@@ -4,6 +4,25 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Fantabet Amici - Sistema Scommesse Fantacalcio</title>
+    
+    <!-- Icone per iOS -->
+    <link rel="apple-touch-icon" sizes="180x180" href="https://raw.githubusercontent.com/savinopi/FantaBet-OP/main/esempio%20stemma%20lega.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="https://raw.githubusercontent.com/savinopi/FantaBet-OP/main/esempio%20stemma%20lega.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="https://raw.githubusercontent.com/savinopi/FantaBet-OP/main/esempio%20stemma%20lega.png">
+    
+    <!-- Icona per Android e altri dispositivi -->
+    <link rel="icon" type="image/png" sizes="192x192" href="https://raw.githubusercontent.com/savinopi/FantaBet-OP/main/esempio%20stemma%20lega.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="https://raw.githubusercontent.com/savinopi/FantaBet-OP/main/esempio%20stemma%20lega.png">
+    
+    <!-- Favicon standard -->
+    <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/savinopi/FantaBet-OP/main/esempio%20stemma%20lega.png">
+    
+    <!-- Meta tag per Web App -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="FantaBet">
+    <meta name="theme-color" content="#0a1628">
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
@@ -136,13 +155,13 @@
     
     <div class="max-w-6xl mx-auto">
         <h1 class="text-4xl font-bold mb-8 text-center text-green-400">
-            Fantabet Amici
+            Fantabet OP
         </h1>
-        <p class="text-center mb-10 text-gray-400">Il tuo sistema di scommesse 1 X 2 personalizzato per la lega di Fantacalcio.</p>
+        <p class="text-center mb-10 text-gray-400">Gioca e scommetti sulle partite della lega fantacalcio Orecchiette e Prosciutto</p>
 
         <!-- Sezione Login (mostrata se non autenticato) -->
         <div id="login-container" class="max-w-md mx-auto card p-8 hidden">
-            <h2 id="auth-title" class="text-2xl font-semibold mb-6 text-center">Accedi a Fantabet</h2>
+            <h2 id="auth-title" class="text-2xl font-semibold mb-6 text-center">Accedi a Fantabet OP</h2>
             <div class="space-y-4">
                 <div class="flex flex-col">
                     <label for="auth-email" class="text-sm text-gray-400 mb-1">Email</label>
@@ -204,7 +223,12 @@
                 <!-- HOME DASHBOARD (Visibile dopo il login) -->
                 <div id="home-container" class="max-w-4xl mx-auto space-y-6">
                     <div class="card p-8 text-center space-y-6">
-                        <h2 class="text-3xl font-bold mb-4">Benvenuto! Scegli la tua area.</h2>
+                        <!-- Logo della Lega -->
+                        <div class="flex justify-center mb-6">
+                            <img src="https://raw.githubusercontent.com/savinopi/FantaBet-OP/main/esempio%20stemma%20lega.png" alt="Logo Fantabet" class="w-32 h-32 object-contain" onerror="this.style.display='none'">
+                        </div>
+                        
+                        <h2 class="text-3xl font-bold mb-4">Benvenuto Ludopatico! Scegli la tua area.</h2>
 
                         <div class="space-y-3">
                             <button onclick="setAppView('betting')" class="w-full py-4 text-xl btn-primary shadow">
