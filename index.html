@@ -7,18 +7,40 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Inter', sans-serif; background-color: #0d1117; color: #c9d1d9; }
-        .card { background-color: #161b22; border-radius: 12px; border: 1px solid #30363d; padding: 24px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); }
-        .btn-primary { background-color: #238636; color: white; padding: 10px 16px; border-radius: 8px; font-weight: 600; transition: background-color 0.2s; }
-        .btn-primary:hover { background-color: #2ea043; }
-        .btn-secondary { background-color: #30363d; color: #c9d1d9; padding: 10px 16px; border-radius: 8px; font-weight: 600; transition: background-color 0.2s; }
-        .btn-secondary:hover { background-color: #484f58; }
-        .btn-danger { background-color: #9b2c2c; color: white; padding: 10px 16px; border-radius: 8px; font-weight: 600; transition: background-color 0.2s; }
-        .btn-danger:hover { background-color: #c53030; }
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: #0a1628; 
+            color: #e0e7ff;
+            background-image: url('https://raw.githubusercontent.com/savinopi/FantaBet-OP/main/Stadium.png');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            background-repeat: no-repeat;
+        }
+        
+        /* Overlay blu per migliorare la leggibilità */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(10, 22, 40, 0.25);
+            z-index: -1;
+        }
+        
+        .card { background-color: rgba(15, 23, 42, 0.95); border-radius: 12px; border: 1px solid #1e3a8a; padding: 24px; box-shadow: 0 4px 6px rgba(37, 99, 235, 0.2); backdrop-filter: blur(10px); }
+        .btn-primary { background-color: #2563eb; color: white; padding: 10px 16px; border-radius: 8px; font-weight: 600; transition: background-color 0.2s; }
+        .btn-primary:hover { background-color: #1d4ed8; }
+        .btn-secondary { background-color: #1e3a8a; color: #e0e7ff; padding: 10px 16px; border-radius: 8px; font-weight: 600; transition: background-color 0.2s; }
+        .btn-secondary:hover { background-color: #1e40af; }
+        .btn-danger { background-color: #dc2626; color: white; padding: 10px 16px; border-radius: 8px; font-weight: 600; transition: background-color 0.2s; }
+        .btn-danger:hover { background-color: #b91c1c; }
         input[type="number"], input[type="text"], input[type="email"], input[type="password"], select, input[type="date"] {
-            background-color: #0d1117;
-            border: 1px solid #30363d;
-            color: #c9d1d9;
+            background-color: #0f172a;
+            border: 1px solid #1e3a8a;
+            color: #e0e7ff;
             padding: 10px;
             border-radius: 6px;
             width: 100%;
@@ -27,10 +49,12 @@
             cursor: pointer;
             transition: all 0.2s;
             border: 2px solid transparent;
+            background-color: #1e293b;
         }
         .bet-option:hover:not(.pointer-events-none) {
             transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(35, 134, 54, 0.3);
+            box-shadow: 0 4px 8px rgba(37, 99, 235, 0.4);
+            border-color: #3b82f6;
         }
         .bet-option.pointer-events-none {
             pointer-events: none;
@@ -41,23 +65,23 @@
         }
         /* Stile per indicare la selezione attiva (prediction locale) */
         .bet-option.local-selected {
-            border-color: #10b981; /* teal */
-            background-color: #1a3328; 
-            box-shadow: 0 0 10px #10b981;
+            border-color: #3b82f6;
+            background-color: #1e3a8a; 
+            box-shadow: 0 0 10px #3b82f6;
         }
         /* Stile per indicare una scommessa SALVATA in Firestore */
         .bet-option.saved-bet {
-            border-color: #238636; /* green */
-            background-color: #1f3928;
-            box-shadow: 0 0 10px #238636;
+            border-color: #2563eb;
+            background-color: #1e40af;
+            box-shadow: 0 0 10px #2563eb;
         }
         /* Stile specifico per l'intestazione della giornata */
         .giornata-header th {
             padding: 12px 16px;
             text-align: left;
             font-size: 1rem;
-            color: #10b981; /* teal-400 */
-            border-bottom: 2px solid #1f2937; /* gray-800 */
+            color: #60a5fa;
+            border-bottom: 2px solid #1e3a8a;
         }
 
         /* Stile per la modale di conferma */
@@ -67,18 +91,19 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.7);
+            background-color: rgba(10, 22, 40, 0.8);
             display: flex;
             justify-content: center;
             align-items: center;
             z-index: 9999;
         }
         .confirm-modal-content {
-            background-color: #161b22;
+            background-color: #0f172a;
             padding: 24px;
             border-radius: 12px;
             width: 400px;
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 10px 20px rgba(37, 99, 235, 0.3);
+            border: 1px solid #1e3a8a;
             text-align: center;
         }
         
@@ -89,7 +114,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.7);
+            background-color: rgba(10, 22, 40, 0.8);
             display: none;
             justify-content: center;
             align-items: center;
@@ -154,35 +179,106 @@
                 </div>
             </div>
 
+            <!-- Barra di Progresso -->
+            <div id="progress-bar-container" class="hidden">
+                <div class="card p-6 w-96">
+                    <h3 id="progress-title" class="text-lg font-bold mb-4 text-center">Elaborazione in corso...</h3>
+                    <div class="mb-2">
+                        <div class="w-full bg-gray-700 rounded-full h-6 overflow-hidden">
+                            <div id="progress-bar-fill" class="bg-blue-500 h-6 transition-all duration-300 flex items-center justify-center text-white text-sm font-bold" style="width: 0%">
+                                <span id="progress-percentage">0%</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-center text-sm text-gray-400 space-y-1">
+                        <div id="progress-status">Inizializzazione...</div>
+                        <div id="progress-time" class="text-xs"></div>
+                    </div>
+                </div>
+            </div>
+
             
             <!-- CONTENITORE PRINCIPALE MODALITÀ: ADMIN / SCOMMESSE / HOME -->
             <div id="app-content-area">
                 
                 <!-- HOME DASHBOARD (Visibile dopo il login) -->
-                <div id="home-container" class="max-w-xl mx-auto card p-8 text-center space-y-6">
-                    <h2 class="text-3xl font-bold mb-4">Benvenuto! Scegli la tua area.</h2>
+                <div id="home-container" class="max-w-4xl mx-auto space-y-6">
+                    <div class="card p-8 text-center space-y-6">
+                        <h2 class="text-3xl font-bold mb-4">Benvenuto! Scegli la tua area.</h2>
 
-                    <div class="space-y-3">
-                        <button onclick="setAppView('betting')" class="w-full py-4 text-xl btn-primary shadow">Vai a Scommesse</button>
+                        <div class="space-y-3">
+                            <button onclick="setAppView('betting')" class="w-full py-4 text-xl btn-primary shadow">
+                                <svg class="w-6 h-6 inline mr-2" fill="currentColor" viewBox="0 0 512 512">
+                                    <path d="M177.1 228.6L207.9 320h96.5l29.62-91.38L256 172.1L177.1 228.6zM255.1 0C114.6 0 .0001 114.6 .0001 256S114.6 512 256 512s255.1-114.6 255.1-255.1S397.4 0 255.1 0zM416.6 246.8L381.9 214l-22.44 62.32l-22.62 7.816l22.38-61.97l-34.71-32.81l34.71-32.81l-22.38-61.97l22.62 7.816L381.9 166.7l34.71-32.81c-34.46-37.46-81.03-63.03-134.5-69.58l-8.066 75.92l-22.44 7.891L260.1 90.16L273.7 13.36C268.5 13.12 263.3 12.1 258.1 12.1c-6.047 0-11.1 .4766-17.83 .8906l12.36 76.83l8.531 58.02L238.7 139.8l-7.844-75.15C176.4 71.23 129.8 96.8 95.35 134.2l34.71 32.81l-22.38 61.97l22.62-7.816L152.7 166.7l34.71 32.81l-34.71 32.81l22.38 61.97l-22.62-7.816L130.1 214L95.35 246.8C108.7 283.9 134.2 314.3 168.8 334.7l7.775-75.43l22.38-7.922l-8.119 58.18l-12.49 76.62c5.453 .2969 10.86 .875 16.51 .875c6.203 0 12.31-.5781 18.43-1.016l-12.76-77.83l-8.205-58.29l22.46 8.012l7.559 75.75c54.25-6.549 101.6-32.45 136.1-69.91L324.2 231.8l22.38-61.97L323.9 177.7L301.5 214L266.8 246.8l34.71 32.81l22.38 61.97l-22.62-7.816l-7.504-75.11l-22.5-8.066l8.131 58.44l12.69 77.74c54.84-6.699 102.4-32.87 137.1-70.55L416.6 246.8z"/>
+                                </svg>
+                                Vai a Scommesse
+                            </button>
 
-                        <!-- Bottone Admin (invisibile per default, checkAdminStatus ne gestisce la visibilità) -->
-                        <button id="admin-button-home" onclick="setAppView('admin')" class="w-full py-3 text-lg btn-secondary hidden">Area Admin</button>
+                            <!-- Bottone Admin (invisibile per default, checkAdminStatus ne gestisce la visibilità) -->
+                            <button id="admin-button-home" onclick="setAppView('admin')" class="w-full py-3 text-lg btn-secondary hidden">
+                                <svg class="w-5 h-5 inline mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd"></path>
+                                </svg>
+                                Area Admin
+                            </button>
 
-                        <!-- Profilo utente -->
-                        <button onclick="setAppView('profile')" class="w-full py-3 text-lg btn-secondary">Profilo</button>
+                            <!-- Profilo utente -->
+                            <button onclick="setAppView('profile')" class="w-full py-3 text-lg btn-secondary">
+                                <svg class="w-5 h-5 inline mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path>
+                                </svg>
+                                Profilo
+                            </button>
 
-                        <!-- Mostra i risultati storici (è ora sibling della home) -->
-                        <button onclick="setAppView('historic_results')" class="w-full py-3 text-lg btn-secondary">Mostra Risultati Storici</button>
+                            <!-- Mostra i risultati storici -->
+                            <button onclick="setAppView('historic_results')" class="w-full py-3 text-lg btn-secondary">
+                                <svg class="w-5 h-5 inline mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"></path>
+                                    <path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" clip-rule="evenodd"></path>
+                                </svg>
+                                Risultati Storici
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Classifica -->
+                    <div class="card p-6">
+                        <h3 class="text-2xl font-bold mb-4 text-yellow-500 flex items-center">
+                            <svg class="w-8 h-8 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"></path>
+                                <path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" clip-rule="evenodd"></path>
+                            </svg>
+                            Classifica
+                        </h3>
+                        <div id="standings-container" class="overflow-x-auto">
+                            <p class="text-gray-500 text-center py-4">Carica i risultati per visualizzare la classifica</p>
+                        </div>
                     </div>
                 </div>
 
                 <!-- RISULTATI STORICI come SIBLING della HOME (prima era annidato dentro home --> 
-                <div id="historic-results-container" class="max-w-4xl mx-auto card p-6 hidden">
+                <div id="historic-results-container" class="max-w-6xl mx-auto card p-6 hidden">
                     <div class="flex justify-between items-center mb-4">
-                        <h2 class="text-2xl font-semibold">Risultati Storici</h2>
+                        <h2 class="text-2xl font-semibold flex items-center">
+                            <svg class="w-6 h-6 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"></path>
+                                <path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" clip-rule="evenodd"></path>
+                            </svg>
+                            Risultati Storici
+                        </h2>
                         <div class="flex space-x-2">
-                            <button onclick="setAppView('home')" class="btn-secondary">Home</button>
-                            <button onclick="setAppView(currentView)" class="btn-secondary">Aggiorna</button>
+                            <button onclick="setAppView('home')" class="btn-secondary">
+                                <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+                                </svg>
+                                Home
+                            </button>
+                            <button onclick="setAppView(currentView)" class="btn-secondary">
+                                <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                                </svg>
+                                Aggiorna
+                            </button>
                         </div>
                     </div>
                     <div class="mb-4">
@@ -193,12 +289,12 @@
                         <table class="min-w-full bg-gray-800 rounded-lg overflow-hidden">
                             <thead>
                                 <tr class="bg-gray-700 text-gray-400">
-                                    <th class="px-4 py-2 text-left">Giornata</th>
-                                    <th class="px-4 py-2 text-left">Data</th>
-                                    <th class="px-4 py-2 text-left">Squadra Casa</th>
-                                    <th class="px-4 py-2 text-left">Squadra Ospite</th>
-                                    <th class="px-4 py-2 text-left">Risultato</th>
-                                    <th class="px-4 py-2 text-left">Punteggio</th>
+                                    <th class="px-6 py-3 text-left whitespace-nowrap">Giornata</th>
+                                    <th class="px-6 py-3 text-left whitespace-nowrap">Data</th>
+                                    <th class="px-6 py-3 text-left whitespace-nowrap">Squadra Casa</th>
+                                    <th class="px-6 py-3 text-left whitespace-nowrap">Squadra Ospite</th>
+                                    <th class="px-6 py-3 text-left whitespace-nowrap">Risultato</th>
+                                    <th class="px-6 py-3 text-left whitespace-nowrap">Punteggio</th>
                                 </tr>
                             </thead>
                             <tbody id="historic-results-table" class="text-gray-300">
@@ -211,13 +307,18 @@
                 <!-- Placeholder per le aree usate dallo script (invisibili finché non richieste) -->
                 <div id="betting-area" class="hidden max-w-4xl mx-auto card p-6">
                     <!-- Header con pulsante Home -->
-                    <div class="flex justify-between items-center mb-4 pb-4 border-b border-gray-700">
-                        <h2 class="text-2xl font-bold text-green-400">Sezione Scommesse</h2>
+                    <div class="flex justify-between items-center mb-4 pb-4 border-b border-blue-800">
+                        <h2 class="text-2xl font-bold text-blue-400 flex items-center">
+                            <svg class="w-7 h-7 mr-2" fill="currentColor" viewBox="0 0 512 512">
+                                <path d="M177.1 228.6L207.9 320h96.5l29.62-91.38L256 172.1L177.1 228.6zM255.1 0C114.6 0 .0001 114.6 .0001 256S114.6 512 256 512s255.1-114.6 255.1-255.1S397.4 0 255.1 0zM416.6 246.8L381.9 214l-22.44 62.32l-22.62 7.816l22.38-61.97l-34.71-32.81l34.71-32.81l-22.38-61.97l22.62 7.816L381.9 166.7l34.71-32.81c-34.46-37.46-81.03-63.03-134.5-69.58l-8.066 75.92l-22.44 7.891L260.1 90.16L273.7 13.36C268.5 13.12 263.3 12.1 258.1 12.1c-6.047 0-11.1 .4766-17.83 .8906l12.36 76.83l8.531 58.02L238.7 139.8l-7.844-75.15C176.4 71.23 129.8 96.8 95.35 134.2l34.71 32.81l-22.38 61.97l22.62-7.816L152.7 166.7l34.71 32.81l-34.71 32.81l22.38 61.97l-22.62-7.816L130.1 214L95.35 246.8C108.7 283.9 134.2 314.3 168.8 334.7l7.775-75.43l22.38-7.922l-8.119 58.18l-12.49 76.62c5.453 .2969 10.86 .875 16.51 .875c6.203 0 12.31-.5781 18.43-1.016l-12.76-77.83l-8.205-58.29l22.46 8.012l7.559 75.75c54.25-6.549 101.6-32.45 136.1-69.91L324.2 231.8l22.38-61.97L323.9 177.7L301.5 214L266.8 246.8l34.71 32.81l22.38 61.97l-22.62-7.816l-7.504-75.11l-22.5-8.066l8.131 58.44l12.69 77.74c54.84-6.699 102.4-32.87 137.1-70.55L416.6 246.8z"/>
+                            </svg>
+                            Sezione Scommesse
+                        </h2>
                         <button onclick="setAppView('home')" class="btn-secondary">
-                            <svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
                             </svg>
-                            Torna alla Home
+                            Home
                         </button>
                     </div>
                     
@@ -246,6 +347,9 @@
                                     onclick="placeBetForGiornata()" 
                                     class="btn-primary px-6 py-2 h-fit" 
                                     disabled>
+                                <svg class="w-5 h-5 inline mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M5 2a1 1 0 011 1v1h1a1 1 0 010 2H6v1a1 1 0 01-2 0V6H3a1 1 0 010-2h1V3a1 1 0 011-1zm0 10a1 1 0 011 1v1h1a1 1 0 110 2H6v1a1 1 0 11-2 0v-1H3a1 1 0 110-2h1v-1a1 1 0 011-1zM12 2a1 1 0 01.967.744L14.146 7.2 17.5 9.134a1 1 0 010 1.732l-3.354 1.935-1.18 4.455a1 1 0 01-1.933 0L9.854 12.8 6.5 10.866a1 1 0 010-1.732l3.354-1.935 1.18-4.455A1 1 0 0112 2z" clip-rule="evenodd"></path>
+                                </svg>
                                 Piazza Scommessa
                             </button>
                         </div>
@@ -264,14 +368,39 @@
                 </div>
 
                 <div id="admin-panel-main" class="hidden max-w-4xl mx-auto">
-                    <div class="flex justify-between items-center border-b border-gray-700">
+                    <div class="flex justify-between items-center border-b border-blue-800">
                         <div class="flex">
-                            <button onclick="showAdminTab('csv')" class="admin-tab-button px-4 py-2 text-lg font-semibold border-b-2 border-transparent hover:border-green-400 hover:text-green-400 focus:outline-none">Caricamento CSV</button>
-                            <button onclick="showAdminTab('users')" class="admin-tab-button px-4 py-2 text-lg font-semibold border-b-2 border-transparent hover:border-green-400 hover:text-green-400 focus:outline-none">Gestione Utenti</button>
-                            <button onclick="showAdminTab('bets')" class="admin-tab-button px-4 py-2 text-lg font-semibold border-b-2 border-transparent hover:border-green-400 hover:text-green-400 focus:outline-none">Scommesse</button>
-                            <button onclick="showAdminTab('danger')" class="admin-tab-button px-4 py-2 text-lg font-semibold border-b-2 border-transparent hover:border-red-500 hover:text-red-500 focus:outline-none">reset Dati</button>
+                            <button onclick="showAdminTab('csv')" class="admin-tab-button px-4 py-2 text-lg font-semibold border-b-2 border-transparent hover:border-blue-400 hover:text-blue-400 focus:outline-none">
+                                <svg class="w-4 h-4 inline mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM6.293 6.707a1 1 0 010-1.414l3-3a1 1 0 011.414 0l3 3a1 1 0 01-1.414 1.414L11 5.414V13a1 1 0 11-2 0V5.414L7.707 6.707a1 1 0 01-1.414 0z"></path>
+                                </svg>
+                                Caricamento CSV
+                            </button>
+                            <button onclick="showAdminTab('users')" class="admin-tab-button px-4 py-2 text-lg font-semibold border-b-2 border-transparent hover:border-blue-400 hover:text-blue-400 focus:outline-none">
+                                <svg class="w-4 h-4 inline mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"></path>
+                                </svg>
+                                Gestione Utenti
+                            </button>
+                            <button onclick="showAdminTab('bets')" class="admin-tab-button px-4 py-2 text-lg font-semibold border-b-2 border-transparent hover:border-blue-400 hover:text-blue-400 focus:outline-none">
+                                <svg class="w-4 h-4 inline mr-1" fill="currentColor" viewBox="0 0 512 512">
+                                    <path d="M177.1 228.6L207.9 320h96.5l29.62-91.38L256 172.1L177.1 228.6zM255.1 0C114.6 0 .0001 114.6 .0001 256S114.6 512 256 512s255.1-114.6 255.1-255.1S397.4 0 255.1 0z"/>
+                                </svg>
+                                Scommesse
+                            </button>
+                            <button onclick="showAdminTab('danger')" class="admin-tab-button px-4 py-2 text-lg font-semibold border-b-2 border-transparent hover:border-red-500 hover:text-red-500 focus:outline-none">
+                                <svg class="w-4 h-4 inline mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                                </svg>
+                                Reset Dati
+                            </button>
                         </div>
-                        <button onclick="setAppView('home')" class="btn-secondary">Home</button>
+                        <button onclick="setAppView('home')" class="btn-secondary">
+                            <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+                            </svg>
+                            Home
+                        </button>
                     </div>
 
                     <div id="admin-tab-csv" class="admin-tab-content card p-6 mt-4">
@@ -307,6 +436,14 @@
 
                     <div id="admin-tab-bets" class="admin-tab-content card p-6 mt-4 hidden">
                         <h3 class="text-xl font-bold mb-4 text-yellow-400">Scommesse della Giornata</h3>
+                        
+                        <!-- Filtri per vedere scommesse liquidate/non liquidate -->
+                        <div class="mb-4 flex space-x-4">
+                            <button onclick="renderAdminBetsFilter('all')" id="filter-all" class="btn-secondary">Tutte</button>
+                            <button onclick="renderAdminBetsFilter('pending')" id="filter-pending" class="btn-primary">Da Liquidare</button>
+                            <button onclick="renderAdminBetsFilter('settled')" id="filter-settled" class="btn-secondary">Liquidate</button>
+                        </div>
+                        
                         <div id="admin-bets-list">
                             <!-- Lista scommesse renderizzata da JS -->
                         </div>
@@ -392,13 +529,37 @@
                 </div>
 
                 <div id="profile-area" class="hidden max-w-md mx-auto card p-6">
-                    <label class="block text-sm text-gray-300 mb-1">Email</label>
-                    <input id="profile-email" class="mb-3" type="email" readonly />
-                    <label class="block text-sm text-gray-300 mb-1">Nome visualizzato</label>
-                    <input id="profile-display-name" type="text" class="mb-4" />
+                    <h2 class="text-2xl font-bold mb-6 text-center flex items-center justify-center">
+                        <svg class="w-6 h-6 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path>
+                        </svg>
+                        Profilo Utente
+                    </h2>
+                    
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-300 mb-2">Email (non modificabile)</label>
+                        <input id="profile-email" class="bg-gray-900 cursor-not-allowed opacity-75" type="email" readonly />
+                    </div>
+                    
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium text-gray-300 mb-2">Nome visualizzato</label>
+                        <input id="profile-display-name" type="text" placeholder="@username" />
+                        <p class="text-xs text-gray-500 mt-1">Questo nome sarà visibile agli altri utenti</p>
+                    </div>
+                    
                     <div class="flex justify-center space-x-4">
-                        <button onclick="setAppView('home')" class="btn-secondary">Torna alla Home</button>
-                        <button onclick="saveUserProfile()" class="btn-primary">Salva Profilo</button>
+                        <button onclick="setAppView('home')" class="btn-secondary">
+                            <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+                            </svg>
+                            Home
+                        </button>
+                        <button onclick="saveUserProfile()" class="btn-primary">
+                            <svg class="w-4 h-4 inline mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M7.707 10.293a1 1 0 10-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 11.586V6h5a2 2 0 012 2v7a2 2 0 01-2 2H4a2 2 0 01-2-2V8a2 2 0 012-2h5v5.586l-1.293-1.293zM9 4a1 1 0 012 0v2H9V4z"></path>
+                            </svg>
+                            Salva Profilo
+                        </button>
                     </div>
                 </div>
             </div>
@@ -452,6 +613,35 @@
         // Lista admin (fallback vuota). Imposta window.ADMIN_USER_IDS = ['uid1','uid2'] se vuoi preconfigurare admin.
         const ADMIN_USER_IDS = Array.isArray(window.ADMIN_USER_IDS) ? window.ADMIN_USER_IDS : ['zfnVEz13IYZchLxxWTwi6htI5cU2'];
         
+        // Mappatura loghi squadre
+        const GITHUB_USERNAME = 'savinopi';
+        const GITHUB_REPO = 'FantaBet-OP';
+        const LOGOS_FOLDER = ''; // I loghi sono nella root del repository
+        const GITHUB_LOGOS_BASE_URL = `https://raw.githubusercontent.com/${GITHUB_USERNAME}/${GITHUB_REPO}/main`;
+        
+        const TEAM_LOGOS = {
+            'Audace Cerignola Next Gen': 'Logo Audace Cerignola.png',
+            'Disagiati FC': 'Logo Disagiati FC.png',
+            'Friariello FC': 'Logo Friarello FC 2025.png',
+            'LIBERTAS': 'Logo Libertas.png',
+            'Tarzanelli': 'Logo Tarzanelli.png',
+            'FC SANTA CLAUS': 'Logo santa claus.png',
+            'Monte Los Angeles Fc': 'MONTE.png',
+            'Schalke 104': 'Schalke104_2024.png',
+            'A.S. UDINEGRE': 'UDINEGRE.png',
+            'Panza Team': 'logo panza team.png'
+        };
+        
+        // Funzione helper per ottenere il logo di una squadra
+        const getTeamLogo = (teamName) => {
+            const logoFile = TEAM_LOGOS[teamName];
+            if (logoFile) {
+                return `${GITHUB_LOGOS_BASE_URL}/${encodeURIComponent(logoFile)}`;
+            }
+            // Logo placeholder se non trovato
+            return `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='50' height='50' viewBox='0 0 50 50'%3E%3Crect width='50' height='50' fill='%23374151'/%3E%3Ctext x='25' y='25' font-size='20' text-anchor='middle' dominant-baseline='middle' fill='%239CA3AF'%3E${teamName.charAt(0)}%3C/text%3E%3C/svg%3E`;
+        };
+        
         // Dati per la gestione delle squadre e risultati
         let allTeams = [];
         let allResults = [];
@@ -473,7 +663,7 @@
         let parsedCsvData = [];
         let currentView = 'home';
 
-        window.showAdminTab = (tabName) => {
+        window.showAdminTab = async (tabName) => {
             // Hide all tab content
             document.querySelectorAll('.admin-tab-content').forEach(tab => {
                 tab.classList.add('hidden');
@@ -491,6 +681,18 @@
                 activeButton.classList.add('text-red-500', 'border-red-500');
             } else {
                 activeButton.classList.add('text-green-400', 'border-green-400');
+            }
+            
+            // Carica i dati specifici della tab
+            if (tabName === 'bets') {
+                // Carica tutte le scommesse
+                const snapshot = await getDocs(getGiornataBetsCollectionRef());
+                const allBets = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                
+                const usersSnapshot = await getDocs(getUsersCollectionRef());
+                const allUsers = usersSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                
+                renderAdminBetsList(allBets, allUsers, currentBetsFilter);
             }
         };
 
@@ -537,6 +739,10 @@
                             console.log('Nessuna partita disponibile in allMatches');
                         }
                     }
+                    // Se stiamo passando alla sezione profilo, popola i campi
+                    if (view === 'profile') {
+                        renderProfileArea();
+                    }
                 }
             }
 
@@ -559,6 +765,78 @@
             const messageBoxElement = document.getElementById('message-box');
             if (messageBoxElement) {
                 messageBoxElement.classList.add('hidden');
+            }
+        };
+
+        // --- Funzioni Barra di Progresso ---
+        let progressStartTime = null;
+        
+        const showProgressBar = (title = 'Elaborazione in corso...') => {
+            const container = document.getElementById('progress-bar-container');
+            const titleElement = document.getElementById('progress-title');
+            if (container && titleElement) {
+                titleElement.textContent = title;
+                container.classList.remove('hidden');
+                updateProgress(0, 'Inizializzazione...');
+                progressStartTime = Date.now();
+            }
+        };
+
+        const hideProgressBar = () => {
+            const container = document.getElementById('progress-bar-container');
+            if (container) {
+                container.classList.add('hidden');
+                progressStartTime = null;
+            }
+        };
+
+        const updateProgress = (percentage, statusText = '', current = null, total = null) => {
+            const fill = document.getElementById('progress-bar-fill');
+            const percentageText = document.getElementById('progress-percentage');
+            const status = document.getElementById('progress-status');
+            const timeElement = document.getElementById('progress-time');
+            
+            if (fill && percentageText) {
+                const clampedPercentage = Math.min(100, Math.max(0, percentage));
+                fill.style.width = clampedPercentage + '%';
+                percentageText.textContent = Math.round(clampedPercentage) + '%';
+            }
+            
+            if (status && statusText) {
+                status.textContent = statusText;
+            }
+            
+            // Calcola tempo rimanente
+            if (timeElement && progressStartTime && percentage > 0 && percentage < 100) {
+                const elapsed = (Date.now() - progressStartTime) / 1000; // secondi
+                const estimatedTotal = (elapsed / percentage) * 100;
+                const remaining = estimatedTotal - elapsed;
+                
+                if (remaining > 0) {
+                    const minutes = Math.floor(remaining / 60);
+                    const seconds = Math.round(remaining % 60);
+                    
+                    let timeText = 'Tempo stimato: ';
+                    if (minutes > 0) {
+                        timeText += `${minutes}m ${seconds}s`;
+                    } else {
+                        timeText += `${seconds}s`;
+                    }
+                    
+                    if (current !== null && total !== null) {
+                        timeText += ` (${current}/${total})`;
+                    }
+                    
+                    timeElement.textContent = timeText;
+                } else {
+                    timeElement.textContent = '';
+                }
+            } else if (timeElement) {
+                if (current !== null && total !== null) {
+                    timeElement.textContent = `(${current}/${total})`;
+                } else {
+                    timeElement.textContent = '';
+                }
             }
         };
 
@@ -967,7 +1245,8 @@
              }
              
              confirmModal.classList.add('hidden');
-             messageBox("Avvio cancellazione... non interrompere.");
+             
+             showProgressBar('Reset Totale Database');
 
              const collectionsToClear = [
                  getTeamCollectionRef(), 
@@ -977,25 +1256,44 @@
              ];
              
              let totalDeleted = 0;
+             let totalDocs = 0;
 
              try {
-                 for (const collectionRef of collectionsToClear) {
-                    // Se non ci sono filtri, getDocs(collectionRef) è più semplice e leggero
-                    const snapshot = await getDocs(collectionRef);
+                 // Prima conta tutti i documenti
+                 const snapshots = await Promise.all(collectionsToClear.map(ref => getDocs(ref)));
+                 totalDocs = snapshots.reduce((sum, snapshot) => sum + snapshot.docs.length, 0);
+                 
+                 updateProgress(10, 'Inizio cancellazione...', 0, totalDocs);
+                 
+                 let currentIndex = 0;
+                 for (let i = 0; i < collectionsToClear.length; i++) {
+                     const collectionRef = collectionsToClear[i];
+                     const snapshot = snapshots[i];
                      let collectionDeleted = 0;
                      
                      // Cancella ogni documento uno per uno
                      for (const docSnapshot of snapshot.docs) {
                          await deleteDoc(doc(collectionRef, docSnapshot.id));
                          collectionDeleted++;
+                         totalDeleted++;
+                         currentIndex++;
+                         
+                         const progress = 10 + (currentIndex / totalDocs) * 85;
+                         updateProgress(progress, `Cancellazione ${collectionRef.id}...`, currentIndex, totalDocs);
                      }
-                     totalDeleted += collectionDeleted;
                      console.log(`Cancellati ${collectionDeleted} documenti dalla collezione: ${collectionRef.id}`);
                  }
                  
-                 messageBox(`Cancellazione completa! Eliminati ${totalDeleted} documenti totali. L'app è stata resettata.`);
+                 updateProgress(100, 'Completato!', totalDocs, totalDocs);
+                 
+                 setTimeout(() => {
+                     hideProgressBar();
+                     messageBox(`Cancellazione completa! Eliminati ${totalDeleted} documenti totali. L'app è stata resettata.`);
+                 }, 500);
+                 
              } catch (error) {
                  console.error("Errore durante la cancellazione dei dati:", error);
+                 hideProgressBar();
                  messageBox(`Errore grave durante la cancellazione. Controlla i permessi di scrittura/cancellazione su Firebase. Errore: ${error.message}`);
              }
          };
@@ -1009,17 +1307,22 @@
                 return;
             }
             
-            messageBox("Cancellazione risultati storici in corso...");
+            showProgressBar('Cancellazione Risultati Storici');
             
             try {
                 const snapshot = await getDocs(getResultsCollectionRef());
+                const totalDocs = snapshot.docs.length;
                 let deletedCount = 0;
                 
                 for (const docSnapshot of snapshot.docs) {
                     await deleteDoc(doc(getResultsCollectionRef(), docSnapshot.id));
                     deletedCount++;
+                    
+                    const progress = (deletedCount / totalDocs) * 100;
+                    updateProgress(progress, `Cancellazione in corso...`, deletedCount, totalDocs);
                 }
                 
+                hideProgressBar();
                 messageBox(`Cancellati ${deletedCount} risultati storici.`);
                 console.log(`Cancellati ${deletedCount} risultati storici`);
                 
@@ -1030,6 +1333,7 @@
                 }
             } catch (error) {
                 console.error("Errore cancellazione risultati storici:", error);
+                hideProgressBar();
                 messageBox(`Errore durante la cancellazione: ${error.message}`);
             }
         };
@@ -1041,18 +1345,23 @@
                 return;
             }
             
-            messageBox("Cancellazione partite aperte in corso...");
+            showProgressBar('Cancellazione Partite Aperte');
             
             try {
                 const q = query(getMatchesCollectionRef(), where('status', '==', 'open'));
                 const snapshot = await getDocs(q);
+                const totalDocs = snapshot.docs.length;
                 let deletedCount = 0;
                 
                 for (const docSnapshot of snapshot.docs) {
                     await deleteDoc(doc(getMatchesCollectionRef(), docSnapshot.id));
                     deletedCount++;
+                    
+                    const progress = (deletedCount / totalDocs) * 100;
+                    updateProgress(progress, `Cancellazione in corso...`, deletedCount, totalDocs);
                 }
                 
+                hideProgressBar();
                 messageBox(`Cancellate ${deletedCount} partite aperte.`);
                 console.log(`Cancellate ${deletedCount} partite aperte`);
                 
@@ -1065,6 +1374,7 @@
                 }
             } catch (error) {
                 console.error("Errore cancellazione partite aperte:", error);
+                hideProgressBar();
                 messageBox(`Errore durante la cancellazione: ${error.message}`);
             }
         };
@@ -1076,27 +1386,32 @@
                 return;
             }
             
-            messageBox("Cancellazione scommesse in corso...");
+            showProgressBar('Cancellazione Scommesse');
             
             try {
                 const snapshot = await getDocs(getGiornataBetsCollectionRef());
+                const totalDocs = snapshot.docs.length;
                 let deletedCount = 0;
                 
                 for (const docSnapshot of snapshot.docs) {
                     await deleteDoc(doc(getGiornataBetsCollectionRef(), docSnapshot.id));
                     deletedCount++;
+                    
+                    const progress = (deletedCount / totalDocs) * 100;
+                    updateProgress(progress, `Cancellazione in corso...`, deletedCount, totalDocs);
                 }
                 
+                hideProgressBar();
                 messageBox(`Cancellate ${deletedCount} scommesse.`);
                 console.log(`Cancellate ${deletedCount} scommesse`);
                 
                 // Aggiorna le viste
-                userGiornataBets = new Map(); // Svuota la mappa delle scommesse
-                if (currentAppView === 'betting') {
-                    renderOpenMatches(); // Aggiorna sezione scommesse per rimuovere banner "scommessa confermata"
+                if (currentView === 'betting') {
+                    renderOpenMatches(openMatches, nextGiornataNumber); // Aggiorna sezione scommesse
                 }
             } catch (error) {
                 console.error("Errore cancellazione scommesse:", error);
+                hideProgressBar();
                 messageBox(`Errore durante la cancellazione: ${error.message}`);
             }
         };
@@ -1108,32 +1423,27 @@
                 return;
             }
             
-            messageBox("Reset crediti in corso...");
+            showProgressBar('Reset Crediti Utenti');
             
             try {
                 const snapshot = await getDocs(getUsersCollectionRef());
-                const batch = writeBatch(db);
+                const totalDocs = snapshot.docs.length;
                 let updatedCount = 0;
                 
-                snapshot.docs.forEach(docSnapshot => {
-                    batch.update(doc(getUsersCollectionRef(), docSnapshot.id), {
-                        credits: 100
-                    });
+                for (const docSnapshot of snapshot.docs) {
+                    await updateDoc(doc(getUsersCollectionRef(), docSnapshot.id), { credits: 100 });
                     updatedCount++;
-                });
-                
-                await batch.commit();
-                
-                messageBox(`Crediti reimpostati a 100 per ${updatedCount} utenti.`);
-                console.log(`Reset crediti per ${updatedCount} utenti`);
-                
-                // Aggiorna crediti locali se l'utente corrente è quello loggato
-                if (currentUserId) {
-                    userCredits = 100;
-                    updateCreditsDisplay();
+                    
+                    const progress = (updatedCount / totalDocs) * 100;
+                    updateProgress(progress, `Reset in corso...`, updatedCount, totalDocs);
                 }
+                
+                hideProgressBar();
+                messageBox(`Crediti reimpostati per ${updatedCount} utenti.`);
+                console.log(`Crediti reimpostati per ${updatedCount} utenti`);
             } catch (error) {
                 console.error("Errore reset crediti:", error);
+                hideProgressBar();
                 messageBox(`Errore durante il reset: ${error.message}`);
             }
         };
@@ -1145,24 +1455,27 @@
                 return;
             }
             
-            messageBox("Cancellazione squadre in corso...");
+            showProgressBar('Cancellazione Squadre');
             
             try {
-                const snapshot = await getDocs(getTeamCollectionRef());
+                const snapshot = await getDocs(getTeamsCollectionRef());
+                const totalDocs = snapshot.docs.length;
                 let deletedCount = 0;
                 
                 for (const docSnapshot of snapshot.docs) {
-                    await deleteDoc(doc(getTeamCollectionRef(), docSnapshot.id));
+                    await deleteDoc(doc(getTeamsCollectionRef(), docSnapshot.id));
                     deletedCount++;
+                    
+                    const progress = (deletedCount / totalDocs) * 100;
+                    updateProgress(progress, `Cancellazione in corso...`, deletedCount, totalDocs);
                 }
                 
+                hideProgressBar();
                 messageBox(`Cancellate ${deletedCount} squadre.`);
                 console.log(`Cancellate ${deletedCount} squadre`);
-                
-                // Aggiorna le viste
-                allTeams = []; // Svuota array locale
             } catch (error) {
                 console.error("Errore cancellazione squadre:", error);
+                hideProgressBar();
                 messageBox(`Errore durante la cancellazione: ${error.message}`);
             }
         };
@@ -1174,11 +1487,14 @@
             if (!isUserAdmin) return;
 
             console.log('Inizio processamento CSV');
+            showProgressBar('Importazione CSV');
+            updateProgress(0, 'Lettura file CSV...');
 
             const delimiter = ';';
             const lines = csvContent.split('\n');
             
             if (lines.length < 2) {
+                hideProgressBar();
                 messageBox("Il file CSV è troppo corto o non contiene dati (intestazione mancante).");
                 return;
             }
@@ -1191,17 +1507,26 @@
             const teamNames = new Set();
             const resultsBatch = []; // Partite giocate
             const matchesBatch = []; // Partite da aprire (score = '-')
-            const resultsCollectionRef = getResultsCollectionRef();            parsedCsvData = []; // Reset data
+            const resultsCollectionRef = getResultsCollectionRef();
+            parsedCsvData = []; // Reset data
 
             console.log('Inizio processamento CSV:', {
                 totaleRighe: lines.length,
                 primoPaio: lines.slice(0, 2)
             });
 
+            updateProgress(10, 'Analisi righe CSV...');
+
             // Loop a partire dalla riga 2 (indice 1) per saltare l'intestazione
             for (let i = 1; i < lines.length; i++) {
                 const line = lines[i].trim();
                 if (!line) continue;
+
+                // Aggiorna progresso durante il parsing
+                const parseProgress = 10 + ((i / lines.length) * 20);
+                if (i % 10 === 0) { // Aggiorna ogni 10 righe per non rallentare
+                    updateProgress(parseProgress, `Elaborazione riga ${i}/${lines.length}...`);
+                }
 
                 // Usa il delimitatore punto e virgola
                 const columns = line.split(delimiter); 
@@ -1215,6 +1540,8 @@
                 // Estrazione dati dal nuovo tracciato
                 const rawGiornata = columns[0] ? columns[0].trim() : null;
                 const homeTeam = columns[1] ? columns[1].trim() : null;
+                const homePoints = columns[2] ? parseFloat(columns[2].trim()) : 0; // P.Casa
+                const awayPoints = columns[3] ? parseFloat(columns[3].trim()) : 0; // P.Ospite
                 const awayTeam = columns[4] ? columns[4].trim() : null;
                 const score = columns[5] ? columns[5].trim() : null; // Colonna 'Risultato' (es. "1-1", "3-2", "-")
                 
@@ -1245,6 +1572,8 @@
                         const resultData = {
                             homeTeam,
                             awayTeam,
+                            homePoints,  // Aggiungi punteggio casa
+                            awayPoints,  // Aggiungi punteggio ospite
                             result,
                             score: finalScore,
                             date, 
@@ -1287,13 +1616,19 @@
             }
             
             // 1. Salva le Squadre
+            updateProgress(30, `Salvataggio squadre (${teamNames.size})...`);
+            let teamCount = 0;
             for (const team of teamNames) {
                 if (team) {
                     await addTeamToFirestore(team);
+                    teamCount++;
+                    const teamProgress = 30 + ((teamCount / teamNames.size) * 10);
+                    updateProgress(teamProgress, `Salvataggio squadre...`, teamCount, teamNames.size);
                 }
             }
 
             // 2. Salva i Risultati Storici (Partite Giocate)
+            updateProgress(40, `Salvataggio risultati storici (${resultsBatch.length})...`);
             let savedResultsCount = 0;
             for (const res of resultsBatch) {
                  const q = query(getResultsCollectionRef(), 
@@ -1307,9 +1642,15 @@
                      await addDoc(resultsCollectionRef, res);
                      savedResultsCount++;
                  }
+                 
+                 if (resultsBatch.length > 0) {
+                     const resultProgress = 40 + ((savedResultsCount / resultsBatch.length) * 20);
+                     updateProgress(resultProgress, `Salvataggio risultati...`, savedResultsCount, resultsBatch.length);
+                 }
             }
             
             // 3. Salva le Partite Future (Partite Aperte)
+            updateProgress(60, 'Pulizia partite aperte precedenti...');
             let savedMatchesCount = 0;
             const matchesCollectionRef = getMatchesCollectionRef();
 
@@ -1325,6 +1666,7 @@
             console.log(`${openMatchesSnapshot.size} partite aperte rimosse`);
 
             // Ora salva le nuove partite aperte
+            updateProgress(65, `Salvataggio nuove partite (${matchesBatch.length})...`);
             console.log(`Salvataggio ${matchesBatch.length} nuove partite aperte...`);
             for (const match of matchesBatch) {
                 // Calcola le quote usando tutti i risultati storici
@@ -1337,12 +1679,97 @@
                     createdAt: new Date().toISOString()
                 });
                 savedMatchesCount++;
+                
+                const matchProgress = 65 + ((savedMatchesCount / matchesBatch.length) * 15);
+                updateProgress(matchProgress, `Salvataggio partite...`, savedMatchesCount, matchesBatch.length);
                 console.log(`Salvata partita: ${match.homeTeam} vs ${match.awayTeam} (Giornata ${match.giornata})`);
             }
 
+            // 4. Liquida le scommesse per le giornate completate
+            updateProgress(80, 'Preparazione liquidazione scommesse...');
+            
+            // FLAG: Imposta a false per disabilitare temporaneamente la liquidazione automatica
+            const ENABLE_AUTO_LIQUIDATION = true;
+            
+            // Raggruppa i risultati per giornata
+            const resultsByGiornata = new Map();
+            resultsBatch.forEach(res => {
+                const giornataNum = res.giornata.toString().match(/\d+/)?.[0] || res.giornata;
+                if (!resultsByGiornata.has(giornataNum)) {
+                    resultsByGiornata.set(giornataNum, []);
+                }
+                resultsByGiornata.get(giornataNum).push(res);
+            });
+
+            // Liquida le scommesse per ogni giornata con risultati
+            let totalSettled = 0;
+            let totalWinners = 0;
+            let totalLosers = 0;
+            
+            const giornateCount = resultsByGiornata.size;
+            let processedGiornate = 0;
+            
+            console.log(`Giornate da liquidare: ${giornateCount}`);
+            console.log(`Liquidazione automatica: ${ENABLE_AUTO_LIQUIDATION ? 'ABILITATA' : 'DISABILITATA'}`);
+            
+            if (ENABLE_AUTO_LIQUIDATION && giornateCount > 0) {
+                console.log(`Inizio liquidazione per ${giornateCount} giornate...`);
+            
+                try {
+                    for (const [giornata, results] of resultsByGiornata) {
+                        processedGiornate++;
+                        const liquidationProgress = 80 + ((processedGiornate / giornateCount) * 15);
+                        updateProgress(liquidationProgress, `Liquidazione Giornata ${giornata}...`, processedGiornate, giornateCount);
+                        
+                        console.log(`[${processedGiornate}/${giornateCount}] Liquidazione Giornata ${giornata} con ${results.length} risultati`);
+                        
+                        try {
+                            const settlement = await Promise.race([
+                                liquidateBetsForGiornata(giornata, results),
+                                new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout liquidazione')), 30000))
+                            ]);
+                            
+                            totalSettled += settlement.processed;
+                            totalWinners += settlement.winners;
+                            totalLosers += settlement.losers;
+                            console.log(`Giornata ${giornata} liquidata: ${settlement.processed} scommesse`);
+                        } catch (liquidationError) {
+                            console.error(`Errore liquidazione Giornata ${giornata}:`, liquidationError);
+                            // Continua comunque con le altre giornate
+                        }
+                    }
+                } catch (error) {
+                    console.error('Errore generale durante la liquidazione:', error);
+                }
+            } else {
+                console.log('Liquidazione saltata (disabilitata o nessuna giornata da liquidare)');
+                updateProgress(95, 'Saltata liquidazione...');
+            }
+
+            console.log('Liquidazione completata, finalizzazione...');
+            updateProgress(95, 'Finalizzazione...');
+            
+            // Forza un piccolo delay per permettere all'UI di aggiornarsi
+            await new Promise(resolve => setTimeout(resolve, 100));
+            
             renderCsvData(parsedCsvData);
 
-            messageBox(`Importazione completata: salvate ${teamNames.size} squadre uniche. Risultati storici: ${savedResultsCount}. Partite future aperte: ${savedMatchesCount}.`);
+            updateProgress(100, 'Completato!');
+            
+            let message = `Importazione completata: salvate ${teamNames.size} squadre uniche. Risultati storici: ${savedResultsCount}. Partite future aperte: ${savedMatchesCount}.`;
+            
+            if (totalSettled > 0) {
+                message += `\n\nLiquidazione scommesse: ${totalSettled} scommesse processate (${totalWinners} vincenti, ${totalLosers} perdenti).`;
+            } else if (resultsByGiornata.size > 0) {
+                message += `\n\nNessuna scommessa da liquidare trovata per queste giornate.`;
+            }
+            
+            console.log('Processo completato!');
+            
+            setTimeout(() => {
+                hideProgressBar();
+                messageBox(message);
+            }, 500);
         };
 
         const renderCsvData = (data) => {
@@ -1362,8 +1789,8 @@
                 <tr class="bg-gray-700 text-gray-400">
                     <th class="px-4 py-2 text-left">Giornata</th>
                     <th class="px-4 py-2 text-left">Data</th>
-                    <th class="px-4 py-2 text-left">Squadra Casa</th>
-                    <th class="px-4 py-2 text-left">Squadra Ospite</th>
+                    <th class="px-4 py-2 text-left" colspan="2">Squadra Casa</th>
+                    <th class="px-4 py-2 text-left" colspan="2">Squadra Ospite</th>
                     <th class="px-4 py-2 text-left">Risultato/Status</th>
                     <th class="px-4 py-2 text-left">Punteggio</th>
                 </tr>
@@ -1375,12 +1802,14 @@
 
             data.forEach(row => {
                 const tr = document.createElement('tr');
-                tr.className = 'hover:bg-gray-800';
+                tr.className = 'hover:bg-gray-700 border-b border-gray-700';
                 tr.innerHTML = `
                     <td class="px-4 py-3 whitespace-nowrap text-sm">${row.giornata}</td>
                     <td class="px-4 py-3 whitespace-nowrap text-sm">${row.date}</td>
-                    <td class="px-4 py-3 whitespace-nowrap text-sm font-semibold">${row.homeTeam}</td>
-                    <td class="px-4 py-3 whitespace-nowrap text-sm font-semibold">${row.awayTeam}</td>
+                    <td class="px-2 py-3 text-center"><img src="${getTeamLogo(row.homeTeam)}" alt="${row.homeTeam}" class="w-8 h-8 object-contain mx-auto" onerror="this.style.display='none'"></td>
+                    <td class="px-2 py-3 whitespace-nowrap text-sm font-semibold">${row.homeTeam}</td>
+                    <td class="px-2 py-3 text-center"><img src="${getTeamLogo(row.awayTeam)}" alt="${row.awayTeam}" class="w-8 h-8 object-contain mx-auto" onerror="this.style.display='none'"></td>
+                    <td class="px-2 py-3 whitespace-nowrap text-sm font-semibold">${row.awayTeam}</td>
                     <td class="px-4 py-3 whitespace-nowrap text-sm">${row.result || row.status}</td>
                     <td class="px-4 py-3 whitespace-nowrap text-sm">${row.score || '-'}</td>
                 `;
@@ -1390,6 +1819,138 @@
             table.appendChild(tbody);
             container.innerHTML = '';
             container.appendChild(table);
+        };
+
+        // Funzione per liquidare le scommesse di una giornata completata
+        const liquidateBetsForGiornata = async (giornata, results) => {
+            console.log(`=== INIZIO LIQUIDAZIONE GIORNATA ${giornata} ===`);
+            
+            try {
+                // 1. Recupera tutte le scommesse per questa giornata
+                const betsQuery = query(
+                    getGiornataBetsCollectionRef(),
+                    where('giornata', '==', giornata.toString())
+                );
+                const betsSnapshot = await getDocs(betsQuery);
+                
+                console.log(`Scommesse trovate per Giornata ${giornata}: ${betsSnapshot.size}`);
+                
+                if (betsSnapshot.empty) {
+                    return { processed: 0, winners: 0, losers: 0 };
+                }
+                
+                // 2. Crea una mappa dei risultati effettivi per rapido accesso
+                const resultsMap = new Map();
+                results.forEach(res => {
+                    const key = `${res.homeTeam}_${res.awayTeam}`;
+                    resultsMap.set(key, res.result);
+                });
+
+                let processedCount = 0;
+                let winnersCount = 0;
+                let losersCount = 0;
+
+                // Batch per aggiornamenti crediti utenti
+                const userUpdates = new Map();
+
+                // 3. Processa ogni scommessa
+                for (const betDoc of betsSnapshot.docs) {
+                    const bet = betDoc.data();
+                    
+                    // Verifica se la scommessa è già stata liquidata
+                    if (bet.settled) {
+                        console.log(`Scommessa ${betDoc.id} già liquidata, skip`);
+                        continue;
+                    }
+
+                    let correctPredictions = 0;
+                    let totalPredictions = 0;
+                    const detailedResults = [];
+
+                    // 4. Verifica ogni pronostico della scommessa
+                    bet.predictions.forEach(pred => {
+                        const key = `${pred.homeTeam}_${pred.awayTeam}`;
+                        const actualResult = resultsMap.get(key);
+                        
+                        if (actualResult) {
+                            totalPredictions++;
+                            const isCorrect = pred.prediction === actualResult;
+                            if (isCorrect) correctPredictions++;
+                            
+                            detailedResults.push({
+                                match: `${pred.homeTeam} vs ${pred.awayTeam}`,
+                                predicted: pred.prediction,
+                                actual: actualResult,
+                                correct: isCorrect
+                            });
+                        }
+                    });
+
+                    // 5. Calcola se la scommessa è vincente (tutti i pronostici corretti)
+                    const isWinningBet = totalPredictions > 0 && correctPredictions === totalPredictions;
+                    
+                    // 6. Calcola la vincita (usa quotaTotale moltiplicativa, non quotaMedia)
+                    let winnings = 0;
+                    if (isWinningBet) {
+                        winnings = bet.stake * bet.quotaTotale;
+                        winnersCount++;
+                    } else {
+                        winnings = 0;
+                        losersCount++;
+                    }
+
+                    // 7. Accumula aggiornamenti crediti (faremo batch update dopo)
+                    if (winnings > 0) {
+                        if (!userUpdates.has(bet.userId)) {
+                            userUpdates.set(bet.userId, 0);
+                        }
+                        userUpdates.set(bet.userId, userUpdates.get(bet.userId) + winnings);
+                    }
+
+                    // 8. Marca la scommessa come liquidata
+                    await updateDoc(betDoc.ref, {
+                        settled: true,
+                        settledAt: new Date().toISOString(),
+                        isWinning: isWinningBet,
+                        winnings: winnings,
+                        correctPredictions: correctPredictions,
+                        totalPredictions: totalPredictions,
+                        detailedResults: detailedResults
+                    });
+
+                    processedCount++;
+                }
+
+                // 9. Aggiorna crediti utenti in batch
+                console.log(`Aggiornamento crediti per ${userUpdates.size} utenti...`);
+                const usersCollectionRef = getUsersCollectionRef();
+                
+                for (const [userId, creditToAdd] of userUpdates) {
+                    const userQuery = query(usersCollectionRef, where('uid', '==', userId));
+                    const userSnapshot = await getDocs(userQuery);
+                    
+                    if (!userSnapshot.empty) {
+                        const userDoc = userSnapshot.docs[0];
+                        const currentCredits = userDoc.data().credits || 0;
+                        const newCredits = currentCredits + creditToAdd;
+                        
+                        await updateDoc(userDoc.ref, {
+                            credits: newCredits
+                        });
+                        
+                        console.log(`Utente ${userId}: +${creditToAdd.toFixed(2)} crediti (${currentCredits} → ${newCredits})`);
+                    }
+                }
+
+                console.log(`=== FINE LIQUIDAZIONE GIORNATA ${giornata} ===`);
+                console.log(`Processate: ${processedCount}, Vincenti: ${winnersCount}, Perdenti: ${losersCount}`);
+
+                return { processed: processedCount, winners: winnersCount, losers: losersCount };
+
+            } catch (error) {
+                console.error('Errore durante la liquidazione delle scommesse:', error);
+                throw error;
+            }
         };
         
         window.handleFileSelect = () => {
@@ -1682,7 +2243,7 @@ const adjustOddsForMargin = (q1, qX, q2, targetMargin = 0.05) => {
 
 // Funzione per il calcolo delle quote (Revisione) — usa adjustOddsForMargin
 const calculateOdds = (homeTeam, awayTeam) => {
-    // Conteggio scontri diretti
+    // 1. Conteggio scontri diretti
     const matchesAgainst = allResults.filter(r =>
         (r.homeTeam === homeTeam && r.awayTeam === awayTeam) ||
         (r.homeTeam === awayTeam && r.awayTeam === homeTeam)
@@ -1698,7 +2259,6 @@ const calculateOdds = (homeTeam, awayTeam) => {
             else if (r.result === 'X') draws++;
             else if (r.result === '2') awayTeamWins++;
         } else if (r.homeTeam === awayTeam && r.awayTeam === homeTeam) {
-            // inversione: in questo caso '1' è vittoria per awayTeam rispetto al homeTeam richiesto
             if (r.result === '1') awayTeamWins++;
             else if (r.result === 'X') draws++;
             else if (r.result === '2') homeTeamWins++;
@@ -1707,29 +2267,65 @@ const calculateOdds = (homeTeam, awayTeam) => {
 
     const totalEncounters = homeTeamWins + awayTeamWins + draws;
 
-    // Probabilità "pure" basate sugli scontri diretti o default se non ci sono dati
+    // 2. Calcola statistiche generali delle squadre
+    const homeStats = calculateTeamStats(homeTeam);
+    const awayStats = calculateTeamStats(awayTeam);
+
+    // 3. Calcola fattore di forza basato sulla classifica
+    const maxPoints = Math.max(homeStats.points, awayStats.points, 1);
+    const homeStrength = homeStats.matchesPlayed > 0 ? homeStats.points / (homeStats.matchesPlayed * 3) : 0.5;
+    const awayStrength = awayStats.matchesPlayed > 0 ? awayStats.points / (awayStats.matchesPlayed * 3) : 0.5;
+    
+    // Fattore casa: bonus del 10% per la squadra di casa
+    const homeBonus = 0.10;
+
+    // 4. Combina scontri diretti con statistiche generali
     let p1, pX, p2;
+    
     if (totalEncounters === 0) {
-        p1 = 0.33; pX = 0.34; p2 = 0.33;
+        // Nessun scontro diretto: usa statistiche generali + classifica
+        const homeAdjusted = homeStrength + homeBonus;
+        const awayAdjusted = awayStrength;
+        
+        p1 = homeStats.homeWinRate * 0.5 + homeAdjusted * 0.5;
+        p2 = awayStats.awayWinRate * 0.5 + awayAdjusted * 0.5;
+        pX = Math.max(0.20, Math.min(0.35, (homeStats.drawRate + awayStats.drawRate) / 2)); // Pareggio tra 20% e 35%
     } else {
-        p1 = homeTeamWins / totalEncounters;
-        p2 = awayTeamWins / totalEncounters;
-        pX = draws / totalEncounters;
-        // normalizza per sicurezza
-        const sum = p1 + pX + p2 || 1;
-        p1 /= sum; pX /= sum; p2 /= sum;
+        // Combina scontri diretti (50%) con statistiche generali (30%) e classifica (20%)
+        const directP1 = homeTeamWins / totalEncounters;
+        const directP2 = awayTeamWins / totalEncounters;
+        const directPX = draws / totalEncounters;
+        
+        const homeAdjusted = homeStrength + homeBonus;
+        const awayAdjusted = awayStrength;
+        
+        const generalP1 = homeStats.homeWinRate * 0.6 + homeAdjusted * 0.4;
+        const generalP2 = awayStats.awayWinRate * 0.6 + awayAdjusted * 0.4;
+        const generalPX = (homeStats.drawRate + awayStats.drawRate) / 2;
+        
+        p1 = directP1 * 0.5 + generalP1 * 0.5;
+        p2 = directP2 * 0.5 + generalP2 * 0.5;
+        pX = directPX * 0.5 + generalPX * 0.5;
+        
+        // Assicura che il pareggio non sia troppo basso o troppo alto
+        pX = Math.max(0.15, Math.min(0.40, pX)); // Pareggio tra 15% e 40%
     }
 
-    // Converti probabilità pure in quote pure (senza margine)
-    const q1Pure = 1 / Math.max(p1, 1e-6);
-    const qXPure = 1 / Math.max(pX, 1e-6);
-    const q2Pure = 1 / Math.max(p2, 1e-6);
+    // Normalizza le probabilità
+    const sum = p1 + pX + p2 || 1;
+    p1 /= sum; 
+    pX /= sum; 
+    p2 /= sum;
 
-    // Applica il margine desiderato (modificare targetMargin se vuoi un margine diverso)
-    const TARGET_MARGIN = 0.05; // 5% di margine consigliato
+    // Converti probabilità in quote pure con limiti
+    const q1Pure = Math.min(15, Math.max(1.20, 1 / Math.max(p1, 0.08))); // Quote tra 1.20 e 15.00
+    const qXPure = Math.min(8, Math.max(2.50, 1 / Math.max(pX, 0.15))); // Quote X tra 2.50 e 8.00
+    const q2Pure = Math.min(20, Math.max(1.20, 1 / Math.max(p2, 0.06))); // Quote tra 1.20 e 20.00
+
+    // Applica il margine del bookmaker
+    const TARGET_MARGIN = 0.08; // 8% di margine
     const adjusted = adjustOddsForMargin(q1Pure, qXPure, q2Pure, TARGET_MARGIN);
 
-    // Restituisci le quote formattate come stringhe coerenti con il resto del codice
     return {
         '1': adjusted['1'].toFixed(2),
         'X': adjusted['X'].toFixed(2),
@@ -1737,6 +2333,207 @@ const calculateOdds = (homeTeam, awayTeam) => {
         overround: adjusted.overround
     };
 };
+
+// Funzione helper per calcolare le statistiche di una squadra
+const calculateTeamStats = (teamName) => {
+    const homeMatches = allResults.filter(r => r.homeTeam === teamName);
+    const awayMatches = allResults.filter(r => r.awayTeam === teamName);
+    const allMatches = [...homeMatches, ...awayMatches];
+
+    if (allMatches.length === 0) {
+        return {
+            homeWinRate: 0.35,
+            awayWinRate: 0.25,
+            overallWinRate: 0.30,
+            drawRate: 0.30,
+            points: 0,
+            matchesPlayed: 0,
+            wins: 0,
+            draws: 0,
+            losses: 0,
+            goalsFor: 0,
+            goalsAgainst: 0,
+            goalDifference: 0
+        };
+    }
+
+    // Statistiche in casa
+    let homeWins = homeMatches.filter(r => r.result === '1').length;
+    let homeDraws = homeMatches.filter(r => r.result === 'X').length;
+    let homeLosses = homeMatches.filter(r => r.result === '2').length;
+    
+    // Statistiche in trasferta
+    let awayWins = awayMatches.filter(r => r.result === '2').length;
+    let awayDraws = awayMatches.filter(r => r.result === 'X').length;
+    let awayLosses = awayMatches.filter(r => r.result === '1').length;
+    
+    // Statistiche totali
+    let totalWins = homeWins + awayWins;
+    let totalDraws = homeDraws + awayDraws;
+    let totalPoints = (totalWins * 3) + totalDraws; // Punti in classifica
+
+    // Calcola gol fatti e subiti
+    let goalsFor = 0;
+    let goalsAgainst = 0;
+    let totalFantasyPoints = 0; // Somma punteggi fantacalcio
+    
+    // Gol in casa (squadra è homeTeam)
+    homeMatches.forEach(r => {
+        if (r.score && r.score.includes('-')) {
+            const [home, away] = r.score.split('-').map(g => parseInt(g.trim(), 10));
+            if (!isNaN(home) && !isNaN(away)) {
+                goalsFor += home;
+                goalsAgainst += away;
+            }
+        }
+        // Aggiungi punteggio fantacalcio in casa
+        if (r.homePoints) {
+            totalFantasyPoints += r.homePoints;
+        }
+    });
+    
+    // Gol in trasferta (squadra è awayTeam)
+    awayMatches.forEach(r => {
+        if (r.score && r.score.includes('-')) {
+            const [home, away] = r.score.split('-').map(g => parseInt(g.trim(), 10));
+            if (!isNaN(home) && !isNaN(away)) {
+                goalsFor += away;
+                goalsAgainst += home;
+            }
+        }
+        // Aggiungi punteggio fantacalcio in trasferta
+        if (r.awayPoints) {
+            totalFantasyPoints += r.awayPoints;
+        }
+    });
+    
+    const goalDifference = goalsFor - goalsAgainst;
+
+    return {
+        homeWinRate: homeMatches.length > 0 ? homeWins / homeMatches.length : 0.35,
+        awayWinRate: awayMatches.length > 0 ? awayWins / awayMatches.length : 0.25,
+        overallWinRate: allMatches.length > 0 ? totalWins / allMatches.length : 0.30,
+        drawRate: allMatches.length > 0 ? totalDraws / allMatches.length : 0.25,
+        points: totalPoints,
+        matchesPlayed: allMatches.length,
+        wins: totalWins,
+        draws: totalDraws,
+        losses: homeLosses + awayLosses,
+        goalsFor: goalsFor,
+        goalsAgainst: goalsAgainst,
+        goalDifference: goalDifference,
+        fantasyPoints: totalFantasyPoints  // Nuovo campo
+    };
+};
+
+// Funzione per calcolare la classifica completa
+const calculateStandings = () => {
+    const standings = [];
+    const teamsSet = new Set();
+    
+    // Raccogli tutte le squadre uniche
+    allResults.forEach(r => {
+        teamsSet.add(r.homeTeam);
+        teamsSet.add(r.awayTeam);
+    });
+    
+    // Calcola statistiche per ogni squadra
+    teamsSet.forEach(teamName => {
+        const stats = calculateTeamStats(teamName);
+        standings.push({
+            team: teamName,
+            points: stats.points,
+            played: stats.matchesPlayed,
+            wins: stats.wins,
+            draws: stats.draws,
+            losses: stats.losses,
+            goalsFor: stats.goalsFor,
+            goalsAgainst: stats.goalsAgainst,
+            goalDifference: stats.goalDifference,
+            fantasyPoints: stats.fantasyPoints  // Aggiungi punteggi fantacalcio
+        });
+    });
+    
+    // Ordina per: punti (decrescente), differenza reti (decrescente), gol fatti (decrescente)
+    standings.sort((a, b) => {
+        if (b.points !== a.points) return b.points - a.points;
+        if (b.goalDifference !== a.goalDifference) return b.goalDifference - a.goalDifference;
+        return b.goalsFor - a.goalsFor;
+    });
+    
+    return standings;
+};
+
+// Funzione per renderizzare la classifica nella homepage
+const renderStandings = () => {
+    const container = document.getElementById('standings-container');
+    if (!container) return;
+    
+    const standings = calculateStandings();
+    
+    if (standings.length === 0) {
+        container.innerHTML = '<p class="text-gray-500 text-center py-4">Nessun dato disponibile</p>';
+        return;
+    }
+    
+    const table = document.createElement('table');
+    table.className = 'min-w-full bg-gray-800 rounded-lg overflow-hidden';
+    
+    table.innerHTML = `
+        <thead>
+            <tr class="bg-gray-700 text-gray-400 text-sm">
+                <th class="px-3 py-2 text-center">#</th>
+                <th class="px-4 py-2 text-left" colspan="2">Squadra</th>
+                <th class="px-3 py-2 text-center">Pt</th>
+                <th class="px-3 py-2 text-center">Pti</th>
+                <th class="px-3 py-2 text-center">G</th>
+                <th class="px-3 py-2 text-center">V</th>
+                <th class="px-3 py-2 text-center">N</th>
+                <th class="px-3 py-2 text-center">P</th>
+                <th class="px-3 py-2 text-center">GF</th>
+                <th class="px-3 py-2 text-center">GS</th>
+                <th class="px-3 py-2 text-center">DR</th>
+            </tr>
+        </thead>
+        <tbody class="text-gray-300">
+            ${standings.map((team, index) => {
+                const position = index + 1;
+                let positionClass = '';
+                if (position === 1) positionClass = 'text-yellow-400 font-bold';
+                else if (position === 2) positionClass = 'text-gray-300 font-semibold';
+                else if (position === 3) positionClass = 'text-orange-400 font-semibold';
+                
+                // Colore per la differenza reti
+                let drClass = 'text-gray-300';
+                if (team.goalDifference > 0) drClass = 'text-green-400 font-semibold';
+                else if (team.goalDifference < 0) drClass = 'text-red-400 font-semibold';
+                
+                return `
+                    <tr class="border-b border-gray-700 hover:bg-gray-750">
+                        <td class="px-3 py-3 text-center ${positionClass}">${position}</td>
+                        <td class="px-2 py-3 text-center">
+                            <img src="${getTeamLogo(team.team)}" alt="${team.team}" class="w-8 h-8 object-contain mx-auto" onerror="this.style.display='none'">
+                        </td>
+                        <td class="px-2 py-3 text-left font-semibold">${team.team}</td>
+                        <td class="px-3 py-3 text-center font-bold text-green-400">${team.points}</td>
+                        <td class="px-3 py-3 text-center font-bold text-blue-400">${team.fantasyPoints ? team.fantasyPoints.toFixed(1) : '0.0'}</td>
+                        <td class="px-3 py-3 text-center text-sm">${team.played}</td>
+                        <td class="px-3 py-3 text-center text-sm text-green-300">${team.wins}</td>
+                        <td class="px-3 py-3 text-center text-sm text-yellow-300">${team.draws}</td>
+                        <td class="px-3 py-3 text-center text-sm text-red-300">${team.losses}</td>
+                        <td class="px-3 py-3 text-center text-sm">${team.goalsFor}</td>
+                        <td class="px-3 py-3 text-center text-sm">${team.goalsAgainst}</td>
+                        <td class="px-3 py-3 text-center text-sm font-semibold ${drClass}">${team.goalDifference > 0 ? '+' : ''}${team.goalDifference}</td>
+                    </tr>
+                `;
+            }).join('')}
+        </tbody>
+    `;
+    
+    container.innerHTML = '';
+    container.appendChild(table);
+};
+
 
 
         window.calculateAndSaveMatch = async () => {
@@ -1948,7 +2745,7 @@ const calculateOdds = (homeTeam, awayTeam) => {
         };
 
         // Funzione di utilità per abilitare/disabilitare il pulsante di salvataggio
-        const updateGiornataBetButton = () => {
+        window.updateGiornataBetButton = () => {
             const button = document.getElementById('place-giornata-bet-button');
             const stakeInput = document.getElementById('bet-stake-input');
             const winPreviewEl = document.getElementById('win-preview');
@@ -2128,11 +2925,10 @@ const calculateOdds = (homeTeam, awayTeam) => {
             try {
                  console.log('Inizio salvataggio scommesse...');
                  
-                 // Usa writeBatch importato per le scritture batch
-                 const batch = writeBatch(db); 
-                 let batchCount = 0;
+                 // Crea UNA SOLA scommessa per la giornata con tutte le predictions
+                 const predictions = [];
+                 let totalOdds = 1;
                  
-                 // Aggiungi le nuove scommesse
                  openMatches.forEach(match => {
                      const matchId = match.id;
                      const prediction = currentPredictions[matchId];
@@ -2142,33 +2938,49 @@ const calculateOdds = (homeTeam, awayTeam) => {
                          return;
                      }
                      
-                     // Usiamo un ID doc unico per la scommessa sulla giornata
-                     const betDocRef = doc(getGiornataBetsCollectionRef(), `${matchId}_${userId}`);
+                     const odds = match.odds[prediction];
+                     totalOdds *= odds; // Quota totale moltiplicativa
                      
-                     const betData = {
-                        matchId: matchId,
-                        userId: userId,
-                        giornata: currentGiornata,
-                        prediction: prediction,
-                        stake: parseFloat(stakePerMatch.toFixed(2)), // La puntata per singola partita
-                        odds: match.odds[prediction], 
-                        match: { // Salva i dati del match al momento della scommessa
-                           homeTeam: match.homeTeam,
-                           awayTeam: match.awayTeam,
-                           date: match.date,
-                           giornata: match.giornata
-                        },
-                        timestamp: new Date().toISOString()
-                     };
-                     
-                     console.log('Aggiunta scommessa al batch:', betData);
-                     batch.set(betDocRef, betData);
-                     batchCount++;
+                     predictions.push({
+                         matchId: matchId,
+                         homeTeam: match.homeTeam,
+                         awayTeam: match.awayTeam,
+                         prediction: prediction,
+                         odds: odds,
+                         date: match.date
+                     });
                  });
                  
-                 console.log(`Commit di ${batchCount} scommesse...`);
-                 await batch.commit();
-                 console.log('Scommesse salvate con successo su Firestore');
+                 // Calcola quota media geometrica (radice n-esima del prodotto)
+                 const quotaMedia = Math.pow(totalOdds, 1 / predictions.length);
+                 const potentialWinnings = totalStake * totalOdds;
+                 
+                 console.log('Dettagli scommessa:', {
+                     predictions: predictions.length,
+                     quotaMedia: quotaMedia.toFixed(2),
+                     quotaTotale: totalOdds.toFixed(2),
+                     puntata: totalStake,
+                     vincitaPotenziale: potentialWinnings.toFixed(2)
+                 });
+                 
+                 // Salva UNA SOLA scommessa per la giornata
+                 const betDocRef = doc(getGiornataBetsCollectionRef(), `${userId}_giornata_${currentGiornata}`);
+                 
+                 const betData = {
+                    userId: userId,
+                    giornata: currentGiornata,
+                    predictions: predictions, // Array di tutte le predictions
+                    stake: totalStake, // Puntata totale
+                    quotaMedia: quotaMedia, // Quota media
+                    quotaTotale: totalOdds, // Quota totale moltiplicativa
+                    potentialWinnings: potentialWinnings, // Vincita potenziale
+                    timestamp: new Date().toISOString(),
+                    settled: false // Flag per liquidazione
+                 };
+                 
+                 console.log('Salvataggio scommessa unica per giornata:', betData);
+                 await setDoc(betDocRef, betData);
+                 console.log('Scommessa salvata con successo su Firestore');
 
                  // Sottrai i crediti e aggiorna Firestore
                  console.log('Aggiornamento crediti...');
@@ -2181,23 +2993,30 @@ const calculateOdds = (homeTeam, awayTeam) => {
                  // Pulisci il campo di input
                  if (stakeInput) stakeInput.value = '';
 
-                 messageBox(`Scommessa piazzata con successo su ${batchCount} partite della Giornata ${currentGiornata}. Totale puntato: ${totalStake} crediti.`);
+                 messageBox(`Scommessa piazzata con successo per la Giornata ${currentGiornata}.\nPuntata totale: ${totalStake} crediti\nQuota totale: ${totalOdds.toFixed(2)}\nVincita potenziale: ${potentialWinnings.toFixed(2)} crediti`);
                  
-                 // Ricarica i dati delle scommesse per ogni partita
-                 console.log('Ricaricamento dati scommesse...');
-                 const updatedMatches = await Promise.all(openMatches.map(async (match) => {
-                     const betDocRef = doc(getGiornataBetsCollectionRef(), `${match.id}_${userId}`);
-                     const betSnapshot = await getDoc(betDocRef);
-                     if (betSnapshot.exists()) {
-                         match.userBet = betSnapshot.data();
-                     }
-                     return match;
-                 }));
+                 // Ricarica la scommessa appena salvata e aggiorna le partite
+                 console.log('Ricarica scommessa dopo salvataggio...');
+                 const savedBetSnapshot = await getDoc(betDocRef);
+                 if (savedBetSnapshot.exists()) {
+                     const savedBet = savedBetSnapshot.data();
+                     console.log('Scommessa ricaricata:', savedBet);
+                     
+                     // Aggiorna openMatches con i dati della scommessa salvata
+                     openMatches = openMatches.map(match => {
+                         const prediction = savedBet.predictions?.find(p => p.matchId === match.id);
+                         if (prediction) {
+                             match.userBet = {
+                                 prediction: prediction.prediction,
+                                 stake: savedBet.stake,
+                                 odds: prediction.odds
+                             };
+                         }
+                         return match;
+                     });
+                 }
                  
-                 // Aggiorna openMatches con i nuovi dati
-                 openMatches = updatedMatches;
-                 
-                 // Aggiorna la vista per mostrare le scommesse salvate
+                 // Aggiorna la vista per mostrare la scommessa confermata
                  console.log('Aggiornamento vista dopo salvataggio...');
                  renderOpenMatches(openMatches, nextGiornataNumber);
 
@@ -2362,7 +3181,11 @@ const calculateOdds = (homeTeam, awayTeam) => {
 
                 matchCard.innerHTML = `
                     <div class="flex justify-between items-center mb-3 border-b border-gray-800 pb-2">
-                        <h3 class="text-xl font-bold text-green-300">${match.homeTeam} vs ${match.awayTeam}</h3>
+                        <div class="flex items-center space-x-3">
+                            <img src="${getTeamLogo(match.homeTeam)}" alt="${match.homeTeam}" class="w-10 h-10 object-contain rounded" onerror="this.style.display='none'">
+                            <h3 class="text-xl font-bold text-green-300">${match.homeTeam} vs ${match.awayTeam}</h3>
+                            <img src="${getTeamLogo(match.awayTeam)}" alt="${match.awayTeam}" class="w-10 h-10 object-contain rounded" onerror="this.style.display='none'">
+                        </div>
                         <span class="text-sm text-gray-400">${match.date}</span>
                     </div>
                     <p class="mb-4 text-sm text-gray-400">Scommessa: ${stakeStatusText}</p>
@@ -2448,17 +3271,49 @@ const calculateOdds = (homeTeam, awayTeam) => {
 
                 betsByGiornata[giornata].forEach(bet => {
                     const betCard = document.createElement('div');
-                    betCard.className = 'p-3 bg-gray-800 rounded-lg flex items-center justify-between';
-                    betCard.innerHTML = `
-                        <div>
-                            <p class="font-semibold">${bet.match.homeTeam} vs ${bet.match.awayTeam}</p>
-                            <p class="text-sm text-gray-400">La tua puntata: <span class="font-bold text-green-300">${bet.prediction}</span></p>
-                        </div>
-                        <div class="text-right">
-                            <p class="text-sm text-gray-400">Puntata: <span class="font-semibold">${bet.stake.toFixed(2)} Cr</span></p>
-                            <p class="text-sm text-gray-400">Quota: <span class="font-semibold">${bet.odds}</span></p>
+                    betCard.className = 'card p-4 mb-3 border-l-4 border-blue-500';
+                    
+                    let betHTML = `
+                        <div class="mb-3">
+                            <div class="flex justify-between items-center">
+                                <h5 class="font-semibold text-green-300 text-lg">Scommessa Giornata ${giornata}</h5>
+                                <div class="text-right">
+                                    <div class="text-sm text-gray-400">
+                                        Puntata: <span class="font-bold text-blue-400">${bet.stake || 0}</span> crediti
+                                    </div>
+                                    <div class="text-sm text-gray-400">
+                                        Quota Totale: <span class="font-bold text-blue-400">${bet.quotaTotale ? bet.quotaTotale.toFixed(2) : '-'}</span>
+                                    </div>
+                                    <div class="text-sm text-gray-400">
+                                        Vincita Potenziale: <span class="font-bold text-green-400">${bet.potentialWinnings ? bet.potentialWinnings.toFixed(2) : '-'}</span> crediti
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     `;
+
+                    // Mostra i pronostici
+                    if (bet.predictions && bet.predictions.length > 0) {
+                        betHTML += '<div class="space-y-2">';
+                        bet.predictions.forEach(pred => {
+                            betHTML += `
+                                <div class="p-2 bg-gray-800 rounded-lg border border-gray-700">
+                                    <div class="flex justify-between items-center">
+                                        <div class="flex-1">
+                                            <div class="font-semibold">${pred.homeTeam || '-'} vs ${pred.awayTeam || '-'}</div>
+                                            <div class="text-sm text-gray-400">
+                                                Pronostico: <span class="font-bold text-blue-400">${pred.prediction}</span> 
+                                                (Quota: ${pred.odds ? parseFloat(pred.odds).toFixed(2) : '-'})
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+                        });
+                        betHTML += '</div>';
+                    }
+                    
+                    betCard.innerHTML = betHTML;
                     listContainer.appendChild(betCard);
                 });
             });
@@ -2473,16 +3328,18 @@ const calculateOdds = (homeTeam, awayTeam) => {
             }
      
             const adminBetsList = document.getElementById('admin-bets-list');
-            if (!isUserAdmin || giornataNum === 0) {
-                if (adminBetsList) adminBetsList.innerHTML = '<p class="text-gray-500">Nessuna scommessa trovata per la giornata corrente.</p>';
+            if (!isUserAdmin) {
+                if (adminBetsList) adminBetsList.innerHTML = '<p class="text-gray-500">Accesso non autorizzato.</p>';
                 return;
             }
 
-            const qBets = query(getGiornataBetsCollectionRef(), where('giornata', '==', giornataNum.toString()));
+            // Carica TUTTE le scommesse, non solo quelle della giornata corrente
+            // Il filtro pending/settled/all viene gestito da renderAdminBetsList
             adminBetsUnsubscribe = addUnsubscribe(
-                onSnapshot(qBets, (snapshot) => {
+                onSnapshot(getGiornataBetsCollectionRef(), (snapshot) => {
                     const allCurrentBets = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
-                    renderAdminBetsList(allCurrentBets, allUsers || []);
+                    console.log('Scommesse caricate per admin:', allCurrentBets.length);
+                    renderAdminBetsList(allCurrentBets, allUsers || [], currentBetsFilter);
                 }, (error) => console.error("Errore onSnapshot Bets (Admin):", error))
             );
         };
@@ -2537,9 +3394,38 @@ const calculateOdds = (homeTeam, awayTeam) => {
         };
 
         // Renderizza la lista delle scommesse per l'admin
-        const renderAdminBetsList = (bets, users) => {
+        let currentBetsFilter = 'pending'; // Default: mostra solo quelle da liquidare
+        
+        window.renderAdminBetsFilter = async (filter) => {
+            currentBetsFilter = filter;
+            
+            // Aggiorna pulsanti attivi
+            document.getElementById('filter-all').className = filter === 'all' ? 'btn-primary' : 'btn-secondary';
+            document.getElementById('filter-pending').className = filter === 'pending' ? 'btn-primary' : 'btn-secondary';
+            document.getElementById('filter-settled').className = filter === 'settled' ? 'btn-primary' : 'btn-secondary';
+            
+            // Ricarica la lista
+            const snapshot = await getDocs(getGiornataBetsCollectionRef());
+            const allBets = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            
+            const usersSnapshot = await getDocs(getUsersCollectionRef());
+            const allUsers = usersSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            
+            renderAdminBetsList(allBets, allUsers, filter);
+        };
+        
+        const renderAdminBetsList = (bets, users, filter = 'pending') => {
+            console.log('renderAdminBetsList chiamato:', {
+                totaleBets: bets?.length,
+                filtro: filter,
+                users: users?.length
+            });
+            
             const listContainer = document.getElementById('admin-bets-list');
-            if (!listContainer) return;
+            if (!listContainer) {
+                console.error('Container admin-bets-list non trovato!');
+                return;
+            }
             listContainer.innerHTML = '';
 
             if (!bets || bets.length === 0) {
@@ -2547,18 +3433,52 @@ const calculateOdds = (homeTeam, awayTeam) => {
                 return;
             }
 
-            // Raggruppa le scommesse per giornata e per utente
-            const betsByGiornata = bets.reduce((acc, bet) => {
+            // Filtra le scommesse in base al filtro selezionato
+            let filteredBets = bets;
+            if (filter === 'pending') {
+                filteredBets = bets.filter(b => !b.settled);
+            } else if (filter === 'settled') {
+                filteredBets = bets.filter(b => b.settled);
+            }
+
+            console.log('Scommesse dopo filtro:', {
+                filtro: filter,
+                totale: bets.length,
+                filtrate: filteredBets.length,
+                dettaglio: filteredBets.map(b => ({
+                    giornata: b.giornata,
+                    userId: b.userId,
+                    stake: b.stake,
+                    settled: b.settled,
+                    predictions: b.predictions?.length
+                }))
+            });
+
+            if (filteredBets.length === 0) {
+                listContainer.innerHTML = `<p class="text-gray-500">Nessuna scommessa ${filter === 'pending' ? 'da liquidare' : filter === 'settled' ? 'liquidata' : ''} trovata.</p>`;
+                return;
+            }
+
+            // Raggruppa le scommesse per giornata
+            const betsByGiornata = filteredBets.reduce((acc, bet) => {
                 const g = bet.giornata || 'Sconosciuta';
-                acc[g] = acc[g] || {};
-                acc[g][bet.userId] = acc[g][bet.userId] || [];
-                acc[g][bet.userId].push(bet);
+                if (!acc[g]) acc[g] = [];
+                acc[g].push(bet);
                 return acc;
             }, {});
 
-            const userMap = (users || []).reduce((m, u) => { m[u.id] = u.displayName || u.email || u.id; return m; }, {});
+            console.log('Scommesse raggruppate per giornata:', betsByGiornata);
+
+            const userMap = (users || []).reduce((m, u) => { 
+                m[u.uid || u.id] = u.displayName || u.email || u.id; 
+                return m; 
+            }, {});
+            
+            console.log('Mappa utenti:', userMap);
 
             const sortedGiornate = Object.keys(betsByGiornata).sort((a,b) => parseInt(a,10) - parseInt(b,10));
+
+            console.log('Rendering giornate:', sortedGiornate);
 
             sortedGiornate.forEach(g => {
                 const header = document.createElement('h4');
@@ -2566,31 +3486,90 @@ const calculateOdds = (homeTeam, awayTeam) => {
                 header.textContent = `Giornata ${g}`;
                 listContainer.appendChild(header);
 
-                const usersInG = betsByGiornata[g];
-                Object.keys(usersInG).sort().forEach(uid => {
-                    const userName = userMap[uid] || uid;
-                    const userCard = document.createElement('div');
-                    userCard.className = 'card p-3 mb-3';
-                    userCard.innerHTML = `<h5 class="font-semibold text-green-300 mb-2">${userName}</h5>`;
-                    usersInG[uid].forEach(bet => {
-                        const betRow = document.createElement('div');
-                        betRow.className = 'p-2 bg-gray-800 rounded-lg flex items-center justify-between mb-2';
-                        betRow.innerHTML = `
-                            <div class="flex-1">
-                                <div class="font-semibold">${bet.match?.homeTeam || '-'} vs ${bet.match?.awayTeam || '-' }</div>
-                                <div class="text-sm text-gray-400">Giornata: ${bet.giornata || '-'}</div>
-                            </div>
-                            <div class="flex items-center space-x-2">
-                                <select id="bet-edit-${bet.id}" class="bg-gray-900 text-sm p-1 rounded">
-                                    <option value="1" ${bet.prediction === '1' ? 'selected' : ''}>1</option>
-                                    <option value="X" ${bet.prediction === 'X' ? 'selected' : ''}>X</option>
-                                    <option value="2" ${bet.prediction === '2' ? 'selected' : ''}>2</option>
-                                </select>
-                                <button onclick="updateUserBet('${bet.id}')" class="btn-secondary px-3 py-1 text-sm">Salva</button>
-                            </div>
-                        `;
-                        userCard.appendChild(betRow);
+                const betsInG = betsByGiornata[g];
+                
+                console.log(`Rendering ${betsInG.length} scommesse per Giornata ${g}:`, betsInG);
+                
+                betsInG.forEach(bet => {
+                    const userName = userMap[bet.userId] || bet.userId;
+                    console.log('Rendering scommessa:', {
+                        giornata: g,
+                        utente: userName,
+                        stake: bet.stake,
+                        predictions: bet.predictions?.length,
+                        settled: bet.settled
                     });
+                    
+                    const userCard = document.createElement('div');
+                    userCard.className = `card p-4 mb-3 ${bet.settled ? (bet.isWinning ? 'border-l-4 border-green-500' : 'border-l-4 border-red-500') : 'border-l-4 border-yellow-500'}`;
+                    
+                    let betHTML = `
+                        <div class="flex justify-between items-start mb-3">
+                            <div>
+                                <h5 class="font-semibold text-green-300 text-lg">${userName}</h5>
+                                <div class="text-sm text-gray-400">
+                                    Puntata: <span class="font-bold text-blue-400">${bet.stake || 0}</span> crediti | 
+                                    Quota Media: <span class="font-bold text-blue-400">${bet.quotaMedia ? bet.quotaMedia.toFixed(2) : '-'}</span>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                ${bet.settled ? `
+                                    <div class="text-sm">
+                                        <div class="${bet.isWinning ? 'text-green-400' : 'text-red-400'} font-bold text-lg">
+                                            ${bet.isWinning ? '✓ VINCENTE' : '✗ PERDENTE'}
+                                        </div>
+                                        <div class="text-gray-400">
+                                            Vincita: <span class="${bet.isWinning ? 'text-green-400' : 'text-red-400'} font-bold">${bet.winnings ? bet.winnings.toFixed(2) : '0.00'}</span>
+                                        </div>
+                                        <div class="text-xs text-gray-500">
+                                            Liquidata il: ${bet.settledAt ? new Date(bet.settledAt).toLocaleString('it-IT') : '-'}
+                                        </div>
+                                    </div>
+                                ` : `
+                                    <div class="text-yellow-400 font-bold">DA LIQUIDARE</div>
+                                `}
+                            </div>
+                        </div>
+                    `;
+
+                    // Mostra i pronostici
+                    if (bet.predictions && bet.predictions.length > 0) {
+                        betHTML += '<div class="space-y-2">';
+                        bet.predictions.forEach(pred => {
+                            let resultClass = '';
+                            let resultIcon = '';
+                            
+                            if (bet.settled && bet.detailedResults) {
+                                const matchResult = bet.detailedResults.find(r => 
+                                    r.match === `${pred.homeTeam} vs ${pred.awayTeam}`
+                                );
+                                if (matchResult) {
+                                    resultClass = matchResult.correct ? 'bg-green-900/30 border-green-600' : 'bg-red-900/30 border-red-600';
+                                    resultIcon = matchResult.correct ? 
+                                        `<span class="text-green-400 font-bold">✓</span> Risultato: ${matchResult.actual}` : 
+                                        `<span class="text-red-400 font-bold">✗</span> Risultato: ${matchResult.actual}`;
+                                }
+                            }
+                            
+                            betHTML += `
+                                <div class="p-2 bg-gray-800 rounded-lg border ${resultClass || 'border-gray-700'}">
+                                    <div class="flex justify-between items-center">
+                                        <div class="flex-1">
+                                            <div class="font-semibold">${pred.homeTeam || '-'} vs ${pred.awayTeam || '-'}</div>
+                                            <div class="text-sm text-gray-400">
+                                                Pronostico: <span class="font-bold text-blue-400">${pred.prediction}</span> 
+                                                (Quota: ${pred.odds ? parseFloat(pred.odds).toFixed(2) : '-'})
+                                            </div>
+                                        </div>
+                                        ${resultIcon ? `<div class="text-sm ml-4">${resultIcon}</div>` : ''}
+                                    </div>
+                                </div>
+                            `;
+                        });
+                        betHTML += '</div>';
+                    }
+
+                    userCard.innerHTML = betHTML;
                     listContainer.appendChild(userCard);
                 });
             });
@@ -2671,7 +3650,14 @@ const calculateOdds = (homeTeam, awayTeam) => {
             const displayNameInput = document.getElementById('profile-display-name');
             if (currentUserProfile) {
                 emailInput.value = currentUserProfile.email;
-                displayNameInput.value = currentUserProfile.displayName || '';
+                
+                // Se non c'è un displayName, proponi un default basato sull'email
+                if (!currentUserProfile.displayName || currentUserProfile.displayName === '') {
+                    const emailUsername = currentUserProfile.email.split('@')[0];
+                    displayNameInput.value = '@' + emailUsername;
+                } else {
+                    displayNameInput.value = currentUserProfile.displayName;
+                }
             }
             document.getElementById('profile-area').classList.remove('hidden');
         };
@@ -2713,6 +3699,7 @@ const calculateOdds = (homeTeam, awayTeam) => {
                 onSnapshot(getResultsCollectionRef(), (snapshot) => {
                     allResults = snapshot.docs.map(doc => doc.data());
                     renderHistoricResults(allResults);
+                    renderStandings(); // Aggiorna la classifica quando cambiano i risultati
                     // Se la vista scommesse è aperta, ricalcola la prossima giornata in base ai risultati
                     if (currentView === 'betting' && allMatches && allMatches.length > 0) {
                         const lastCompleted = determineLastCompletedGiornata();
@@ -2836,21 +3823,33 @@ const calculateOdds = (homeTeam, awayTeam) => {
                     }))
                 });
 
-                // 4. Recupera le scommesse dell'utente per queste partite
-                const betPromises = openMatchesData.map(match => {
-                    if (!userId) return Promise.resolve(match); // Se l'utente non è loggato, non cercare scommesse
-                    const betDocRef = doc(getGiornataBetsCollectionRef(), `${match.id}_${userId}`);
-                    return getDoc(betDocRef).then(betSnapshot => {
-                         if (betSnapshot.exists()) {
-                             match.userBet = betSnapshot.data();
-                         } else {
-                             match.userBet = { prediction: null, stake: 0 }; // Assicura che userBet sia sempre presente
-                         }
-                         return match;
-                    });
-                });
+                // 4. Recupera la scommessa dell'utente per questa giornata (formato nuovo: una scommessa per giornata)
+                let userGiornataBet = null;
+                if (userId && newNextGiornata) {
+                    const betDocRef = doc(getGiornataBetsCollectionRef(), `${userId}_giornata_${newNextGiornata}`);
+                    const betSnapshot = await getDoc(betDocRef);
+                    if (betSnapshot.exists()) {
+                        userGiornataBet = betSnapshot.data();
+                        console.log('Scommessa trovata per giornata', newNextGiornata, ':', userGiornataBet);
+                    }
+                }
                 
-                openMatches = await Promise.all(betPromises);
+                // Assegna la scommessa a tutte le partite per compatibilità con renderOpenMatches
+                openMatches = openMatchesData.map(match => {
+                    // Se esiste una scommessa per la giornata, marca la partita come "bet placed"
+                    if (userGiornataBet) {
+                        // Trova la predizione per questa partita specifica
+                        const prediction = userGiornataBet.predictions?.find(p => p.matchId === match.id);
+                        match.userBet = {
+                            prediction: prediction?.prediction || null,
+                            stake: userGiornataBet.stake || 0,
+                            odds: prediction?.odds || 0
+                        };
+                    } else {
+                        match.userBet = { prediction: null, stake: 0 };
+                    }
+                    return match;
+                });
                 
                         // 5. Renderizza solo la prossima giornata
                         renderOpenMatches(openMatches, nextGiornataNumber);
@@ -2875,11 +3874,8 @@ const calculateOdds = (homeTeam, awayTeam) => {
                     onSnapshot(getUsersCollectionRef(), (snapshot) => {
                         allUsersForAdmin = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                         renderAdminUsersList(allUsersForAdmin);
-                        // Passiamo anche la lista utenti per mappare i nomi
-                        // Se nextGiornataNumber è già noto, re-triggera il listener delle scommesse admin
-                        if (nextGiornataNumber > 0) { 
-                            setupAdminBetsListener(nextGiornataNumber, allUsersForAdmin); // Passa la lista utenti
-                        } 
+                        // Avvia sempre il listener delle scommesse admin, indipendentemente da nextGiornataNumber
+                        setupAdminBetsListener(nextGiornataNumber, allUsersForAdmin);
                     }, (error) => console.error("Errore onSnapshot Users:", error))
                 );
             }
