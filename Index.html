@@ -1,0 +1,2894 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fantabet Amici - Sistema Scommesse Fantacalcio</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #0d1117; color: #c9d1d9; }
+        .card { background-color: #161b22; border-radius: 12px; border: 1px solid #30363d; padding: 24px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); }
+        .btn-primary { background-color: #238636; color: white; padding: 10px 16px; border-radius: 8px; font-weight: 600; transition: background-color 0.2s; }
+        .btn-primary:hover { background-color: #2ea043; }
+        .btn-secondary { background-color: #30363d; color: #c9d1d9; padding: 10px 16px; border-radius: 8px; font-weight: 600; transition: background-color 0.2s; }
+        .btn-secondary:hover { background-color: #484f58; }
+        .btn-danger { background-color: #9b2c2c; color: white; padding: 10px 16px; border-radius: 8px; font-weight: 600; transition: background-color 0.2s; }
+        .btn-danger:hover { background-color: #c53030; }
+        input[type="number"], input[type="text"], input[type="email"], input[type="password"], select, input[type="date"] {
+            background-color: #0d1117;
+            border: 1px solid #30363d;
+            color: #c9d1d9;
+            padding: 10px;
+            border-radius: 6px;
+            width: 100%;
+        }
+        .bet-option {
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 2px solid transparent;
+        }
+        .bet-option:hover:not(.pointer-events-none) {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(35, 134, 54, 0.3);
+        }
+        .bet-option.pointer-events-none {
+            pointer-events: none;
+            cursor: not-allowed;
+        }
+        .bet-option.opacity-50 {
+            opacity: 0.5;
+        }
+        /* Stile per indicare la selezione attiva (prediction locale) */
+        .bet-option.local-selected {
+            border-color: #10b981; /* teal */
+            background-color: #1a3328; 
+            box-shadow: 0 0 10px #10b981;
+        }
+        /* Stile per indicare una scommessa SALVATA in Firestore */
+        .bet-option.saved-bet {
+            border-color: #238636; /* green */
+            background-color: #1f3928;
+            box-shadow: 0 0 10px #238636;
+        }
+        /* Stile specifico per l'intestazione della giornata */
+        .giornata-header th {
+            padding: 12px 16px;
+            text-align: left;
+            font-size: 1rem;
+            color: #10b981; /* teal-400 */
+            border-bottom: 2px solid #1f2937; /* gray-800 */
+        }
+
+        /* Stile per la modale di conferma */
+        .confirm-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+        .confirm-modal-content {
+            background-color: #161b22;
+            padding: 24px;
+            border-radius: 12px;
+            width: 400px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+            text-align: center;
+        }
+        
+        /* Modifica per centrare i messaggi di notifica */
+        #message-box {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+    </style>
+</head>
+<body class="min-h-screen p-4 sm:p-8">
+
+    <div id="auth-status" class="fixed top-2 right-2 text-sm text-green-400">Caricamento...</div>
+    <!-- Rimosso l'input Crediti Bonus qui -->
+    <div id="user-info" class="fixed top-8 right-2 text-xs text-gray-500 flex flex-col items-end space-y-2">
+        <span id="user-display-name"></span>
+        <span id="user-id-display"></span>
+        <span id="user-credits-display" class="mt-1 px-2 py-1 bg-yellow-900 rounded-full text-yellow-300 font-bold text-sm">Crediti Bonus: 100</span>
+        <span id="user-role-display" class="mt-1 px-2 py-1 bg-blue-900 rounded-full text-blue-300 font-bold text-sm"></span>
+        <button id="logout-button" onclick="handleLogout()" class="btn-secondary px-3 py-1 text-xs hidden">Logout</button>
+    </div>
+    
+    <div class="max-w-6xl mx-auto">
+        <h1 class="text-4xl font-bold mb-8 text-center text-green-400">
+            Fantabet Amici
+        </h1>
+        <p class="text-center mb-10 text-gray-400">Il tuo sistema di scommesse 1 X 2 personalizzato per la lega di Fantacalcio.</p>
+
+        <!-- Sezione Login (mostrata se non autenticato) -->
+        <div id="login-container" class="max-w-md mx-auto card p-8 hidden">
+            <h2 id="auth-title" class="text-2xl font-semibold mb-6 text-center">Accedi a Fantabet</h2>
+            <div class="space-y-4">
+                <div class="flex flex-col">
+                    <label for="auth-email" class="text-sm text-gray-400 mb-1">Email</label>
+                    <input type="email" id="auth-email" placeholder="Inserisci la tua email" required>
+                </div>
+                <div class="flex flex-col">
+                    <label for="auth-password" class="text-sm text-gray-400 mb-1">Password</label>
+                    <input type="password" id="auth-password" placeholder="Inserisci la tua password" required>
+                </div>
+            </div>
+            <div class="mt-6 flex flex-col space-y-3">
+                <button onclick="handleLoginRegister(true)" class="btn-primary" id="login-button-ui">Accedi</button>
+                <button onclick="handleLoginRegister(false)" class="btn-secondary" id="register-button-ui">Registrati</button>
+            </div>
+        </div>
+        
+        <!-- Contenitore App Principale (Nascosto finché non autenticato) -->
+           <!-- Modale di Conferma Cancellazione -->
+            <div id="confirm-modal" class="confirm-modal hidden">
+                <div class="confirm-modal-content">
+                    <p id="confirm-text" class="text-lg mb-6 font-semibold text-red-400">Sei sicuro di voler cancellare TUTTI i dati storici, squadre, partite e scommesse? Questa azione è irreversibile.</p>
+                    <div class="flex justify-center space-x-4">
+                        <button onclick="document.getElementById('confirm-modal').classList.add('hidden');" class="btn-secondary">Annulla</button>
+                        <button onclick="clearHistoricResultsAndTeams(true)" class="btn-danger">Conferma Cancellazione Totale</button>
+                    </div>
+                </div>
+            </div>
+        <div id="main-app-container" class="hidden">
+            <!-- Sezione Messaggi (Modale) - CENTRATO -->
+            <div id="message-box" class="hidden">
+                <div class="card p-6 w-96 text-center">
+                    <p id="message-text" class="text-lg mb-4"></p>
+                    <button onclick="hideMessageBox()" class="btn-primary">OK</button>
+                </div>
+            </div>
+
+            
+            <!-- CONTENITORE PRINCIPALE MODALITÀ: ADMIN / SCOMMESSE / HOME -->
+            <div id="app-content-area">
+                
+                <!-- HOME DASHBOARD (Visibile dopo il login) -->
+                <div id="home-container" class="max-w-xl mx-auto card p-8 text-center space-y-6">
+                    <h2 class="text-3xl font-bold mb-4">Benvenuto! Scegli la tua area.</h2>
+
+                    <div class="space-y-3">
+                        <button onclick="setAppView('betting')" class="w-full py-4 text-xl btn-primary shadow">Vai a Scommesse</button>
+
+                        <!-- Bottone Admin (invisibile per default, checkAdminStatus ne gestisce la visibilità) -->
+                        <button id="admin-button-home" onclick="setAppView('admin')" class="w-full py-3 text-lg btn-secondary hidden">Area Admin</button>
+
+                        <!-- Profilo utente -->
+                        <button onclick="setAppView('profile')" class="w-full py-3 text-lg btn-secondary">Profilo</button>
+
+                        <!-- Mostra i risultati storici (è ora sibling della home) -->
+                        <button onclick="setAppView('historic_results')" class="w-full py-3 text-lg btn-secondary">Mostra Risultati Storici</button>
+                    </div>
+                </div>
+
+                <!-- RISULTATI STORICI come SIBLING della HOME (prima era annidato dentro home --> 
+                <div id="historic-results-container" class="max-w-4xl mx-auto card p-6 hidden">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-2xl font-semibold">Risultati Storici</h2>
+                        <div class="flex space-x-2">
+                            <button onclick="setAppView('home')" class="btn-secondary">Home</button>
+                            <button onclick="setAppView(currentView)" class="btn-secondary">Aggiorna</button>
+                        </div>
+                    </div>
+                    <div class="mb-4">
+                        <label for="historic-date" class="block text-sm font-medium text-gray-300 mb-2">Seleziona una data:</label>
+                        <input type="date" id="historic-date" class="w-full" onchange="loadHistoricResults()">
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full bg-gray-800 rounded-lg overflow-hidden">
+                            <thead>
+                                <tr class="bg-gray-700 text-gray-400">
+                                    <th class="px-4 py-2 text-left">Giornata</th>
+                                    <th class="px-4 py-2 text-left">Data</th>
+                                    <th class="px-4 py-2 text-left">Squadra Casa</th>
+                                    <th class="px-4 py-2 text-left">Squadra Ospite</th>
+                                    <th class="px-4 py-2 text-left">Risultato</th>
+                                    <th class="px-4 py-2 text-left">Punteggio</th>
+                                </tr>
+                            </thead>
+                            <tbody id="historic-results-table" class="text-gray-300">
+                                <!-- I risultati storici verranno inseriti qui tramite JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Placeholder per le aree usate dallo script (invisibili finché non richieste) -->
+                <div id="betting-area" class="hidden max-w-4xl mx-auto card p-6">
+                    <!-- Header con pulsante Home -->
+                    <div class="flex justify-between items-center mb-4 pb-4 border-b border-gray-700">
+                        <h2 class="text-2xl font-bold text-green-400">Sezione Scommesse</h2>
+                        <button onclick="setAppView('home')" class="btn-secondary">
+                            <svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+                            </svg>
+                            Torna alla Home
+                        </button>
+                    </div>
+                    
+                    <!-- Lista partite -->
+                    <div id="open-matches-list" class="mb-6"></div>
+                    <div id="no-open-matches" class="hidden text-center text-gray-400 py-4">
+                        Nessuna partita aperta per le scommesse al momento.
+                    </div>
+                    
+                    <!-- Form per la puntata (spostato sotto) -->
+                    <div class="p-4 bg-gray-800 rounded-lg border-t-2 border-green-500">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex-1 mr-4">
+                                <label for="bet-stake-input" class="block text-sm font-medium text-gray-300 mb-2">
+                                    Inserisci la puntata totale per la giornata:
+                                </label>
+                                <input type="number" 
+                                       id="bet-stake-input" 
+                                       min="1" 
+                                       class="w-full bg-gray-700 text-white px-3 py-2 rounded" 
+                                       placeholder="Inserisci crediti..." 
+                                       oninput="updateGiornataBetButton()"
+                                       aria-label="Puntata totale in crediti" />
+                            </div>
+                            <button id="place-giornata-bet-button" 
+                                    onclick="placeBetForGiornata()" 
+                                    class="btn-primary px-6 py-2 h-fit" 
+                                    disabled>
+                                Piazza Scommessa
+                            </button>
+                        </div>
+                        
+                        <!-- Anteprima vincita -->
+                        <div id="win-preview" class="mt-4">
+                            <div class="bg-gray-800 border border-gray-700 rounded-lg p-4 text-center">
+                                <p class="text-sm text-gray-500">Seleziona tutte le partite e inserisci la puntata per vedere l'anteprima della vincita</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="placed-bets-area" class="hidden max-w-4xl mx-auto card p-6">
+                    <div id="user-placed-bets-list"></div>
+                </div>
+
+                <div id="admin-panel-main" class="hidden max-w-4xl mx-auto">
+                    <div class="flex justify-between items-center border-b border-gray-700">
+                        <div class="flex">
+                            <button onclick="showAdminTab('csv')" class="admin-tab-button px-4 py-2 text-lg font-semibold border-b-2 border-transparent hover:border-green-400 hover:text-green-400 focus:outline-none">Caricamento CSV</button>
+                            <button onclick="showAdminTab('users')" class="admin-tab-button px-4 py-2 text-lg font-semibold border-b-2 border-transparent hover:border-green-400 hover:text-green-400 focus:outline-none">Gestione Utenti</button>
+                            <button onclick="showAdminTab('bets')" class="admin-tab-button px-4 py-2 text-lg font-semibold border-b-2 border-transparent hover:border-green-400 hover:text-green-400 focus:outline-none">Scommesse</button>
+                            <button onclick="showAdminTab('danger')" class="admin-tab-button px-4 py-2 text-lg font-semibold border-b-2 border-transparent hover:border-red-500 hover:text-red-500 focus:outline-none">reset Dati</button>
+                        </div>
+                        <button onclick="setAppView('home')" class="btn-secondary">Home</button>
+                    </div>
+
+                    <div id="admin-tab-csv" class="admin-tab-content card p-6 mt-4">
+                        <h3 class="text-xl font-bold mb-4 text-yellow-400">Caricamento Dati CSV</h3>
+                        <div class="flex items-center space-x-4 mb-4">
+                            <label for="csv-file-input" class="sr-only">Seleziona file CSV</label>
+                            <input type="file" id="csv-file-input" class="hidden" onchange="handleFileSelect()" accept=".csv" aria-label="Seleziona file CSV">
+                            <button onclick="triggerFileInput()" class="btn-primary">Seleziona File Calendario (.csv)</button>
+                            <button id="upload-button" onclick="confirmUpload()" class="btn-secondary" disabled>Carica File</button>
+                            <span id="file-name-display" class="text-gray-400" aria-live="polite">Nessun file selezionato.</span>
+                        </div>
+                        <p class="text-xs text-gray-500 mb-6">
+                            Il file CSV deve avere il delimitatore ';' e il seguente tracciato: Giornata;Casa;P.Casa;P.Ospite;Ospite;Risultato.
+                            Le partite con risultato (es. '2-1') verranno importate come risultati storici.
+                            Le partite con risultato '-' verranno importate come partite aperte per le scommesse.
+                        </p>
+                        
+                        <!-- Tabella dati CSV caricati -->
+                        <div class="border-t border-gray-700 pt-6">
+                            <h4 class="text-lg font-semibold mb-4 text-green-400">Dati Caricati</h4>
+                            <div id="csv-data-container" class="overflow-x-auto">
+                                <p class="text-gray-500">Nessun dato da visualizzare. Carica un file CSV.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="admin-tab-users" class="admin-tab-content card p-6 mt-4 hidden">
+                        <h3 class="text-xl font-bold mb-4 text-yellow-400">Gestione Utenti</h3>
+                        <div id="admin-users-list" class="space-y-2">
+                            <!-- Lista utenti renderizzata da JS -->
+                        </div>
+                    </div>
+
+                    <div id="admin-tab-bets" class="admin-tab-content card p-6 mt-4 hidden">
+                        <h3 class="text-xl font-bold mb-4 text-yellow-400">Scommesse della Giornata</h3>
+                        <div id="admin-bets-list">
+                            <!-- Lista scommesse renderizzata da JS -->
+                        </div>
+                    </div>
+
+                    <div id="admin-tab-danger" class="admin-tab-content card p-6 mt-4 hidden border-red-600">
+                        <h3 class="text-xl font-bold mb-6 text-red-400">Reset Dati</h3>
+                        
+                        <div class="space-y-6">
+                            <!-- Cancella Risultati Storici -->
+                            <div class="border border-gray-700 rounded-lg p-4">
+                                <h4 class="font-semibold text-lg mb-2 text-red-300">Cancella Risultati Storici</h4>
+                                <p class="text-sm text-gray-400 mb-3">Rimuove tutti i risultati storici caricati da CSV (giornate già completate).</p>
+                                <button onclick="clearHistoricResults()" class="btn-danger">
+                                    <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                    </svg>
+                                    Cancella Risultati Storici
+                                </button>
+                            </div>
+
+                            <!-- Cancella Partite Aperte -->
+                            <div class="border border-gray-700 rounded-lg p-4">
+                                <h4 class="font-semibold text-lg mb-2 text-red-300">Cancella Partite Aperte</h4>
+                                <p class="text-sm text-gray-400 mb-3">Rimuove tutte le partite aperte (giornate future disponibili per le scommesse).</p>
+                                <button onclick="clearOpenMatches()" class="btn-danger">
+                                    <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                    </svg>
+                                    Cancella Partite Aperte
+                                </button>
+                            </div>
+
+                            <!-- Cancella Scommesse -->
+                            <div class="border border-gray-700 rounded-lg p-4">
+                                <h4 class="font-semibold text-lg mb-2 text-red-300">Cancella Tutte le Scommesse</h4>
+                                <p class="text-sm text-gray-400 mb-3">Rimuove tutte le scommesse piazzate dagli utenti (non restituisce i crediti).</p>
+                                <button onclick="clearAllBets()" class="btn-danger">
+                                    <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                    </svg>
+                                    Cancella Scommesse
+                                </button>
+                            </div>
+
+                            <!-- Reset Crediti Utenti -->
+                            <div class="border border-gray-700 rounded-lg p-4">
+                                <h4 class="font-semibold text-lg mb-2 text-red-300">Reset Crediti Utenti</h4>
+                                <p class="text-sm text-gray-400 mb-3">Reimposta i crediti di tutti gli utenti a 100 (valore predefinito).</p>
+                                <button onclick="resetUserCredits()" class="btn-danger">
+                                    <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                                    </svg>
+                                    Reset Crediti (100 per tutti)
+                                </button>
+                            </div>
+
+                            <!-- Cancella Squadre -->
+                            <div class="border border-gray-700 rounded-lg p-4">
+                                <h4 class="font-semibold text-lg mb-2 text-red-300">Cancella Tutte le Squadre</h4>
+                                <p class="text-sm text-gray-400 mb-3">Rimuove tutte le squadre dal database. Da usare solo per reset completo.</p>
+                                <button onclick="clearAllTeams()" class="btn-danger">
+                                    <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                    </svg>
+                                    Cancella Squadre
+                                </button>
+                            </div>
+
+                            <!-- Reset Totale -->
+                            <div class="border-2 border-red-500 rounded-lg p-4 bg-red-900 bg-opacity-10">
+                                <h4 class="font-semibold text-lg mb-2 text-red-400">⚠️ RESET TOTALE</h4>
+                                <p class="text-sm text-gray-300 mb-3 font-semibold">Cancella TUTTO: squadre, partite, risultati storici, scommesse. Questa azione è IRREVERSIBILE!</p>
+                                <button onclick="clearHistoricResultsAndTeams(false)" class="btn-danger">
+                                    <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                                    </svg>
+                                    RESET COMPLETO
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="profile-area" class="hidden max-w-md mx-auto card p-6">
+                    <label class="block text-sm text-gray-300 mb-1">Email</label>
+                    <input id="profile-email" class="mb-3" type="email" readonly />
+                    <label class="block text-sm text-gray-300 mb-1">Nome visualizzato</label>
+                    <input id="profile-display-name" type="text" class="mb-4" />
+                    <div class="flex justify-center space-x-4">
+                        <button onclick="setAppView('home')" class="btn-secondary">Torna alla Home</button>
+                        <button onclick="saveUserProfile()" class="btn-primary">Salva Profilo</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.11/firebase-app.js";
+        import {
+            getFirestore,
+            collection,
+            doc,
+            setDoc,
+            getDoc,
+            updateDoc,
+            deleteDoc,
+            onSnapshot,
+            query,
+            where,
+            orderBy,
+            limit,
+            getDocs,
+            addDoc,
+            writeBatch
+        } from "https://www.gstatic.com/firebasejs/9.6.11/firebase-firestore.js";
+        import {
+            getAuth,
+            signInWithEmailAndPassword,
+            createUserWithEmailAndPassword,
+            signOut,
+            onAuthStateChanged
+        } from "https://www.gstatic.com/firebasejs/9.6.11/firebase-auth.js";
+
+            // Configurazione Firebase (DA SOSTITUIRE CON LE TUE CREDENZIALI)
+        // Vai sulla console Firebase del tuo progetto, vai su "Impostazioni progetto" e nella sezione "Generali"
+        // cerca "Le tue app". Seleziona l'app web e copia l'oggetto di configurazione.
+           const firebaseConfig = {
+      apiKey: "AIzaSyD9FAyUKCHkP9v_gEWnh4kLDFjyKMKWw74",
+      authDomain: "fantabet-op.firebaseapp.com",
+      projectId: "fantabet-op",
+      storageBucket: "fantabet-op.firebasestorage.app",
+      messagingSenderId: "1042496289193",
+      appId: "1:1042496289193:web:9e62956ef2da506b80ecb8"
+    };
+
+        // --- Variabili Globali ---
+        let db, auth;
+        let userId = null;
+        let userCredits = 100; // Crediti utente, inizializzati a 100 per test
+        let isUserAdmin = false;
+        // Lista admin (fallback vuota). Imposta window.ADMIN_USER_IDS = ['uid1','uid2'] se vuoi preconfigurare admin.
+        const ADMIN_USER_IDS = Array.isArray(window.ADMIN_USER_IDS) ? window.ADMIN_USER_IDS : ['zfnVEz13IYZchLxxWTwi6htI5cU2'];
+        
+        // Dati per la gestione delle squadre e risultati
+        let allTeams = [];
+        let allResults = [];
+        let allMatches = [];
+        
+        // Stato per le scommesse aperte
+        let openMatches = [];
+        let nextGiornataNumber = 0;
+        
+        // Stato per le scommesse piazzate dall'utente
+        let userPlacedBets = [];
+        let currentPredictions = {}; // Per le scommesse di gruppo
+        
+        // --- Variabili per la gestione admin ---
+        let adminBetsUnsubscribe = null;
+        let allUsersForAdmin = [];
+        let currentUserProfile = null;
+        let localCsvContent = null;
+        let parsedCsvData = [];
+        let currentView = 'home';
+
+        window.showAdminTab = (tabName) => {
+            // Hide all tab content
+            document.querySelectorAll('.admin-tab-content').forEach(tab => {
+                tab.classList.add('hidden');
+            });
+            // Deactivate all tab buttons
+            document.querySelectorAll('.admin-tab-button').forEach(button => {
+                button.classList.remove('text-green-400', 'border-green-400', 'text-red-500', 'border-red-500');
+            });
+
+            // Show the selected tab content
+            document.getElementById(`admin-tab-${tabName}`).classList.remove('hidden');
+            // Activate the selected tab button
+            const activeButton = document.querySelector(`button[onclick="showAdminTab('${tabName}')"]`);
+            if (tabName === 'danger') {
+                activeButton.classList.add('text-red-500', 'border-red-500');
+            } else {
+                activeButton.classList.add('text-green-400', 'border-green-400');
+            }
+        };
+
+        window.setAppView = (view) => {
+            console.log('setAppView chiamato con view:', view);
+            
+            currentView = view;
+            const containers = {
+                home: 'home-container',
+                betting: 'betting-area',
+                placed_bets: 'placed-bets-area',
+                admin: 'admin-panel-main',
+                profile: 'profile-area',
+                historic_results: 'historic-results-container'
+            };
+
+            console.log('Container disponibili:', containers);
+
+            // Nascondi tutte le sezioni principali
+            Object.values(containers).forEach(id => {
+                const el = document.getElementById(id);
+                console.log(`Cercando elemento ${id}:`, el ? 'trovato' : 'non trovato');
+                if (el) el.classList.add('hidden');
+            });
+
+            // Mostra solo la sezione richiesta
+            const viewId = containers[view];
+            if (viewId) {
+                const el = document.getElementById(viewId);
+                console.log(`Tentativo di mostrare ${viewId}:`, el ? 'elemento trovato' : 'elemento non trovato');
+                if (el) {
+                    el.classList.remove('hidden');
+                    // Se stiamo passando alla sezione scommesse, forziamo il refresh
+                    if (view === 'betting') {
+                        console.log('Passaggio a sezione scommesse, aggiorno lista partite...');
+                        // Forza il refresh delle partite
+                        if (allMatches && allMatches.length > 0) {
+                            console.log('Partite disponibili:', allMatches.length);
+                            const lastCompletedGiornata = determineLastCompletedGiornata();
+                            const newNextGiornata = lastCompletedGiornata + 1;
+                            console.log('Rendering partite per giornata (setAppView):', newNextGiornata);
+                            renderOpenMatches(allMatches, newNextGiornata);
+                        } else {
+                            console.log('Nessuna partita disponibile in allMatches');
+                        }
+                    }
+                }
+            }
+
+            if (view === 'admin') {
+                showAdminTab('csv');
+            }
+        };
+
+        // --- Funzioni di utilità ---
+        const messageBox = (message) => {
+            const messageText = document.getElementById('message-text');
+            const messageBoxElement = document.getElementById('message-box');
+            if (messageText && messageBoxElement) {
+                messageText.textContent = message;
+                messageBoxElement.classList.remove('hidden');
+            }
+        };
+
+        const hideMessageBox = () => {
+            const messageBoxElement = document.getElementById('message-box');
+            if (messageBoxElement) {
+                messageBoxElement.classList.add('hidden');
+            }
+        };
+
+        // --- Gestione Admin ---
+        const checkAdminStatus = () => {
+             try {
+                 isUserAdmin = Array.isArray(ADMIN_USER_IDS) && ADMIN_USER_IDS.includes(userId);
+             } catch (e) {
+                 console.warn('checkAdminStatus: errore controllo admin:', e);
+                 isUserAdmin = false;
+             }
+
+             const adminButton = document.getElementById('admin-button-home');
+             if (adminButton) {
+                 adminButton.classList.toggle('hidden', !isUserAdmin);
+             }
+             return isUserAdmin;
+        };
+        
+        window.triggerFileInput = () => {
+            document.getElementById('csv-file-input').click();
+        }
+
+        // --- Gestione Autenticazione ---
+        
+        window.handleLoginRegister = async (isLogin) => {
+            const email = document.getElementById('auth-email').value;
+            const password = document.getElementById('auth-password').value;
+            
+            if (!email || !password) {
+                messageBox("Inserisci email e password.");
+                return;
+            }
+
+            try {
+                let userCredential;
+                if (isLogin) {
+                    userCredential = await signInWithEmailAndPassword(auth, email, password);
+                } else {
+                    userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                }
+                
+                const user = userCredential.user;
+                console.log("User authenticated:", user.uid);
+                
+                // Crea o aggiorna sempre il documento utente
+                const userDocRef = doc(getUsersCollectionRef(), user.uid);
+                
+                try {
+                    // Prima verifica se è un admin predefinito
+                    const isDefaultAdmin = ADMIN_USER_IDS.includes(user.uid);
+                    console.log("Is default admin:", isDefaultAdmin);
+                    
+                    // Ottieni il documento esistente se presente
+                    const userDoc = await getDoc(userDocRef);
+                    const existingData = userDoc.exists() ? userDoc.data() : {};
+                    
+                    // Prepara i dati da salvare
+                    const userData = {
+                        ...existingData,
+                        email: user.email,
+                        displayName: existingData.displayName || user.email.split('@')[0],
+                        credits: existingData.credits !== undefined ? existingData.credits : 100,
+                        isAdmin: existingData.isAdmin !== undefined ? existingData.isAdmin : isDefaultAdmin,
+                        lastLogin: new Date().toISOString(),
+                        ...((!userDoc.exists()) && { createdAt: new Date().toISOString() })
+                    };
+                    
+                    // Salva o aggiorna il documento
+                    await setDoc(userDocRef, userData);
+                    console.log("User document saved:", userData);
+                    
+                    messageBox(isLogin ? 
+                        "Accesso riuscito!" : 
+                        "Registrazione completata! Profilo utente creato.");
+                        
+                } catch (dbError) {
+                    console.error("Errore salvataggio documento utente:", dbError);
+                    messageBox("Errore nel salvataggio del profilo. Contatta l'admin.");
+                }
+            } catch (error) {
+                console.error("Errore Autenticazione:", error);
+                let errorMessage = "Errore di autenticazione.";
+
+                if (error.code === 'auth/invalid-credential' || error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
+                    errorMessage = "Credenziali non valide. Controlla email e password. Hai provato prima a **Registrarti**?";
+                } else if (error.code === 'auth/email-already-in-use') {
+                    errorMessage = "Questa email è già registrata. Prova ad accedere.";
+                } else if (error.code === 'auth/weak-password') {
+                    errorMessage = "La password deve essere di almeno 6 caratteri.";
+                } else if (error.code === 'auth/invalid-email') {
+                    errorMessage = "Formato email non valido.";
+                }
+                
+                messageBox(errorMessage);
+            }
+        };
+        
+        // Array per tenere traccia di tutti i listener attivi
+        let activeUnsubscribes = [];
+
+        // Funzione per aggiungere un unsubscribe alla lista
+        const addUnsubscribe = (unsubscribe) => {
+            if (typeof unsubscribe === 'function') {
+                activeUnsubscribes.push(unsubscribe);
+            }
+        };
+
+        // Funzione per rimuovere tutti i listener
+        const removeAllListeners = () => {
+            console.log('Removing all listeners:', activeUnsubscribes.length);
+            while (activeUnsubscribes.length > 0) {
+                const unsubscribe = activeUnsubscribes.pop();
+                try {
+                    unsubscribe();
+                } catch (e) {
+                    console.error('Error unsubscribing:', e);
+                }
+            }
+        };
+
+        window.handleLogout = async () => {
+            try {
+                // Prima rimuovi tutti i listener
+                removeAllListeners();
+                // Poi esegui il logout
+                await signOut(auth);
+                console.log('Logout completato e listener rimossi');
+            } catch (error) {
+                console.error("Errore Logout:", error);
+                messageBox("Errore durante il logout.");
+            }
+        };
+
+        const setupFirebase = async () => {
+            if (!firebaseConfig.apiKey) {
+                document.getElementById('auth-status').textContent = 'Errore: Configurazione Firebase mancante.';
+                messageBox('Errore di configurazione Firebase. Impossibile avviare l\'app.');
+                return;
+            }
+
+            const app = initializeApp(firebaseConfig);
+            db = getFirestore(app);
+            auth = getAuth(app);
+
+            document.getElementById('auth-status').textContent = 'In attesa di autenticazione...';
+            
+            onAuthStateChanged(auth, async (user) => {
+                const loginContainer = document.getElementById('login-container');
+                const mainAppContainer = document.getElementById('main-app-container');
+                const logoutButton = document.getElementById('logout-button');
+                const authStatus = document.getElementById('auth-status');
+
+                if (user) {
+                    userId = user.uid;
+                    authStatus.textContent = 'Autenticato';
+                    authStatus.classList.add('hidden'); // Nascondi dopo l'autenticazione
+
+                    loginContainer.classList.add('hidden');
+                    mainAppContainer.classList.remove('hidden');
+                    logoutButton.classList.remove('hidden');
+
+                    checkAdminStatus(); 
+                    updateUserInfoDisplay();
+                    setupUserProfileListener(userId); // Imposta il listener per il profilo utente
+                    setupListeners();
+
+                    if (isUserAdmin) {
+                        await loadInitialData();
+                    }
+                    
+                    // Va alla schermata home di default
+                    setAppView('home');
+
+                    // Forza nascondere la sezione risultati storici e assicurati che la home sia visibile
+                    const hr = document.getElementById('historic-results-container');
+                    if (hr) hr.classList.add('hidden');
+                    const homeEl = document.getElementById('home-container');
+                    if (homeEl) homeEl.classList.remove('hidden');
+
+                    const today = new Date().toISOString().split('T')[0];
+                    if (document.getElementById('historic-date')) document.getElementById('historic-date').value = today;
+                    if (document.getElementById('new-match-date')) document.getElementById('new-match-date').value = today;
+
+                } else {
+                    userId = null;
+                    authStatus.textContent = 'Non autenticato';
+                    authStatus.classList.remove('hidden');
+
+                    const userDisplayNameElement = document.getElementById('user-display-name');
+                    if (userDisplayNameElement) userDisplayNameElement.textContent = ''; // Pulisci il nome visualizzato
+
+                    logoutButton.classList.add('hidden');
+
+                    loginContainer.classList.remove('hidden');
+                    mainAppContainer.classList.add('hidden');
+                }
+            });
+        };
+
+        // --- Funzioni Crediti ---
+        const updateUserInfoDisplay = () => {
+            const userCreditsElement = document.getElementById('user-credits-display'); 
+            const userDisplayNameElement = document.getElementById('user-display-name');
+            const userRoleElement = document.getElementById('user-role-display');
+            const userIdElement = document.getElementById('user-id-display');
+
+            if (userCreditsElement) userCreditsElement.textContent = `Crediti Bonus: ${userCredits}`;
+            if (userDisplayNameElement && currentUserProfile) { 
+                userDisplayNameElement.textContent = currentUserProfile.displayName || currentUserProfile.email;
+            }
+            if (userRoleElement) {
+                userRoleElement.textContent = isUserAdmin ? 'Admin' : 'Utente';
+            }
+            if (userIdElement && userId) {
+                userIdElement.textContent = `ID: ${userId}`;
+            }
+        };
+
+        const adjustCredits = async (amount) => {
+            userCredits += amount;
+            updateUserInfoDisplay();
+            
+            // Aggiorna anche su Firestore
+            if (userId) {
+                try {
+                    const userRef = doc(getUsersCollectionRef(), userId);
+                    await updateDoc(userRef, {
+                        credits: userCredits
+                    });
+                    console.log('Crediti aggiornati su Firestore:', userCredits);
+                } catch (error) {
+                    console.error('Errore aggiornamento crediti su Firestore:', error);
+                }
+            }
+        }
+
+        // --- Accesso a Firestore ---
+        const getTeamCollectionRef = () => collection(db, 'fantabet_teams');
+        const getResultsCollectionRef = () => collection(db, 'fantabet_results');
+        const getMatchesCollectionRef = () => collection(db, 'fantabet_matches');
+        // Usa una collezione per le scommesse per singola giornata
+        const getGiornataBetsCollectionRef = () => collection(db, 'fantabet_giornata_bets'); 
+        const getUsersCollectionRef = () => collection(db, 'fantabet_users');
+        
+        // --- Gestione Teams e UI ---
+
+        const updateTeamSelects = (teams) => {
+            const selects = [
+                'historic-home-team', 'historic-away-team',
+                'new-match-home-team', 'new-match-away-team'
+            ];
+            
+            selects.forEach(id => {
+                const select = document.getElementById(id);
+                if (select) {
+                    select.innerHTML = '';
+                    teams.forEach(team => {
+                        const option = document.createElement('option');
+                        option.value = team;
+                        option.textContent = team;
+                        select.appendChild(option);
+                    });
+                }
+            });
+
+            renderTeamList(teams);
+        };
+        
+        const renderTeamList = (teams) => {
+            const listContainer = document.getElementById('team-list');
+            if (listContainer) {
+                listContainer.innerHTML = '';
+                if (teams.length === 0) {
+                    listContainer.textContent = 'Nessuna squadra aggiunta.';
+                } else {
+                    teams.forEach(team => {
+                        const div = document.createElement('div');
+                        div.className = 'text-sm text-gray-400 p-1';
+                        div.textContent = team;
+                        listContainer.appendChild(div);
+                    });
+                }
+            }
+        };
+
+        const addTeamToFirestore = async (teamName) => {
+            const teamId = teamName.toLowerCase().replace(/[^a-z0-9]/g, '');
+            try {
+                await setDoc(doc(getTeamCollectionRef(), teamId), {
+                    name: teamName
+                });
+            } catch (error) {
+                console.error("Errore salvataggio squadra:", error);
+                messageBox(`Errore nel salvataggio della squadra ${teamName}.`);
+            }
+        };
+
+        window.addTeam = async () => {
+            if (!isUserAdmin) return;
+            const teamNameInput = document.getElementById('new-team-name');
+            const teamName = teamNameInput.value.trim();
+            if (teamName && !allTeams.includes(teamName)) {
+                await addTeamToFirestore(teamName);
+                teamNameInput.value = '';
+                messageBox(`Squadra "${teamName}" aggiunta.`);
+            } else if (teamName) {
+                messageBox(`Squadra "${teamName}" è già presente.`);
+            }
+        };
+        
+        // --- Gestione Risultati Storici ---
+
+        const renderHistoricResults = (results) => {
+            const tableBody = document.getElementById('historic-results-table');
+            if (!tableBody) return;
+            tableBody.innerHTML = '';
+
+            // 1. Raggruppa i risultati per giornata
+            const resultsByGiornata = results.reduce((acc, res) => {
+                const giornata = res.giornata || 'Senza Giornata';
+                (acc[giornata] = acc[giornata] || []).push(res);
+                return acc;
+            }, {});
+
+            const resultMap = { '1': 'Vittoria Casa (1)', 'X': 'Pareggio (X)', '2': 'Vittoria Ospite (2)' };
+
+            // helper: estrai numero dalla stringa (se presente)
+            const extractNumber = s => {
+                const m = (s || '').match(/\d+/);
+                return m ? parseInt(m[0], 10) : 999;
+            };
+
+            // 2. Ordina le giornate in modo sicuro
+            const sortedGiornate = Object.keys(resultsByGiornata).sort((a, b) => extractNumber(a) - extractNumber(b));
+
+            // 3. Costruisci DOM usando fragment per ridurre repaint
+            const frag = document.createDocumentFragment();
+
+            sortedGiornate.forEach(giornata => {
+                // Ordina le partite all'interno della giornata per data
+                resultsByGiornata[giornata].sort((a, b) => new Date(a.date) - new Date(b.date));
+
+                // Intestazione Giornata
+                const headerRow = document.createElement('tr');
+                headerRow.className = 'giornata-header bg-gray-700';
+                headerRow.innerHTML = `<th colspan="6" class="text-left">${giornata.startsWith('Aggiunta Manuale') ? giornata : 'Giornata ' + giornata}</th>`;
+                frag.appendChild(headerRow);
+
+                // Partite della Giornata
+                resultsByGiornata[giornata].forEach(res => {
+                    const row = document.createElement('tr');
+                    row.className = 'hover:bg-gray-800';
+                    row.innerHTML = `
+                        <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">${giornata}</td>
+                        <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-400">${res.date}</td>
+                        <td class="px-4 py-3 whitespace-nowrap text-sm text-white font-semibold">${res.homeTeam}</td>
+                        <td class="px-4 py-3 whitespace-nowrap text-sm text-white font-semibold">${res.awayTeam}</td>
+                        <td class="px-4 py-3 whitespace-nowrap text-sm font-bold text-center ${res.result === '1' ? 'text-green-500' : res.result === '2' ? 'text-red-500' : 'text-yellow-500'}">${resultMap[res.result] || '-'}</td>
+                        <td class="px-4 py-3 whitespace-nowrap text-sm font-bold text-center text-blue-400">${res.score || '-'}</td>
+                    `;
+                    frag.appendChild(row);
+                });
+            });
+
+            tableBody.appendChild(frag);
+        };
+
+        window.addHistoricResult = async () => {
+            if (!isUserAdmin) return;
+            const homeTeam = document.getElementById('historic-home-team').value;
+            const awayTeam = document.getElementById('historic-away-team').value;
+            const result = document.getElementById('historic-result').value;
+            const date = document.getElementById('historic-date').value;
+
+            if (!homeTeam || !awayTeam || !result || !date || homeTeam === awayTeam) {
+                messageBox("Seleziona entrambe le squadre, il risultato e la data. Le squadre non possono essere le stesse.");
+                return;
+            }
+
+            try {
+                await addDoc(getResultsCollectionRef(), {
+                    homeTeam,
+                    awayTeam,
+                    result, // '1', 'X', '2'
+                    date,
+                    giornata: 'Aggiunta Manuale', // Aggiunge un nome di giornata per i risultati manuali
+                    score: 'N/A' // Punteggio fittizio
+                });
+                messageBox(`Risultato storico ${result} (${homeTeam} vs ${awayTeam}) salvato.`);
+            } catch (error) {
+                console.error("Errore salvataggio risultato storico:", error);
+                messageBox("Errore nel salvataggio del risultato storico.");
+            }
+        };
+        
+        // --- Funzione di pulizia del database ---
+        window.clearHistoricResultsAndTeams = async (confirmed) => {
+             if (!isUserAdmin) return; 
+             
+             const confirmModal = document.getElementById('confirm-modal');
+             
+             if (!confirmed) {
+                 confirmModal.classList.remove('hidden');
+                 return;
+             }
+             
+             confirmModal.classList.add('hidden');
+             messageBox("Avvio cancellazione... non interrompere.");
+
+             const collectionsToClear = [
+                 getTeamCollectionRef(), 
+                 getResultsCollectionRef(), 
+                 getMatchesCollectionRef(),
+                 getGiornataBetsCollectionRef() // Nuova collezione di scommesse
+             ];
+             
+             let totalDeleted = 0;
+
+             try {
+                 for (const collectionRef of collectionsToClear) {
+                    // Se non ci sono filtri, getDocs(collectionRef) è più semplice e leggero
+                    const snapshot = await getDocs(collectionRef);
+                     let collectionDeleted = 0;
+                     
+                     // Cancella ogni documento uno per uno
+                     for (const docSnapshot of snapshot.docs) {
+                         await deleteDoc(doc(collectionRef, docSnapshot.id));
+                         collectionDeleted++;
+                     }
+                     totalDeleted += collectionDeleted;
+                     console.log(`Cancellati ${collectionDeleted} documenti dalla collezione: ${collectionRef.id}`);
+                 }
+                 
+                 messageBox(`Cancellazione completa! Eliminati ${totalDeleted} documenti totali. L'app è stata resettata.`);
+             } catch (error) {
+                 console.error("Errore durante la cancellazione dei dati:", error);
+                 messageBox(`Errore grave durante la cancellazione. Controlla i permessi di scrittura/cancellazione su Firebase. Errore: ${error.message}`);
+             }
+         };
+
+        // --- Funzioni per cancellare singole sezioni ---
+        
+        window.clearHistoricResults = async () => {
+            if (!isUserAdmin) return;
+            
+            if (!confirm('Sei sicuro di voler cancellare TUTTI i risultati storici? Questa azione è irreversibile.')) {
+                return;
+            }
+            
+            messageBox("Cancellazione risultati storici in corso...");
+            
+            try {
+                const snapshot = await getDocs(getResultsCollectionRef());
+                let deletedCount = 0;
+                
+                for (const docSnapshot of snapshot.docs) {
+                    await deleteDoc(doc(getResultsCollectionRef(), docSnapshot.id));
+                    deletedCount++;
+                }
+                
+                messageBox(`Cancellati ${deletedCount} risultati storici.`);
+                console.log(`Cancellati ${deletedCount} risultati storici`);
+                
+                // Aggiorna le viste
+                allResults = []; // Svuota array locale
+                if (currentAppView === 'betting') {
+                    renderOpenMatches(); // Aggiorna sezione scommesse
+                }
+            } catch (error) {
+                console.error("Errore cancellazione risultati storici:", error);
+                messageBox(`Errore durante la cancellazione: ${error.message}`);
+            }
+        };
+
+        window.clearOpenMatches = async () => {
+            if (!isUserAdmin) return;
+            
+            if (!confirm('Sei sicuro di voler cancellare TUTTE le partite aperte? Questa azione è irreversibile.')) {
+                return;
+            }
+            
+            messageBox("Cancellazione partite aperte in corso...");
+            
+            try {
+                const q = query(getMatchesCollectionRef(), where('status', '==', 'open'));
+                const snapshot = await getDocs(q);
+                let deletedCount = 0;
+                
+                for (const docSnapshot of snapshot.docs) {
+                    await deleteDoc(doc(getMatchesCollectionRef(), docSnapshot.id));
+                    deletedCount++;
+                }
+                
+                messageBox(`Cancellate ${deletedCount} partite aperte.`);
+                console.log(`Cancellate ${deletedCount} partite aperte`);
+                
+                // Aggiorna le viste
+                allMatches = allMatches.filter(m => m.status !== 'open'); // Rimuovi dall'array locale
+                openMatches = [];
+                currentPredictions = {};
+                if (currentAppView === 'betting') {
+                    renderOpenMatches(); // Aggiorna sezione scommesse
+                }
+            } catch (error) {
+                console.error("Errore cancellazione partite aperte:", error);
+                messageBox(`Errore durante la cancellazione: ${error.message}`);
+            }
+        };
+
+        window.clearAllBets = async () => {
+            if (!isUserAdmin) return;
+            
+            if (!confirm('Sei sicuro di voler cancellare TUTTE le scommesse? I crediti NON verranno restituiti agli utenti. Questa azione è irreversibile.')) {
+                return;
+            }
+            
+            messageBox("Cancellazione scommesse in corso...");
+            
+            try {
+                const snapshot = await getDocs(getGiornataBetsCollectionRef());
+                let deletedCount = 0;
+                
+                for (const docSnapshot of snapshot.docs) {
+                    await deleteDoc(doc(getGiornataBetsCollectionRef(), docSnapshot.id));
+                    deletedCount++;
+                }
+                
+                messageBox(`Cancellate ${deletedCount} scommesse.`);
+                console.log(`Cancellate ${deletedCount} scommesse`);
+                
+                // Aggiorna le viste
+                userGiornataBets = new Map(); // Svuota la mappa delle scommesse
+                if (currentAppView === 'betting') {
+                    renderOpenMatches(); // Aggiorna sezione scommesse per rimuovere banner "scommessa confermata"
+                }
+            } catch (error) {
+                console.error("Errore cancellazione scommesse:", error);
+                messageBox(`Errore durante la cancellazione: ${error.message}`);
+            }
+        };
+
+        window.resetUserCredits = async () => {
+            if (!isUserAdmin) return;
+            
+            if (!confirm('Sei sicuro di voler reimpostare i crediti di TUTTI gli utenti a 100? Questa azione è irreversibile.')) {
+                return;
+            }
+            
+            messageBox("Reset crediti in corso...");
+            
+            try {
+                const snapshot = await getDocs(getUsersCollectionRef());
+                const batch = writeBatch(db);
+                let updatedCount = 0;
+                
+                snapshot.docs.forEach(docSnapshot => {
+                    batch.update(doc(getUsersCollectionRef(), docSnapshot.id), {
+                        credits: 100
+                    });
+                    updatedCount++;
+                });
+                
+                await batch.commit();
+                
+                messageBox(`Crediti reimpostati a 100 per ${updatedCount} utenti.`);
+                console.log(`Reset crediti per ${updatedCount} utenti`);
+                
+                // Aggiorna crediti locali se l'utente corrente è quello loggato
+                if (currentUserId) {
+                    userCredits = 100;
+                    updateCreditsDisplay();
+                }
+            } catch (error) {
+                console.error("Errore reset crediti:", error);
+                messageBox(`Errore durante il reset: ${error.message}`);
+            }
+        };
+
+        window.clearAllTeams = async () => {
+            if (!isUserAdmin) return;
+            
+            if (!confirm('Sei sicuro di voler cancellare TUTTE le squadre? Questa azione è irreversibile e potrebbe causare problemi se ci sono partite o risultati associati.')) {
+                return;
+            }
+            
+            messageBox("Cancellazione squadre in corso...");
+            
+            try {
+                const snapshot = await getDocs(getTeamCollectionRef());
+                let deletedCount = 0;
+                
+                for (const docSnapshot of snapshot.docs) {
+                    await deleteDoc(doc(getTeamCollectionRef(), docSnapshot.id));
+                    deletedCount++;
+                }
+                
+                messageBox(`Cancellate ${deletedCount} squadre.`);
+                console.log(`Cancellate ${deletedCount} squadre`);
+                
+                // Aggiorna le viste
+                allTeams = []; // Svuota array locale
+            } catch (error) {
+                console.error("Errore cancellazione squadre:", error);
+                messageBox(`Errore durante la cancellazione: ${error.message}`);
+            }
+        };
+
+
+        // --- Gestione Caricamento File CSV ---
+
+            const processCsvContent = async (csvContent) => {
+            if (!isUserAdmin) return;
+
+            console.log('Inizio processamento CSV');
+
+            const delimiter = ';';
+            const lines = csvContent.split('\n');
+            
+            if (lines.length < 2) {
+                messageBox("Il file CSV è troppo corto o non contiene dati (intestazione mancante).");
+                return;
+            }
+
+            console.log('CSV letto:', {
+                numeroLinee: lines.length,
+                primeLinee: lines.slice(0, 5)
+            });
+
+            const teamNames = new Set();
+            const resultsBatch = []; // Partite giocate
+            const matchesBatch = []; // Partite da aprire (score = '-')
+            const resultsCollectionRef = getResultsCollectionRef();            parsedCsvData = []; // Reset data
+
+            console.log('Inizio processamento CSV:', {
+                totaleRighe: lines.length,
+                primoPaio: lines.slice(0, 2)
+            });
+
+            // Loop a partire dalla riga 2 (indice 1) per saltare l'intestazione
+            for (let i = 1; i < lines.length; i++) {
+                const line = lines[i].trim();
+                if (!line) continue;
+
+                // Usa il delimitatore punto e virgola
+                const columns = line.split(delimiter); 
+                
+                // Tracciato: [0]Giornata; [1]Casa; [2]P.Casa; [3]P.Ospite; [4]Ospite; [5]Risultato
+                if (columns.length < 6) {
+                    console.warn(`Riga ${i+1} ignorata: meno di 6 colonne. Contenuto: ${line}`);
+                    continue; 
+                }
+
+                // Estrazione dati dal nuovo tracciato
+                const rawGiornata = columns[0] ? columns[0].trim() : null;
+                const homeTeam = columns[1] ? columns[1].trim() : null;
+                const awayTeam = columns[4] ? columns[4].trim() : null;
+                const score = columns[5] ? columns[5].trim() : null; // Colonna 'Risultato' (es. "1-1", "3-2", "-")
+                
+                // Data fittizia per l'importazione
+                const date = new Date().toISOString().split('T')[0]; 
+
+                if (rawGiornata && homeTeam && awayTeam) {
+                    
+                    teamNames.add(homeTeam);
+                    teamNames.add(awayTeam);
+                    
+                    let result = null;
+                    let finalScore = null;
+
+                    if (score && score.includes('-') && score !== '-') {
+                        // PARTITA GIOCATA (risultato storico)
+                        finalScore = score;
+                        const [homeGoals, awayGoals] = score.split('-').map(g => parseInt(g.trim(), 10));
+                        
+                        if (homeGoals > awayGoals) {
+                            result = '1';
+                        } else if (homeGoals < awayGoals) {
+                            result = '2';
+                        } else {
+                            result = 'X';
+                        }
+                        
+                        const resultData = {
+                            homeTeam,
+                            awayTeam,
+                            result,
+                            score: finalScore,
+                            date, 
+                            giornata: rawGiornata,
+                            status: 'closed'  // Aggiungiamo lo status closed
+                        };
+                        resultsBatch.push(resultData);
+                        parsedCsvData.push(resultData);
+
+                    } else if (score === '-') {
+                        // PARTITA DA APRIRE (prossimo match)
+                        console.log('Trovata partita da aprire:', {
+                            homeTeam,
+                            awayTeam,
+                            giornata: rawGiornata,
+                            score
+                        });
+                        
+                        const odds = calculateOdds(homeTeam, awayTeam);
+                        console.log('Quote calcolate:', {
+                            partita: `${homeTeam} vs ${awayTeam}`,
+                            odds
+                        });
+                        
+                        const matchData = {
+                            homeTeam,
+                            awayTeam,
+                            date,
+                            giornata: rawGiornata,
+                            status: 'open',
+                            score: null,
+                            odds: odds  // Aggiungiamo le quote
+                        };
+                        matchesBatch.push(matchData);
+                        parsedCsvData.push(matchData);
+                        
+                        console.log('Aggiunta partita al batch:', matchData);
+                    }
+                }
+            }
+            
+            // 1. Salva le Squadre
+            for (const team of teamNames) {
+                if (team) {
+                    await addTeamToFirestore(team);
+                }
+            }
+
+            // 2. Salva i Risultati Storici (Partite Giocate)
+            let savedResultsCount = 0;
+            for (const res of resultsBatch) {
+                 const q = query(getResultsCollectionRef(), 
+                     where('homeTeam', '==', res.homeTeam),
+                     where('awayTeam', '==', res.awayTeam),
+                     where('giornata', '==', res.giornata), 
+                     limit(1)
+                 );
+                 const existingDocs = await getDocs(q);
+                 if (existingDocs.empty) {
+                     await addDoc(resultsCollectionRef, res);
+                     savedResultsCount++;
+                 }
+            }
+            
+            // 3. Salva le Partite Future (Partite Aperte)
+            let savedMatchesCount = 0;
+            const matchesCollectionRef = getMatchesCollectionRef();
+
+            // Prima elimina tutte le partite aperte esistenti
+            console.log('Rimozione partite aperte esistenti...');
+            const openMatchesQuery = query(matchesCollectionRef, where('status', '==', 'open'));
+            const openMatchesSnapshot = await getDocs(openMatchesQuery);
+            const batch = writeBatch(db);
+            openMatchesSnapshot.forEach(doc => {
+                batch.delete(doc.ref);
+            });
+            await batch.commit();
+            console.log(`${openMatchesSnapshot.size} partite aperte rimosse`);
+
+            // Ora salva le nuove partite aperte
+            console.log(`Salvataggio ${matchesBatch.length} nuove partite aperte...`);
+            for (const match of matchesBatch) {
+                // Calcola le quote usando tutti i risultati storici
+                const odds = calculateOdds(match.homeTeam, match.awayTeam);
+                
+                await addDoc(matchesCollectionRef, {
+                    ...match,
+                    odds: odds,
+                    status: 'open', // Assicurati che lo status sia impostato
+                    createdAt: new Date().toISOString()
+                });
+                savedMatchesCount++;
+                console.log(`Salvata partita: ${match.homeTeam} vs ${match.awayTeam} (Giornata ${match.giornata})`);
+            }
+
+            renderCsvData(parsedCsvData);
+
+            messageBox(`Importazione completata: salvate ${teamNames.size} squadre uniche. Risultati storici: ${savedResultsCount}. Partite future aperte: ${savedMatchesCount}.`);
+        };
+
+        const renderCsvData = (data) => {
+            const container = document.getElementById('csv-data-container');
+            if (!container) return;
+
+            if (!data || data.length === 0) {
+                container.innerHTML = '<p class="text-gray-500">Nessun dato da visualizzare. Carica un file CSV.</p>';
+                return;
+            }
+
+            const table = document.createElement('table');
+            table.className = 'min-w-full bg-gray-800 rounded-lg overflow-hidden';
+
+            const thead = document.createElement('thead');
+            thead.innerHTML = `
+                <tr class="bg-gray-700 text-gray-400">
+                    <th class="px-4 py-2 text-left">Giornata</th>
+                    <th class="px-4 py-2 text-left">Data</th>
+                    <th class="px-4 py-2 text-left">Squadra Casa</th>
+                    <th class="px-4 py-2 text-left">Squadra Ospite</th>
+                    <th class="px-4 py-2 text-left">Risultato/Status</th>
+                    <th class="px-4 py-2 text-left">Punteggio</th>
+                </tr>
+            `;
+            table.appendChild(thead);
+
+            const tbody = document.createElement('tbody');
+            tbody.className = 'text-gray-300';
+
+            data.forEach(row => {
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-gray-800';
+                tr.innerHTML = `
+                    <td class="px-4 py-3 whitespace-nowrap text-sm">${row.giornata}</td>
+                    <td class="px-4 py-3 whitespace-nowrap text-sm">${row.date}</td>
+                    <td class="px-4 py-3 whitespace-nowrap text-sm font-semibold">${row.homeTeam}</td>
+                    <td class="px-4 py-3 whitespace-nowrap text-sm font-semibold">${row.awayTeam}</td>
+                    <td class="px-4 py-3 whitespace-nowrap text-sm">${row.result || row.status}</td>
+                    <td class="px-4 py-3 whitespace-nowrap text-sm">${row.score || '-'}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            table.appendChild(tbody);
+            container.innerHTML = '';
+            container.appendChild(table);
+        };
+        
+        window.handleFileSelect = () => {
+            console.log('handleFileSelect chiamato');
+            const fileInput = document.getElementById('csv-file-input');
+            console.log('Input file trovato:', !!fileInput);
+            
+            const file = fileInput?.files[0];
+            console.log('File selezionato:', file ? {
+                nome: file.name,
+                tipo: file.type,
+                dimensione: file.size
+            } : 'nessun file');
+            
+            const fileNameDisplay = document.getElementById('file-name-display');
+            const uploadButton = document.getElementById('upload-button');
+            
+            console.log('Elementi UI trovati:', {
+                fileNameDisplay: !!fileNameDisplay,
+                uploadButton: !!uploadButton
+            });
+
+            if (file) {
+                if (fileNameDisplay) fileNameDisplay.textContent = file.name;
+                if (uploadButton) {
+                    uploadButton.disabled = false;
+                    uploadButton.classList.remove('btn-secondary');
+                    uploadButton.classList.add('btn-primary');
+                }
+                console.log('File selezionato correttamente, UI aggiornata');
+            } else {
+                if (fileNameDisplay) fileNameDisplay.textContent = 'Nessun file selezionato.';
+                if (uploadButton) {
+                    uploadButton.disabled = true;
+                    uploadButton.classList.add('btn-secondary');
+                    uploadButton.classList.remove('btn-primary');
+                }
+                console.log('Nessun file selezionato, UI resettata');
+            }
+        }
+
+        window.confirmUpload = async () => {
+            console.log('confirmUpload chiamato');
+            
+            if (!isUserAdmin) {
+                console.warn('Tentativo di upload da utente non admin');
+                messageBox("Solo gli admin possono caricare file.");
+                return;
+            }
+
+            const fileInput = document.getElementById('csv-file-input');
+            const file = fileInput?.files[0];
+            
+            console.log('Stato file:', {
+                inputTrovato: !!fileInput,
+                fileTrovato: !!file,
+                dettagliFile: file ? {
+                    nome: file.name,
+                    tipo: file.type,
+                    dimensione: file.size
+                } : null
+            });
+
+            if (!file) {
+                messageBox("Seleziona un file prima di caricarlo.");
+                return;
+            }
+
+            try {
+                // Check if data already exists
+                console.log('Verifica dati esistenti...');
+                const q = query(getResultsCollectionRef(), limit(1));
+                const snapshot = await getDocs(q);
+                console.log('Snapshot risultati:', {
+                    vuoto: snapshot.empty,
+                    numeroDoc: snapshot.size
+                });
+                
+                let confirmationMessage = "Sei sicuro di voler caricare il file? Eventuali dati esistenti verranno sovrascritti.";
+
+                if (snapshot.empty) {
+                    confirmationMessage = "Sei sicuro di voler procedere con il caricamento del file?";
+                }
+
+                console.log('Richiesta conferma utente');
+                if (confirm(confirmationMessage)) {
+                    console.log('Utente ha confermato, avvio processamento');
+                    processNewFile();
+                } else {
+                    console.log('Utente ha annullato');
+                }
+            } catch (error) {
+                console.error('Errore durante la verifica dei dati esistenti:', error);
+                messageBox("Errore durante la verifica dei dati: " + error.message);
+            }
+        }
+
+        window.processNewFile = () => {
+            console.log('processNewFile chiamato');
+            if (!isUserAdmin) {
+                console.warn('Utente non admin, caricamento non permesso');
+                return;
+            }
+            
+            const fileInput = document.getElementById('csv-file-input');
+            console.log('File input trovato:', !!fileInput);
+            
+            const file = fileInput.files[0];
+            console.log('File selezionato:', file ? {
+                nome: file.name,
+                tipo: file.type,
+                dimensione: file.size
+            } : 'nessun file');
+            
+            const fileNameDisplay = document.getElementById('file-name-display');
+            console.log('Display elemento trovato:', !!fileNameDisplay);
+
+            if (!file) {
+                if (fileNameDisplay) fileNameDisplay.textContent = 'Nessun file selezionato.';
+                console.warn('Nessun file selezionato');
+                return;
+            }
+
+            if (fileNameDisplay) fileNameDisplay.textContent = file.name;
+
+            const reader = new FileReader();
+            reader.onload = async (e) => {
+                console.log('File letto con successo');
+                localCsvContent = e.target.result;
+                console.log('Contenuto CSV (primi 200 caratteri):', localCsvContent.substring(0, 200));
+                try {
+                    await processCsvContent(localCsvContent);
+                } catch (error) {
+                    console.error('Errore durante il processamento del CSV:', error);
+                    messageBox("Errore durante l'elaborazione del file: " + error.message);
+                }
+            };
+            reader.onerror = (error) => {
+                console.error('Errore nella lettura del file:', error);
+                messageBox("Errore nella lettura del file: " + error);
+            };
+            
+            console.log('Inizio lettura file...');
+            reader.readAsText(file);
+        };
+        
+        window.processUploadedData = async (fileName) => {
+             if (!isUserAdmin) return;
+             // Se non ho ancora caricato localCsvContent dal file picker, 
+             // cerco di recuperare il contenuto dal file pre-caricato dell'ambiente
+             if (!localCsvContent) {
+                 if (typeof __file_contents !== 'undefined' && __file_contents[fileName]) {
+                     localCsvContent = __file_contents[fileName];
+                 } else {
+                     messageBox(`Il contenuto del file "${fileName}" non è disponibile per l'auto-caricamento. Carica il file manualmente.`);
+                     return;
+                 }
+             }
+             
+             await processCsvContent(localCsvContent); 
+        };
+
+        const loadInitialData = async () => {
+            if (!isUserAdmin) return;
+            try {
+                // Controlla se esistono già risultati storici
+                const q = query(getResultsCollectionRef(), limit(1));
+                const snapshot = await getDocs(q);
+
+                if (snapshot.empty) {
+                    // Simula il caricamento del file pre-caricato
+                    await processUploadedData('Calendario_Campionato.csv');
+                    messageBox("Caricamento automatico dei risultati storici e del calendario completato.");
+                }
+            } catch (error) {
+                console.error("Errore nel caricamento iniziale dei dati:", error);
+            }
+        };
+
+        // --- Gestione Quote e Partite ---
+
+        // Helper: determina l'ultima giornata completata usando SIA i match chiusi SIA i risultati storici
+        const determineLastCompletedGiornata = () => {
+            // Dal registro partite (solo match chiusi con result)
+            const fromMatches = (allMatches || [])
+                .filter(m => m && m.status === 'closed' && m.result)
+                .reduce((max, m) => {
+                    const g = parseInt(m.giornata || '0', 10) || 0;
+                    return g > max ? g : max;
+                }, 0);
+
+            // Dai risultati storici importati (CSV)
+            const fromResults = (allResults || [])
+                .reduce((max, r) => {
+                    // Estrai il numero dalla stringa giornata (es. "7", "Giornata 7", etc.)
+                    const match = (r.giornata || '').toString().match(/\d+/);
+                    const g = match ? parseInt(match[0], 10) || 0 : 0;
+                    return g > max ? g : max;
+                }, 0);
+
+            const last = Math.max(fromMatches, fromResults);
+            console.log('determineLastCompletedGiornata ->', { fromMatches, fromResults, last });
+            return last;
+        };
+
+        const updateMatchToCloseSelect = (matches) => {
+            const select = document.getElementById('match-to-close-select');
+            if (!select) return; 
+            
+            // Trova l'ultima giornata con risultati (usa anche i risultati storici)
+            const lastCompletedGiornata = determineLastCompletedGiornata();
+            console.log('updateMatchToCloseSelect -> ultima completata:', lastCompletedGiornata, 'prossima:', lastCompletedGiornata + 1);
+
+                // Mostra solo le partite della prossima giornata da completare
+                const openMatches = matches
+                    .filter(m => {
+                        const giornata = parseInt(m.giornata || '0', 10);
+                        const isNextGiornata = giornata === (lastCompletedGiornata + 1);
+                        const isOpen = m.status === 'open' || !m.status;
+                        
+                        console.log('Valutazione partita per visualizzazione:', {
+                            partita: `${m.homeTeam} vs ${m.awayTeam}`,
+                            giornata,
+                            status: m.status,
+                            isNextGiornata,
+                            isOpen,
+                            include: isOpen && isNextGiornata
+                        });
+                        
+                        return isOpen && isNextGiornata;
+                    })
+                    .sort((a, b) => new Date(a.date) - new Date(b.date));
+
+            select.innerHTML = '<option value="">Seleziona partita da chiudere</option>';
+            
+            if (openMatches.length === 0) {
+                 select.innerHTML = '<option value="">Nessuna partita aperta nella prossima giornata</option>';
+                 return;
+            }
+
+            openMatches.forEach(match => {
+                const option = document.createElement('option');
+                option.value = match.id;
+                option.textContent = `G${match.giornata}: ${match.homeTeam} vs ${match.awayTeam} (${match.date})`;
+                select.appendChild(option);
+            });
+        };
+
+        // Funzione di supporto: ricalibra quote pure per ottenere un margine target
+const adjustOddsForMargin = (q1, qX, q2, targetMargin = 0.05) => {
+    // Protezione contro divisioni per zero
+    const eps = 1e-6;
+    q1 = Math.max(q1, eps);
+    qX = Math.max(qX, eps);
+    q2 = Math.max(q2, eps);
+
+    // Log per debug delle quote in ingresso
+    try {
+        console.log('adjustOddsForMargin input:', { q1, qX, q2, targetMargin });
+    } catch (e) { /* no-op */ }
+
+                // Step 1: probabilità "pure"
+                let p1 = 1 / q1;
+                let pX = 1 / qX;
+                let p2 = 1 / q2;
+                const totalPure = p1 + pX + p2;
+
+                // Step 2: target sum = 1 + margine
+                const targetSum = 1 + targetMargin;    // Step 3: scala le probabilità in modo che la loro somma = targetSum
+    const scale = targetSum / totalPure;
+    const p1Adj = p1 * scale;
+    const pXAdj = pX * scale;
+    const p2Adj = p2 * scale;
+
+    // Step 4: nuove quote
+    const q1New = 1 / p1Adj;
+    const qXNew = 1 / pXAdj;
+    const q2New = 1 / p2Adj;
+
+    // Step 5: overround effettivo (verifica)
+    const overround = (p1Adj + pXAdj + p2Adj) - 1;
+
+    return {
+        '1': parseFloat(q1New.toFixed(2)),
+        'X': parseFloat(qXNew.toFixed(2)),
+        '2': parseFloat(q2New.toFixed(2)),
+        overround: parseFloat(overround.toFixed(4))
+    };
+};
+
+// Funzione per il calcolo delle quote (Revisione) — usa adjustOddsForMargin
+const calculateOdds = (homeTeam, awayTeam) => {
+    // Conteggio scontri diretti
+    const matchesAgainst = allResults.filter(r =>
+        (r.homeTeam === homeTeam && r.awayTeam === awayTeam) ||
+        (r.homeTeam === awayTeam && r.awayTeam === homeTeam)
+    );
+
+    let homeTeamWins = 0;
+    let awayTeamWins = 0;
+    let draws = 0;
+
+    matchesAgainst.forEach(r => {
+        if (r.homeTeam === homeTeam && r.awayTeam === awayTeam) {
+            if (r.result === '1') homeTeamWins++;
+            else if (r.result === 'X') draws++;
+            else if (r.result === '2') awayTeamWins++;
+        } else if (r.homeTeam === awayTeam && r.awayTeam === homeTeam) {
+            // inversione: in questo caso '1' è vittoria per awayTeam rispetto al homeTeam richiesto
+            if (r.result === '1') awayTeamWins++;
+            else if (r.result === 'X') draws++;
+            else if (r.result === '2') homeTeamWins++;
+        }
+    });
+
+    const totalEncounters = homeTeamWins + awayTeamWins + draws;
+
+    // Probabilità "pure" basate sugli scontri diretti o default se non ci sono dati
+    let p1, pX, p2;
+    if (totalEncounters === 0) {
+        p1 = 0.33; pX = 0.34; p2 = 0.33;
+    } else {
+        p1 = homeTeamWins / totalEncounters;
+        p2 = awayTeamWins / totalEncounters;
+        pX = draws / totalEncounters;
+        // normalizza per sicurezza
+        const sum = p1 + pX + p2 || 1;
+        p1 /= sum; pX /= sum; p2 /= sum;
+    }
+
+    // Converti probabilità pure in quote pure (senza margine)
+    const q1Pure = 1 / Math.max(p1, 1e-6);
+    const qXPure = 1 / Math.max(pX, 1e-6);
+    const q2Pure = 1 / Math.max(p2, 1e-6);
+
+    // Applica il margine desiderato (modificare targetMargin se vuoi un margine diverso)
+    const TARGET_MARGIN = 0.05; // 5% di margine consigliato
+    const adjusted = adjustOddsForMargin(q1Pure, qXPure, q2Pure, TARGET_MARGIN);
+
+    // Restituisci le quote formattate come stringhe coerenti con il resto del codice
+    return {
+        '1': adjusted['1'].toFixed(2),
+        'X': adjusted['X'].toFixed(2),
+        '2': adjusted['2'].toFixed(2),
+        overround: adjusted.overround
+    };
+};
+
+
+        window.calculateAndSaveMatch = async () => {
+             if (!isUserAdmin) return;
+             const homeTeam = document.getElementById('new-match-home-team').value;
+             const awayTeam = document.getElementById('new-match-away-team').value;
+             const date = document.getElementById('new-match-date').value;
+ 
+             if (!homeTeam || !awayTeam || homeTeam === awayTeam || !date) {
+                 messageBox("Seleziona due squadre diverse e una data.");
+                 return;
+             }
+             
+             const odds = calculateOdds(homeTeam, awayTeam);
+            // Recupera tutte le partite aperte e determina la prossima giornata disponibile
+            const openMatchesSnapshot = await getDocs(query(getMatchesCollectionRef(), where('status', '==', 'open')));
+            let nextGiornata = 1;
+            if (!openMatchesSnapshot.empty) {
+                 const maxGiornata = openMatchesSnapshot.docs.reduce((max, d) => {
+                     const g = parseInt(d.data().giornata || '0', 10) || 0;
+                     return Math.max(max, g);
+                 }, 0);
+                 // prossima giornata libera = max + 1
+                 nextGiornata = Math.max(1, maxGiornata + 1);
+            }
+ 
+             try {
+                 await addDoc(getMatchesCollectionRef(), {
+                     homeTeam,
+                     awayTeam,
+                     date,
+                     odds, // { '1': 2.50, 'X': 3.00, '2': 3.50 }
+                     status: 'open',
+                     score: null, // Nuovo campo score, nullo finché non chiusa
+                     giornata: nextGiornata.toString(),
+                     createdAt: new Date().toISOString()
+                 });
+                 messageBox(`Partita ${homeTeam} vs ${awayTeam} aperta per la Giornata ${nextGiornata} con quote: 1=${odds['1']}, X=${odds['X']}, 2=${odds['2']}`);
+             } catch (error) {
+                 console.error("Errore salvataggio partita:", error);
+                 messageBox("Errore nel salvataggio della partita aperta.");
+             }
+         };
+
+        // --- Chiusura Partita Admin ---
+        // Funzione per liquidare le scommesse di una giornata
+        const liquidateGiornataBets = async (giornata) => {
+            try {
+                const qBets = query(
+                    getGiornataBetsCollectionRef(),
+                    where('giornata', '==', giornata.toString())
+                );
+                const betsSnapshot = await getDocs(qBets);
+                
+                // Ottieni i match chiusi della giornata
+                const qMatches = query(
+                    getMatchesCollectionRef(),
+                    where('giornata', '==', giornata.toString()),
+                    where('status', '==', 'closed')
+                );
+                const matchesSnapshot = await getDocs(qMatches);
+                const closedMatches = new Map(
+                    matchesSnapshot.docs.map(doc => [doc.id, doc.data()])
+                );
+
+                // Batch write per aggiornare i crediti degli utenti
+                const batch = writeBatch(db);
+                const userUpdates = new Map(); // Map per aggregare le vincite per utente
+
+                // Processa ogni scommessa
+                betsSnapshot.docs.forEach(betDoc => {
+                    const bet = betDoc.data();
+                    const match = closedMatches.get(bet.matchId);
+                    
+                    if (match && match.result) {
+                        const userId = bet.userId;
+                        let creditsChange = -bet.stake; // Inizialmente sottrai la puntata
+                        
+                        // Se la previsione era corretta
+                        if (bet.prediction === match.result) {
+                            // Calcola la vincita (puntata * quota)
+                            const win = bet.stake * parseFloat(bet.odds);
+                            creditsChange += win;
+                        }
+
+                        // Aggrega le modifiche ai crediti per utente
+                        userUpdates.set(
+                            userId, 
+                            (userUpdates.get(userId) || 0) + creditsChange
+                        );
+                    }
+                });
+
+                // Applica gli aggiornamenti dei crediti
+                for (const [userId, creditsChange] of userUpdates) {
+                    const userRef = doc(getUsersCollectionRef(), userId);
+                    const userSnap = await getDoc(userRef);
+                    if (userSnap.exists()) {
+                        const currentCredits = userSnap.data().credits || 0;
+                        batch.update(userRef, {
+                            credits: currentCredits + creditsChange
+                        });
+                    }
+                }
+
+                // Esegui il batch
+                await batch.commit();
+
+                messageBox(`Scommesse liquidate per la giornata ${giornata}. ${userUpdates.size} utenti aggiornati.`);
+                return true;
+            } catch (error) {
+                console.error("Errore liquidazione scommesse:", error);
+                messageBox(`Errore durante la liquidazione delle scommesse: ${error.message}`);
+                return false;
+            }
+        };
+
+        window.closeMatchAndSaveScore = async () => {
+            if (!isUserAdmin) return;
+
+            const matchId = document.getElementById('match-to-close-select').value;
+            const finalScore = document.getElementById('final-score-input').value.trim();
+
+            if (!matchId) {
+                messageBox("Seleziona una partita da chiudere.");
+                return;
+            }
+
+            if (!finalScore || !finalScore.match(/^\d+-\d+$/)) {
+                 messageBox("Inserisci il punteggio finale nel formato corretto (es: 3-1).");
+                 return;
+            }
+            
+            const [homeGoals, awayGoals] = finalScore.split('-').map(g => parseInt(g.trim(), 10));
+
+            let result;
+            if (homeGoals > awayGoals) {
+                result = '1';
+            } else if (homeGoals < awayGoals) {
+                result = '2';
+            } else {
+                result = 'X';
+            }
+
+            try {
+                const matchRef = doc(getMatchesCollectionRef(), matchId);
+                const matchData = (await getDoc(matchRef)).data();
+                const giornata = matchData.giornata;
+                
+                // 1. Chiudi il match
+                await updateDoc(matchRef, {
+                    status: 'closed',
+                    score: finalScore,
+                    result: result
+                });
+
+                // 2. Verifica se tutti i match della giornata sono chiusi
+                const qOpenMatches = query(
+                    getMatchesCollectionRef(),
+                    where('giornata', '==', giornata),
+                    where('status', '==', 'open')
+                );
+                const openMatchesSnap = await getDocs(qOpenMatches);
+
+                // Se non ci sono più partite aperte nella giornata
+                if (openMatchesSnap.empty) {
+                    // 3. Liquida tutte le scommesse della giornata
+                    const liquidated = await liquidateGiornataBets(giornata);
+                    if (liquidated) {
+                        messageBox(`Giornata ${giornata} completata! Scommesse liquidate e crediti aggiornati.`);
+                    }
+                } else {
+                    messageBox(`Partita chiusa: ${finalScore}. Rimangono ancora ${openMatchesSnap.size} partite da chiudere per la giornata ${giornata}.`);
+                }
+
+                document.getElementById('final-score-input').value = '';
+
+            } catch (error) {
+                console.error("Errore chiusura partita:", error);
+                messageBox(`Errore durante la chiusura della partita: ${error.message}`);
+            }
+        };
+
+
+        // --- Gestione Scommesse Utente (MODIFICATA PER SCOMMESSA DI GRUPPO) ---
+        
+        // 1. Registra localmente la previsione per un singolo match
+        window.recordPrediction = (matchId, prediction) => {
+            // Verifica se l'utente ha già scommesse confermate per questa giornata
+            const hasConfirmedBets = openMatches.some(m => m.userBet && m.userBet.stake > 0);
+            if (hasConfirmedBets) {
+                messageBox("Non puoi modificare le scommesse dopo averle confermate per questa giornata.");
+                return;
+            }
+
+            const matchContainer = document.getElementById(`match-${matchId}`);
+            // Rimuovi la classe 'local-selected' da tutte le opzioni di questo match
+            matchContainer.querySelectorAll('.bet-option').forEach(el => {
+                el.classList.remove('local-selected');
+            });
+            
+            const selectedElement = matchContainer.querySelector(`[data-match-id="${matchId}"][data-prediction="${prediction}"]`);
+            
+            // Aggiorna sempre la previsione (no toggle)
+            currentPredictions[matchId] = prediction;
+            selectedElement.classList.add('local-selected');
+
+            updateGiornataBetButton();
+        };
+
+        // Funzione di utilità per abilitare/disabilitare il pulsante di salvataggio
+        const updateGiornataBetButton = () => {
+            const button = document.getElementById('place-giornata-bet-button');
+            const stakeInput = document.getElementById('bet-stake-input');
+            const winPreviewEl = document.getElementById('win-preview');
+            
+            if (!button || !stakeInput) return;
+
+            const requiredMatches = openMatches.length;
+            const predictedMatches = Object.keys(currentPredictions).length;
+            const stake = parseInt(stakeInput.value, 10);
+            
+            // Calcola la vincita potenziale
+            let potentialWin = 0;
+            let quotaTotale = 1;
+            
+            if (predictedMatches > 0 && stake > 0) {
+                const stakePerMatch = stake / requiredMatches;
+                
+                openMatches.forEach(match => {
+                    const prediction = currentPredictions[match.id];
+                    if (prediction && match.odds && match.odds[prediction]) {
+                        const quota = parseFloat(match.odds[prediction]);
+                        const winForMatch = stakePerMatch * quota;
+                        potentialWin += winForMatch;
+                        quotaTotale *= quota;
+                    }
+                });
+            }
+            
+            // Aggiorna l'anteprima della vincita
+            if (winPreviewEl) {
+                if (predictedMatches === requiredMatches && stake > 0) {
+                    const profitto = potentialWin - stake;
+                    const quotaMedia = Math.pow(quotaTotale, 1/requiredMatches);
+                    
+                    winPreviewEl.innerHTML = `
+                        <div class="bg-gray-800 border border-gray-700 rounded-lg p-4">
+                            <h4 class="text-sm font-semibold text-gray-400 mb-2">Anteprima Vincita</h4>
+                            <div class="grid grid-cols-2 gap-3">
+                                <div>
+                                    <p class="text-xs text-gray-500">Puntata Totale</p>
+                                    <p class="text-lg font-bold text-white">${stake.toFixed(2)} Cr</p>
+                                </div>
+                                <div>
+                                    <p class="text-xs text-gray-500">Quota Media</p>
+                                    <p class="text-lg font-bold text-blue-400">${quotaMedia.toFixed(2)}</p>
+                                </div>
+                                <div>
+                                    <p class="text-xs text-gray-500">Vincita Potenziale</p>
+                                    <p class="text-xl font-bold text-green-400">${potentialWin.toFixed(2)} Cr</p>
+                                </div>
+                                <div>
+                                    <p class="text-xs text-gray-500">Profitto Netto</p>
+                                    <p class="text-xl font-bold ${profitto >= 0 ? 'text-green-400' : 'text-red-400'}">${profitto >= 0 ? '+' : ''}${profitto.toFixed(2)} Cr</p>
+                                </div>
+                            </div>
+                            <div class="mt-3 pt-3 border-t border-gray-700">
+                                <p class="text-xs text-gray-500 mb-1">Quote selezionate:</p>
+                                <div class="flex flex-wrap gap-2">
+                                    ${openMatches.map(m => {
+                                        const pred = currentPredictions[m.id];
+                                        return pred ? `<span class="text-xs bg-gray-700 px-2 py-1 rounded">${m.homeTeam.substring(0,10)} vs ${m.awayTeam.substring(0,10)}: ${pred} @ ${m.odds[pred]}</span>` : '';
+                                    }).join('')}
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    winPreviewEl.innerHTML = `
+                        <div class="bg-gray-800 border border-gray-700 rounded-lg p-4 text-center">
+                            <p class="text-sm text-gray-500">Seleziona tutte le partite e inserisci la puntata per vedere l'anteprima della vincita</p>
+                        </div>
+                    `;
+                }
+            }
+            
+            if (requiredMatches === 0) {
+                button.disabled = true;
+                button.textContent = "Nessuna partita aperta per scommettere.";
+                return;
+            }
+
+            // Verifica se l'utente ha già scommesse confermate
+            const hasConfirmedBets = openMatches.some(m => m.userBet && m.userBet.stake > 0);
+            if (hasConfirmedBets) {
+                button.disabled = true;
+                button.textContent = "Hai già confermato le scommesse per questa giornata";
+                button.classList.replace('btn-primary', 'btn-secondary');
+                return;
+            }
+
+            // Aggiorna il testo del pulsante in base allo stato
+            if (predictedMatches === requiredMatches) {
+                const totalStake = stake;
+                if (totalStake > userCredits || totalStake <= 0) {
+                    button.disabled = true;
+                    button.textContent = totalStake > userCredits ? 
+                        `Crediti insufficienti! (${totalStake} Cr richiesti)` : 
+                        'Inserisci una puntata valida';
+                    button.classList.replace('btn-primary', 'btn-danger');
+                } else {
+                    button.disabled = false;
+                    button.textContent = `Conferma Scommesse Giornata (${totalStake} Crediti)`;
+                    button.classList.replace('btn-danger', 'btn-primary');
+                }
+            } else {
+                button.disabled = true;
+                button.textContent = `Devi selezionare TUTTE le partite (${predictedMatches}/${requiredMatches})`;
+                button.classList.replace('btn-primary', 'btn-secondary');
+                button.classList.remove('btn-danger');
+            }
+        };
+
+        // 2. Salva tutte le predizioni per la giornata
+        window.placeBetForGiornata = async () => {
+            console.log('placeBetForGiornata chiamato');
+            
+            const stakeInput = document.getElementById('bet-stake-input');
+            const totalStake = parseInt(stakeInput.value, 10);
+            
+            const requiredMatches = openMatches.length;
+            const predictedMatches = Object.keys(currentPredictions).length;
+            
+            const currentGiornata = nextGiornataNumber.toString();
+            console.log('Stato scommessa:', {
+                giornata: currentGiornata,
+                requiredMatches,
+                predictedMatches,
+                totalStake,
+                userCredits,
+                currentPredictions
+            });
+            
+            // Verifica se ci sono già scommesse SALVATE su Firestore per questa giornata
+            try {
+                const qExistingBets = query(
+                    getGiornataBetsCollectionRef(),
+                    where('userId', '==', userId),
+                    where('giornata', '==', currentGiornata)
+                );
+                const existingBetsSnapshot = await getDocs(qExistingBets);
+                
+                if (!existingBetsSnapshot.empty) {
+                    console.warn('Scommesse già presenti per questa giornata:', existingBetsSnapshot.size);
+                    messageBox("Hai già piazzato le scommesse per questa giornata. Non puoi modificarle.");
+                    return;
+                }
+            } catch (error) {
+                console.error('Errore verifica scommesse esistenti:', error);
+                messageBox("Errore durante la verifica delle scommesse esistenti.");
+                return;
+            }
+            
+            if (predictedMatches !== requiredMatches) {
+                messageBox(`Devi selezionare OBBLIGATORIAMENTE un pronostico per tutte e ${requiredMatches} le partite della giornata.`);
+                return;
+            }
+            
+            if (totalStake <= 0 || isNaN(totalStake)) {
+                messageBox("La puntata per la giornata deve essere un numero positivo.");
+                return;
+            }
+
+            if (totalStake > userCredits) {
+                messageBox(`Crediti insufficienti. La puntata totale (${totalStake} crediti) supera il saldo disponibile (${userCredits}).`);
+                return;
+            }
+            
+            // Chiedi conferma all'utente
+            if (!confirm(`ATTENZIONE: Stai per confermare le scommesse per tutta la giornata.\nImporto totale: ${totalStake} crediti\nUna volta confermata, non potrai più modificare le tue scelte.\n\nProcedere?`)) {
+                console.log('Utente ha annullato la conferma');
+                return;
+            }
+            
+            const stakePerMatch = totalStake / requiredMatches;
+            console.log('Puntata per partita:', stakePerMatch);
+
+            try {
+                 console.log('Inizio salvataggio scommesse...');
+                 
+                 // Usa writeBatch importato per le scritture batch
+                 const batch = writeBatch(db); 
+                 let batchCount = 0;
+                 
+                 // Aggiungi le nuove scommesse
+                 openMatches.forEach(match => {
+                     const matchId = match.id;
+                     const prediction = currentPredictions[matchId];
+                     
+                     if (!prediction) {
+                         console.warn('Previsione mancante per match:', matchId);
+                         return;
+                     }
+                     
+                     // Usiamo un ID doc unico per la scommessa sulla giornata
+                     const betDocRef = doc(getGiornataBetsCollectionRef(), `${matchId}_${userId}`);
+                     
+                     const betData = {
+                        matchId: matchId,
+                        userId: userId,
+                        giornata: currentGiornata,
+                        prediction: prediction,
+                        stake: parseFloat(stakePerMatch.toFixed(2)), // La puntata per singola partita
+                        odds: match.odds[prediction], 
+                        match: { // Salva i dati del match al momento della scommessa
+                           homeTeam: match.homeTeam,
+                           awayTeam: match.awayTeam,
+                           date: match.date,
+                           giornata: match.giornata
+                        },
+                        timestamp: new Date().toISOString()
+                     };
+                     
+                     console.log('Aggiunta scommessa al batch:', betData);
+                     batch.set(betDocRef, betData);
+                     batchCount++;
+                 });
+                 
+                 console.log(`Commit di ${batchCount} scommesse...`);
+                 await batch.commit();
+                 console.log('Scommesse salvate con successo su Firestore');
+
+                 // Sottrai i crediti e aggiorna Firestore
+                 console.log('Aggiornamento crediti...');
+                 await adjustCredits(-totalStake);
+                 console.log('Crediti aggiornati');
+
+                 // Reset dello stato locale dopo il successo
+                 currentPredictions = {};
+                 
+                 // Pulisci il campo di input
+                 if (stakeInput) stakeInput.value = '';
+
+                 messageBox(`Scommessa piazzata con successo su ${batchCount} partite della Giornata ${currentGiornata}. Totale puntato: ${totalStake} crediti.`);
+                 
+                 // Ricarica i dati delle scommesse per ogni partita
+                 console.log('Ricaricamento dati scommesse...');
+                 const updatedMatches = await Promise.all(openMatches.map(async (match) => {
+                     const betDocRef = doc(getGiornataBetsCollectionRef(), `${match.id}_${userId}`);
+                     const betSnapshot = await getDoc(betDocRef);
+                     if (betSnapshot.exists()) {
+                         match.userBet = betSnapshot.data();
+                     }
+                     return match;
+                 }));
+                 
+                 // Aggiorna openMatches con i nuovi dati
+                 openMatches = updatedMatches;
+                 
+                 // Aggiorna la vista per mostrare le scommesse salvate
+                 console.log('Aggiornamento vista dopo salvataggio...');
+                 renderOpenMatches(openMatches, nextGiornataNumber);
+
+            } catch (error) {
+                console.error("Errore piazzamento scommessa:", error);
+                messageBox(`Errore nel piazzamento della scommessa: ${error.message || error}`);
+            }
+        };
+
+
+        const renderOpenMatches = (matches, nextGiornata) => {
+            console.log('renderOpenMatches chiamato con:', { 
+                matches: matches?.map(m => ({
+                    id: m.id,
+                    homeTeam: m.homeTeam,
+                    awayTeam: m.awayTeam,
+                    giornata: m.giornata,
+                    status: m.status,
+                    result: m.result
+                })),
+                nextGiornata 
+            });
+            
+            const listContainer = document.getElementById('open-matches-list');
+            const noMatchesMessage = document.getElementById('no-open-matches');
+            const stakeButton = document.getElementById('place-giornata-bet-button');
+            
+            if (!listContainer || !noMatchesMessage || !stakeButton) {
+                console.error('Elementi UI mancanti:', {
+                    listContainer: !!listContainer,
+                    noMatchesMessage: !!noMatchesMessage,
+                    stakeButton: !!stakeButton
+                });
+                return;
+            }
+
+            nextGiornataNumber = nextGiornata; // Aggiorna lo stato globale
+            listContainer.innerHTML = '';
+            
+            // Verifica se ci sono già scommesse confermate
+            const hasConfirmedBets = matches.some(m => m.userBet && m.userBet.stake > 0);
+            console.log('Stato scommesse:', { hasConfirmedBets, matchesCount: matches?.length });
+            
+            // Se ci sono scommesse confermate, disabilita input e mostra messaggio
+            const stakeInputEl = document.getElementById('bet-stake-input');
+            if (stakeInputEl) {
+                stakeInputEl.disabled = hasConfirmedBets;
+                if (hasConfirmedBets) {
+                    stakeInputEl.value = '';
+                    stakeInputEl.placeholder = 'Scommessa già piazzata';
+                }
+            }
+            
+            // Se non ci sono scommesse confermate, resetta le predizioni locali
+            if (!hasConfirmedBets) {
+                currentPredictions = {}; 
+            } else {
+                // Se ci sono scommesse confermate, caricale nelle predizioni locali
+                currentPredictions = matches.reduce((acc, match) => {
+                    if (match.userBet && match.userBet.prediction) {
+                        acc[match.id] = match.userBet.prediction;
+                    }
+                    return acc;
+                }, {});
+            }
+
+            if (!matches || matches.length === 0) {
+                noMatchesMessage.classList.remove('hidden');
+                noMatchesMessage.textContent = 'Nessuna partita aperta per le scommesse al momento.';
+                stakeButton.disabled = true;
+                stakeButton.textContent = "Nessuna partita aperta";
+                listContainer.innerHTML = ''; 
+                return;
+            }
+
+            // Filtra solo le partite della prossima giornata (con parseInt sicuro)
+            const filteredMatches = matches.filter(m => {
+                const matchGiornata = parseInt(m.giornata || '0', 10) || 0;
+                console.log('Valutando partita:', m.homeTeam, 'vs', m.awayTeam, 
+                          'Giornata:', matchGiornata, 
+                          'Target:', nextGiornata,
+                          'Match:', matchGiornata === nextGiornata);
+                return matchGiornata === nextGiornata;
+            });
+
+            if (filteredMatches.length === 0) {
+                noMatchesMessage.classList.remove('hidden');
+                noMatchesMessage.textContent = `Nessuna partita aperta per la Giornata ${nextGiornata} (Prossima giornata di scommesse).`;
+                stakeButton.disabled = true;
+                stakeButton.textContent = "Nessuna partita aperta";
+                listContainer.innerHTML = ''; // Pulisci il contenitore
+                return;
+            }
+
+            noMatchesMessage.classList.add('hidden');
+
+            // Costruzione DOM con fragment
+            const frag = document.createDocumentFragment();
+            
+            // Aggiungi messaggio se le scommesse sono già state piazzate
+            if (hasConfirmedBets) {
+                // Calcola vincita potenziale per scommesse salvate
+                let totalStakeSaved = 0;
+                let potentialWinSaved = 0;
+                
+                filteredMatches.forEach(match => {
+                    const userBet = match.userBet || {};
+                    if (userBet.stake > 0 && userBet.prediction && userBet.odds) {
+                        totalStakeSaved += userBet.stake;
+                        potentialWinSaved += userBet.stake * parseFloat(userBet.odds);
+                    }
+                });
+                
+                const profittoSaved = potentialWinSaved - totalStakeSaved;
+                
+                const alertDiv = document.createElement('div');
+                alertDiv.className = 'bg-yellow-900 border-l-4 border-yellow-500 text-yellow-200 p-4 mb-4 rounded';
+                alertDiv.innerHTML = `
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center">
+                            <svg class="w-6 h-6 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                            </svg>
+                            <p class="font-semibold">Scommesse già piazzate per questa giornata</p>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-xs">Vincita Potenziale</p>
+                            <p class="text-xl font-bold text-green-300">${potentialWinSaved.toFixed(2)} Cr</p>
+                            <p class="text-xs">(Profitto: <span class="font-semibold ${profittoSaved >= 0 ? 'text-green-300' : 'text-red-300'}">${profittoSaved >= 0 ? '+' : ''}${profittoSaved.toFixed(2)} Cr</span>)</p>
+                        </div>
+                    </div>
+                `;
+                frag.appendChild(alertDiv);
+            }
+            
+            const title = document.createElement('div');
+            title.innerHTML = `<h3 class="text-xl font-bold text-yellow-500 mb-4">Scommetti su: Giornata ${nextGiornata} (${filteredMatches.length} Partite)</h3>`;
+            frag.appendChild(title);
+
+            filteredMatches.sort((a, b) => new Date(a.date) - new Date(b.date));
+
+            filteredMatches.forEach(match => {
+                const userBet = match.userBet || { prediction: null, stake: 0 };
+                if (userBet.prediction) currentPredictions[match.id] = userBet.prediction;
+
+                const matchCard = document.createElement('div');
+                matchCard.id = `match-${match.id}`;
+                matchCard.className = 'card p-4 mb-4';
+
+                let stakeStatusText;
+                if (userBet.stake > 0) {
+                    const potentialWinForMatch = userBet.stake * parseFloat(userBet.odds || 1);
+                    const profitForMatch = potentialWinForMatch - userBet.stake;
+                    stakeStatusText = `
+                        <span class="font-bold text-yellow-300">SALVATA: ${userBet.prediction} @ ${userBet.odds}</span>
+                        <span class="text-sm text-gray-400"> | Puntata: ${userBet.stake.toFixed(2)} Cr</span>
+                        <span class="text-sm text-green-400"> | Vincita potenziale: ${potentialWinForMatch.toFixed(2)} Cr (${profitForMatch >= 0 ? '+' : ''}${profitForMatch.toFixed(2)} Cr)</span>
+                    `;
+                } else {
+                    stakeStatusText = `Nessuna`;
+                }
+
+                matchCard.innerHTML = `
+                    <div class="flex justify-between items-center mb-3 border-b border-gray-800 pb-2">
+                        <h3 class="text-xl font-bold text-green-300">${match.homeTeam} vs ${match.awayTeam}</h3>
+                        <span class="text-sm text-gray-400">${match.date}</span>
+                    </div>
+                    <p class="mb-4 text-sm text-gray-400">Scommessa: ${stakeStatusText}</p>
+                    <div class="grid grid-cols-3 gap-3">
+                        ${renderBetOption(match, '1', userBet, hasConfirmedBets)}
+                        ${renderBetOption(match, 'X', userBet, hasConfirmedBets)}
+                        ${renderBetOption(match, '2', userBet, hasConfirmedBets)}
+                    </div>
+                `;
+                frag.appendChild(matchCard);
+            });
+
+            listContainer.appendChild(frag);
+            updateGiornataBetButton();
+        };
+        
+        const renderBetOption = (match, prediction, userBet, hasConfirmedBets) => {
+            const isSavedBet = userBet.prediction === prediction;
+            const isLocalBet = currentPredictions[match.id] === prediction;
+            const hasSavedBet = userBet.stake > 0; // C'è già una scommessa salvata per questo match
+
+            let betClass = '';
+            let pointerEvents = '';
+            let opacity = '';
+            
+            // Se ci sono scommesse confermate per la giornata, blocca tutti i click
+            if (hasConfirmedBets) {
+                if (isSavedBet) {
+                    // Se la scommessa è salvata in Firestore
+                    betClass = 'saved-bet';
+                } else {
+                    // Tutte le altre opzioni sono disabilitate
+                    opacity = 'opacity-50';
+                }
+                pointerEvents = 'pointer-events-none';
+            } else {
+                // Logica normale quando non ci sono scommesse confermate
+                if (isLocalBet) {
+                    // Se è solo la selezione locale temporanea (non salvata)
+                    betClass = 'local-selected';
+                }
+            }
+            
+            const clickHandler = hasConfirmedBets ? '' : `onclick="recordPrediction('${match.id}', '${prediction}')"`;
+            
+            return `
+                <div ${clickHandler}
+                     data-match-id="${match.id}" 
+                     data-prediction="${prediction}"
+                     class="bet-option ${betClass} ${pointerEvents} ${opacity} p-3 text-center bg-gray-800 rounded-lg cursor-${hasConfirmedBets ? 'not-allowed' : 'pointer'}">
+                    <p class="text-lg font-semibold">${prediction}</p>
+                    <p class="text-xs text-gray-400">Quota: ${match.odds[prediction]}</p>
+                </div>
+            `;
+        };
+
+        // Renderizza le scommesse già piazzate dall'utente
+        const renderPlacedBets = (userBets) => {
+            const listContainer = document.getElementById('user-placed-bets-list');
+            if (!listContainer) return;
+            listContainer.innerHTML = '';
+
+            if (!userBets || userBets.length === 0) {
+                listContainer.innerHTML = '<p class="text-gray-500 text-center">Non hai ancora piazzato nessuna scommessa per le prossime giornate.</p>';
+                return;
+            }
+
+            // Raggruppa per giornata
+            const betsByGiornata = userBets.reduce((acc, bet) => {
+                const giornata = bet.giornata || 'Sconosciuta';
+                if (!acc[giornata]) acc[giornata] = [];
+                acc[giornata].push(bet);
+                return acc;
+            }, {});
+
+            const sortedGiornate = Object.keys(betsByGiornata).sort((a, b) => parseInt(a, 10) - parseInt(b, 10));
+
+            sortedGiornate.forEach(giornata => {
+                const giornataHeader = document.createElement('h4');
+                giornataHeader.className = 'text-xl font-bold text-yellow-500 mt-4 mb-3 border-b border-gray-700 pb-2';
+                giornataHeader.textContent = `Giornata ${giornata}`;
+                listContainer.appendChild(giornataHeader);
+
+                betsByGiornata[giornata].forEach(bet => {
+                    const betCard = document.createElement('div');
+                    betCard.className = 'p-3 bg-gray-800 rounded-lg flex items-center justify-between';
+                    betCard.innerHTML = `
+                        <div>
+                            <p class="font-semibold">${bet.match.homeTeam} vs ${bet.match.awayTeam}</p>
+                            <p class="text-sm text-gray-400">La tua puntata: <span class="font-bold text-green-300">${bet.prediction}</span></p>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-sm text-gray-400">Puntata: <span class="font-semibold">${bet.stake.toFixed(2)} Cr</span></p>
+                            <p class="text-sm text-gray-400">Quota: <span class="font-semibold">${bet.odds}</span></p>
+                        </div>
+                    `;
+                    listContainer.appendChild(betCard);
+                });
+            });
+        };
+
+        // Funzione per impostare/reimpostare il listener delle scommesse admin
+        const setupAdminBetsListener = (giornataNum, allUsers) => {
+            // Disiscrivi il listener precedente se esiste
+            if (adminBetsUnsubscribe) {
+                try { adminBetsUnsubscribe(); } catch (e) { /* ignore */ }
+                adminBetsUnsubscribe = null;
+            }
+     
+            const adminBetsList = document.getElementById('admin-bets-list');
+            if (!isUserAdmin || giornataNum === 0) {
+                if (adminBetsList) adminBetsList.innerHTML = '<p class="text-gray-500">Nessuna scommessa trovata per la giornata corrente.</p>';
+                return;
+            }
+
+            const qBets = query(getGiornataBetsCollectionRef(), where('giornata', '==', giornataNum.toString()));
+            adminBetsUnsubscribe = addUnsubscribe(
+                onSnapshot(qBets, (snapshot) => {
+                    const allCurrentBets = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+                    renderAdminBetsList(allCurrentBets, allUsers || []);
+                }, (error) => console.error("Errore onSnapshot Bets (Admin):", error))
+            );
+        };
+
+        // Renderizza la lista degli utenti per l'admin
+        const renderAdminUsersList = (users) => {
+            const listContainer = document.getElementById('admin-users-list');
+            if (!listContainer) return;
+            listContainer.innerHTML = '';
+
+            if (!users || users.length === 0) {
+                listContainer.innerHTML = '<div class="text-center text-gray-500 py-4">Nessun utente registrato.</div>';
+                return;
+            }
+
+            users.forEach(user => {
+                const row = document.createElement('div');
+                row.className = 'flex items-center justify-between p-2 bg-gray-900 rounded mb-2';
+                row.innerHTML = `
+                    <div class="text-sm text-gray-300">${user.email || user.id}</div>
+                    <div class="flex items-center space-x-2">
+                        <label class="text-sm text-gray-400">Admin: <input type="checkbox" id="isAdmin-${user.id}" ${user.isAdmin ? 'checked' : ''}></label>
+                        <input type="number" id="credits-${user.id}" value="${user.credits || 0}" class="bg-gray-800 text-sm p-1 rounded w-24" />
+                        <button onclick="updateUserPermissionsAndCredits('${user.id}')" class="btn-secondary px-3 py-1 text-sm">Salva</button>
+                    </div>
+                `;
+                listContainer.appendChild(row);
+            });
+        };
+
+        // Aggiorna il nome visualizzato di un utente (admin)
+        window.updateUserPermissionsAndCredits = async (uid) => {
+            if (!isUserAdmin) return;
+            const isAdmin = document.getElementById(`isAdmin-${uid}`).checked;
+            const credits = parseInt(document.getElementById(`credits-${uid}`).value, 10);
+
+            if (isNaN(credits)) {
+                messageBox("I crediti devono essere un numero.");
+                return;
+            }
+
+            try {
+                await updateDoc(doc(getUsersCollectionRef(), uid), { 
+                    isAdmin: isAdmin,
+                    credits: credits
+                });
+                messageBox("Permessi e crediti utente aggiornati.");
+            } catch (error) {
+                console.error("Errore aggiornamento permessi utente:", error);
+                messageBox("Errore durante l'aggiornamento dei permessi e crediti utente.");
+            }
+        };
+
+        // Renderizza la lista delle scommesse per l'admin
+        const renderAdminBetsList = (bets, users) => {
+            const listContainer = document.getElementById('admin-bets-list');
+            if (!listContainer) return;
+            listContainer.innerHTML = '';
+
+            if (!bets || bets.length === 0) {
+                listContainer.innerHTML = '<p class="text-gray-500">Nessuna scommessa trovata.</p>';
+                return;
+            }
+
+            // Raggruppa le scommesse per giornata e per utente
+            const betsByGiornata = bets.reduce((acc, bet) => {
+                const g = bet.giornata || 'Sconosciuta';
+                acc[g] = acc[g] || {};
+                acc[g][bet.userId] = acc[g][bet.userId] || [];
+                acc[g][bet.userId].push(bet);
+                return acc;
+            }, {});
+
+            const userMap = (users || []).reduce((m, u) => { m[u.id] = u.displayName || u.email || u.id; return m; }, {});
+
+            const sortedGiornate = Object.keys(betsByGiornata).sort((a,b) => parseInt(a,10) - parseInt(b,10));
+
+            sortedGiornate.forEach(g => {
+                const header = document.createElement('h4');
+                header.className = 'text-lg font-bold text-yellow-500 mt-4 mb-2';
+                header.textContent = `Giornata ${g}`;
+                listContainer.appendChild(header);
+
+                const usersInG = betsByGiornata[g];
+                Object.keys(usersInG).sort().forEach(uid => {
+                    const userName = userMap[uid] || uid;
+                    const userCard = document.createElement('div');
+                    userCard.className = 'card p-3 mb-3';
+                    userCard.innerHTML = `<h5 class="font-semibold text-green-300 mb-2">${userName}</h5>`;
+                    usersInG[uid].forEach(bet => {
+                        const betRow = document.createElement('div');
+                        betRow.className = 'p-2 bg-gray-800 rounded-lg flex items-center justify-between mb-2';
+                        betRow.innerHTML = `
+                            <div class="flex-1">
+                                <div class="font-semibold">${bet.match?.homeTeam || '-'} vs ${bet.match?.awayTeam || '-' }</div>
+                                <div class="text-sm text-gray-400">Giornata: ${bet.giornata || '-'}</div>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <select id="bet-edit-${bet.id}" class="bg-gray-900 text-sm p-1 rounded">
+                                    <option value="1" ${bet.prediction === '1' ? 'selected' : ''}>1</option>
+                                    <option value="X" ${bet.prediction === 'X' ? 'selected' : ''}>X</option>
+                                    <option value="2" ${bet.prediction === '2' ? 'selected' : ''}>2</option>
+                                </select>
+                                <button onclick="updateUserBet('${bet.id}')" class="btn-secondary px-3 py-1 text-sm">Salva</button>
+                            </div>
+                        `;
+                        userCard.appendChild(betRow);
+                    });
+                    listContainer.appendChild(userCard);
+                });
+            });
+        };
+
+        // Aggiorna la scommessa di un utente (admin)
+        window.updateUserBet = async (betId) => {
+            if (!isUserAdmin) return;
+            const select = document.getElementById(`bet-edit-${betId}`);
+            if (!select) return;
+            const newPrediction = select.value;
+            try {
+                const betDocRef = doc(getGiornataBetsCollectionRef(), betId);
+                await updateDoc(betDocRef, { prediction: newPrediction });
+                messageBox("Pronostico aggiornato con successo.");
+            } catch (error) {
+                console.error("Errore aggiornamento scommessa:", error);
+                messageBox("Errore durante l'aggiornamento della scommessa.");
+            }
+        };
+
+        // --- NUOVE FUNZIONI PER PROFILO UTENTE ---
+
+        // Listener per il profilo dell'utente corrente
+        const setupUserProfileListener = async (uid) => {
+            if (!uid) return;
+            
+            try {
+                const userDocRef = doc(getUsersCollectionRef(), uid);
+                // Prima controlla se il documento esiste
+                const docSnap = await getDoc(userDocRef);
+                
+                if (!docSnap.exists()) {
+                    // Se il documento non esiste, crealo con valori di default
+                    const isDefaultAdmin = ADMIN_USER_IDS.includes(uid);
+                    const defaultUserData = {
+                        email: auth.currentUser?.email,
+                        displayName: auth.currentUser?.email?.split('@')[0] || 'Utente',
+                        credits: 100,
+                        isAdmin: isDefaultAdmin,
+                        createdAt: new Date().toISOString()
+                    };
+                    
+                    await setDoc(userDocRef, defaultUserData);
+                    console.log("Creato nuovo profilo utente per:", uid);
+                }
+                
+                // Ora imposta il listener
+                addUnsubscribe(
+                    onSnapshot(userDocRef, (docSnapshot) => {
+                        if (docSnapshot.exists()) {
+                            currentUserProfile = { id: docSnapshot.id, ...docSnapshot.data() };
+                            userCredits = currentUserProfile.credits || 100; // Aggiorna i crediti globali
+                            isUserAdmin = currentUserProfile.isAdmin || false; // Aggiorna lo stato admin
+                            updateUserInfoDisplay(); // Aggiorna la UI con il nuovo nome
+                            if (currentView === 'profile') {
+                                renderProfileArea(); // Ricarica la sezione profilo se è aperta
+                            }
+                        } else {
+                            console.warn("Documento utente non trovato per UID:", uid);
+                            currentUserProfile = null;
+                        }
+                    }, (error) => {
+                        console.error("Errore onSnapshot User Profile:", error);
+                        messageBox("Errore nel caricamento del profilo utente. Prova a ricaricare la pagina.");
+                    })
+                );
+                
+            } catch (error) {
+                console.error("Errore setup profilo utente:", error);
+                messageBox("Errore nella configurazione del profilo utente. Contatta l'amministratore.");
+            }
+        };
+
+        // Renderizza la sezione Profilo
+        const renderProfileArea = () => {
+            const emailInput = document.getElementById('profile-email');
+            const displayNameInput = document.getElementById('profile-display-name');
+            if (currentUserProfile) {
+                emailInput.value = currentUserProfile.email;
+                displayNameInput.value = currentUserProfile.displayName || '';
+            }
+            document.getElementById('profile-area').classList.remove('hidden');
+        };
+
+        // Salva le modifiche al profilo utente
+        window.saveUserProfile = async () => { // Corretto: esposto a window
+            const newDisplayName = document.getElementById('profile-display-name').value.trim();
+            if (!newDisplayName) {
+                messageBox("Il nome visualizzato non può essere vuoto.");
+                return;
+            }
+            await updateDoc(doc(getUsersCollectionRef(), userId), { displayName: newDisplayName });
+            messageBox("Profilo aggiornato con successo!");
+        };
+
+        // --- Inizializzazione Listener ---
+
+        const setupListeners = () => {
+            console.log('Inizializzazione listeners...');
+            
+            // Prima rimuovi eventuali listener esistenti
+            removeAllListeners();
+            
+            // Listener per le Squadre
+            addUnsubscribe(
+                onSnapshot(getTeamCollectionRef(), (snapshot) => {
+                    console.log('Snapshot Teams ricevuto:', {
+                        numeroTeams: snapshot.docs.length,
+                        teams: snapshot.docs.map(doc => doc.data().name)
+                    });
+                    
+                    allTeams = snapshot.docs.map(doc => doc.data().name).filter(name => name); 
+                    updateTeamSelects(allTeams);
+                }, (error) => console.error("Errore onSnapshot Teams:", error))
+            );
+            
+            // Listener per i Risultati Storici
+            addUnsubscribe(
+                onSnapshot(getResultsCollectionRef(), (snapshot) => {
+                    allResults = snapshot.docs.map(doc => doc.data());
+                    renderHistoricResults(allResults);
+                    // Se la vista scommesse è aperta, ricalcola la prossima giornata in base ai risultati
+                    if (currentView === 'betting' && allMatches && allMatches.length > 0) {
+                        const lastCompleted = determineLastCompletedGiornata();
+                        const nextG = lastCompleted + 1;
+                        console.log('onSnapshot(Results): re-render betting con giornata', nextG);
+                        renderOpenMatches(allMatches, nextG);
+                    }
+                }, (error) => console.error("Errore onSnapshot Results:", error))
+            );
+            
+            // Listener per TUTTE le Partite (Aperte e Chiuse)
+            addUnsubscribe(
+                onSnapshot(getMatchesCollectionRef(), async (snapshot) => {
+                    try {
+                        console.log('Snapshot delle partite ricevuto:', {
+                            numeroDoc: snapshot.docs.length,
+                            docs: snapshot.docs.map(doc => ({
+                                id: doc.id,
+                                ...doc.data()
+                            }))
+                        });
+
+                        allMatches = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                        console.log('Partite caricate in allMatches:', allMatches.length);
+                        
+                        // 1. Aggiorna la tendina di chiusura Admin
+                        updateMatchToCloseSelect(allMatches);
+                
+
+                // Determina l'ultima giornata con risultati
+                console.log('Analisi giornate dalle partite:', {
+                    totalePartite: allMatches.length,
+                    statoPartite: allMatches.map(m => ({
+                        partita: `${m.homeTeam} vs ${m.awayTeam}`,
+                        giornata: m.giornata,
+                        status: m.status,
+                        result: m.result
+                    }))
+                });
+                
+                const partiteChiuse = allMatches.filter(m => m.status === 'closed' && m.result);
+                console.log('Partite chiuse trovate:', {
+                    numero: partiteChiuse.length,
+                    dettaglio: partiteChiuse.map(m => ({
+                        partita: `${m.homeTeam} vs ${m.awayTeam}`,
+                        giornata: m.giornata,
+                        status: m.status,
+                        result: m.result
+                    }))
+                });
+                
+                let giornatePresenti = new Set(allMatches.map(m => parseInt(m.giornata || '0', 10)));
+                console.log('Giornate presenti nel sistema:', Array.from(giornatePresenti).sort());
+
+                // Usa anche i risultati storici per determinare l'ultima giornata completata
+                const lastCompletedGiornata = determineLastCompletedGiornata();
+                console.log('Ultima giornata completata (combinata):', lastCompletedGiornata);
+
+                // La prossima giornata è quella successiva all'ultima completata
+                let newNextGiornata = lastCompletedGiornata + 1;
+                console.log('Prossima giornata disponibile:', newNextGiornata);
+                
+                // Filtra le partite aperte solo della prossima giornata
+                console.log('Inizio filtro partite aperte. Stato attuale:', {
+                    totalePartite: allMatches.length,
+                    prossimaGiornata: newNextGiornata,
+                    partitePerStato: allMatches.reduce((acc, m) => {
+                        acc[m.status || 'undefined'] = (acc[m.status || 'undefined'] || 0) + 1;
+                        return acc;
+                    }, {})
+                });
+                
+                let openMatchesData = allMatches.filter(m => {
+                    const isOpen = m.status === 'open' || !m.status;
+                    const giornataNum = parseInt(m.giornata || '0', 10);
+                    const isNextGiornata = giornataNum === newNextGiornata;
+                    
+                    console.log('Valutazione partita:', {
+                        partita: `${m.homeTeam} vs ${m.awayTeam}`,
+                        giornata: giornataNum,
+                        status: m.status,
+                        isOpen,
+                        isNextGiornata,
+                        prossimaGiornata: newNextGiornata,
+                        risultatoFiltro: isOpen && isNextGiornata
+                    });
+                    
+                    console.log('Analisi partita:', {
+                        partita: `${m.homeTeam} vs ${m.awayTeam}`,
+                        giornata: giornataNum,
+                        status: m.status,
+                        isOpen: isOpen,
+                        isNextGiornata: isNextGiornata,
+                        odds: m.odds
+                    });
+                    
+                    return isOpen && isNextGiornata;
+                });
+                
+                // Se il numero della prossima giornata è cambiato, aggiorna e reimposta il listener delle scommesse admin
+                if (newNextGiornata !== nextGiornataNumber) {
+                    nextGiornataNumber = newNextGiornata;
+                    if (isUserAdmin) {
+                        setupAdminBetsListener(nextGiornataNumber, allUsersForAdmin); // Passa la lista utenti
+                    }
+                }
+                
+                if (nextGiornataNumber === 0) { // Nessuna giornata aperta valida
+                    openMatchesData = []; // Nessuna partita da mostrare
+                }
+
+                // 3. FILTRA le partite per includere solo la PROSSIMA GIORNATA
+                openMatchesData = openMatchesData.filter(m => parseInt(m.giornata) === newNextGiornata);
+                console.log('Partite filtrate per la prossima giornata:', {
+                    giornata: newNextGiornata,
+                    partiteTrovate: openMatchesData.length,
+                    dettaglio: openMatchesData.map(m => ({
+                        partita: `${m.homeTeam} vs ${m.awayTeam}`,
+                        giornata: m.giornata,
+                        status: m.status
+                    }))
+                });
+
+                // 4. Recupera le scommesse dell'utente per queste partite
+                const betPromises = openMatchesData.map(match => {
+                    if (!userId) return Promise.resolve(match); // Se l'utente non è loggato, non cercare scommesse
+                    const betDocRef = doc(getGiornataBetsCollectionRef(), `${match.id}_${userId}`);
+                    return getDoc(betDocRef).then(betSnapshot => {
+                         if (betSnapshot.exists()) {
+                             match.userBet = betSnapshot.data();
+                         } else {
+                             match.userBet = { prediction: null, stake: 0 }; // Assicura che userBet sia sempre presente
+                         }
+                         return match;
+                    });
+                });
+                
+                openMatches = await Promise.all(betPromises);
+                
+                        // 5. Renderizza solo la prossima giornata
+                        renderOpenMatches(openMatches, nextGiornataNumber);
+                    } catch (error) {
+                        console.error("Errore nell'elaborazione del match snapshot:", error);
+                    }
+                }, (error) => console.error("Errore onSnapshot Matches:", error)));
+
+            // Listener per le scommesse piazzate dall'utente
+            const qUserBets = query(getGiornataBetsCollectionRef(), where('userId', '==', userId));
+            addUnsubscribe(
+                onSnapshot(qUserBets, (snapshot) => {
+                    userPlacedBets = snapshot.docs.map(doc => doc.data());
+                    renderPlacedBets(userPlacedBets);
+                }, (error) => console.error("Errore onSnapshot User Placed Bets:", error))
+            );
+
+            // Listener per Admin: Utenti e Scommesse
+            if (isUserAdmin) {
+                // Listener per tutti gli utenti
+                addUnsubscribe(
+                    onSnapshot(getUsersCollectionRef(), (snapshot) => {
+                        allUsersForAdmin = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                        renderAdminUsersList(allUsersForAdmin);
+                        // Passiamo anche la lista utenti per mappare i nomi
+                        // Se nextGiornataNumber è già noto, re-triggera il listener delle scommesse admin
+                        if (nextGiornataNumber > 0) { 
+                            setupAdminBetsListener(nextGiornataNumber, allUsersForAdmin); // Passa la lista utenti
+                        } 
+                    }, (error) => console.error("Errore onSnapshot Users:", error))
+                );
+            }
+        };
+
+        // --- Inizializzazione ---
+        window.onload = () => {
+            setupFirebase();
+        };
+    </script>
+</body>
+</html>
