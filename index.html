@@ -2780,29 +2780,27 @@ const renderStandings = () => {
             const predictedMatches = Object.keys(currentPredictions).length;
             const stake = parseInt(stakeInput.value, 10);
             
-            // Calcola la vincita potenziale
+            // Calcola la vincita potenziale (puntata × quota totale)
             let potentialWin = 0;
             let quotaTotale = 1;
             
             if (predictedMatches > 0 && stake > 0) {
-                const stakePerMatch = stake / requiredMatches;
-                
                 openMatches.forEach(match => {
                     const prediction = currentPredictions[match.id];
                     if (prediction && match.odds && match.odds[prediction]) {
                         const quota = parseFloat(match.odds[prediction]);
-                        const winForMatch = stakePerMatch * quota;
-                        potentialWin += winForMatch;
                         quotaTotale *= quota;
                     }
                 });
+                
+                // Vincita = Puntata totale × Quota totale
+                potentialWin = stake * quotaTotale;
             }
             
             // Aggiorna l'anteprima della vincita
             if (winPreviewEl) {
                 if (predictedMatches === requiredMatches && stake > 0) {
                     const profitto = potentialWin - stake;
-                    const quotaMedia = Math.pow(quotaTotale, 1/requiredMatches);
                     
                     winPreviewEl.innerHTML = `
                         <div class="bg-gray-800 border border-gray-700 rounded-lg p-4">
@@ -2813,8 +2811,8 @@ const renderStandings = () => {
                                     <p class="text-lg font-bold text-white">${stake.toFixed(2)} Cr</p>
                                 </div>
                                 <div>
-                                    <p class="text-xs text-gray-500">Quota Media</p>
-                                    <p class="text-lg font-bold text-blue-400">${quotaMedia.toFixed(2)}</p>
+                                    <p class="text-xs text-gray-500">Quota Totale</p>
+                                    <p class="text-lg font-bold text-blue-400">${quotaTotale.toFixed(2)}</p>
                                 </div>
                                 <div>
                                     <p class="text-xs text-gray-500">Vincita Potenziale</p>
@@ -2975,13 +2973,11 @@ const renderStandings = () => {
                      });
                  });
                  
-                 // Calcola quota media geometrica (radice n-esima del prodotto)
-                 const quotaMedia = Math.pow(totalOdds, 1 / predictions.length);
+                 // Calcola vincita potenziale (puntata * quota totale)
                  const potentialWinnings = totalStake * totalOdds;
                  
                  console.log('Dettagli scommessa:', {
                      predictions: predictions.length,
-                     quotaMedia: quotaMedia.toFixed(2),
                      quotaTotale: totalOdds.toFixed(2),
                      puntata: totalStake,
                      vincitaPotenziale: potentialWinnings.toFixed(2)
@@ -2995,7 +2991,6 @@ const renderStandings = () => {
                     giornata: currentGiornata,
                     predictions: predictions, // Array di tutte le predictions
                     stake: totalStake, // Puntata totale
-                    quotaMedia: quotaMedia, // Quota media
                     quotaTotale: totalOdds, // Quota totale moltiplicativa
                     potentialWinnings: potentialWinnings, // Vincita potenziale
                     timestamp: new Date().toISOString(),
@@ -3533,7 +3528,7 @@ const renderStandings = () => {
                                 <h5 class="font-semibold text-green-300 text-lg">${userName}</h5>
                                 <div class="text-sm text-gray-400">
                                     Puntata: <span class="font-bold text-blue-400">${bet.stake || 0}</span> crediti | 
-                                    Quota Media: <span class="font-bold text-blue-400">${bet.quotaMedia ? bet.quotaMedia.toFixed(2) : '-'}</span>
+                                    Quota Totale: <span class="font-bold text-blue-400">${bet.quotaTotale ? bet.quotaTotale.toFixed(2) : '-'}</span>
                                 </div>
                             </div>
                             <div class="text-right">
