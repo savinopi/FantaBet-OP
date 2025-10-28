@@ -18,6 +18,7 @@
     <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/savinopi/FantaBet-OP/main/esempio%20stemma%20lega.png">
     
     <!-- Meta tag per Web App -->
+    <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="FantaBet">
@@ -49,26 +50,83 @@
             z-index: -1;
         }
         
-        .card { background-color: rgba(15, 23, 42, 0.95); border-radius: 12px; border: 1px solid #1e3a8a; padding: 24px; box-shadow: 0 4px 6px rgba(37, 99, 235, 0.2); backdrop-filter: blur(10px); }
-        .btn-primary { background-color: #2563eb; color: white; padding: 10px 16px; border-radius: 8px; font-weight: 600; transition: background-color 0.2s; }
+        .card { background-color: rgba(15, 23, 42, 0.95); border-radius: 12px; border: 1px solid #1e3a8a; padding: 16px; box-shadow: 0 4px 6px rgba(37, 99, 235, 0.2); backdrop-filter: blur(10px); }
+        
+        /* Responsive padding for cards */
+        @media (min-width: 768px) {
+            .card { padding: 24px; }
+        }
+        
+        /* Pulsanti ottimizzati per mobile con minimo 44x44px (Apple HIG) */
+        .btn-primary { 
+            background-color: #2563eb; 
+            color: white; 
+            padding: 14px 20px; 
+            border-radius: 8px; 
+            font-weight: 600; 
+            font-size: 16px;
+            min-height: 44px;
+            transition: background-color 0.2s; 
+            cursor: pointer;
+            touch-action: manipulation;
+        }
         .btn-primary:hover { background-color: #1d4ed8; }
-        .btn-secondary { background-color: #1e3a8a; color: #e0e7ff; padding: 10px 16px; border-radius: 8px; font-weight: 600; transition: background-color 0.2s; }
+        
+        .btn-secondary { 
+            background-color: #1e3a8a; 
+            color: #e0e7ff; 
+            padding: 14px 20px; 
+            border-radius: 8px; 
+            font-weight: 600; 
+            font-size: 16px;
+            min-height: 44px;
+            transition: background-color 0.2s; 
+            cursor: pointer;
+            touch-action: manipulation;
+        }
         .btn-secondary:hover { background-color: #1e40af; }
-        .btn-danger { background-color: #dc2626; color: white; padding: 10px 16px; border-radius: 8px; font-weight: 600; transition: background-color 0.2s; }
+        
+        .btn-danger { 
+            background-color: #dc2626; 
+            color: white; 
+            padding: 14px 20px; 
+            border-radius: 8px; 
+            font-weight: 600; 
+            font-size: 16px;
+            min-height: 44px;
+            transition: background-color 0.2s; 
+            cursor: pointer;
+            touch-action: manipulation;
+        }
         .btn-danger:hover { background-color: #b91c1c; }
+        
+        /* Input ottimizzati per mobile */
         input[type="number"], input[type="text"], input[type="email"], input[type="password"], select, input[type="date"] {
             background-color: #0f172a;
             border: 1px solid #1e3a8a;
             color: #e0e7ff;
-            padding: 10px;
+            padding: 12px;
             border-radius: 6px;
             width: 100%;
+            font-size: 16px; /* Previene zoom automatico su iOS */
+            min-height: 44px;
         }
         .bet-option {
             cursor: pointer;
             transition: all 0.2s;
             border: 2px solid transparent;
             background-color: #1e293b;
+            padding: 14px;
+            min-height: 50px;
+            font-size: 15px;
+            touch-action: manipulation;
+        }
+        
+        @media (min-width: 768px) {
+            .bet-option {
+                padding: 12px;
+                font-size: 14px;
+            }
         }
         .bet-option:hover:not(.pointer-events-none) {
             transform: translateY(-2px);
@@ -96,11 +154,40 @@
         }
         /* Stile specifico per l'intestazione della giornata */
         .giornata-header th {
-            padding: 12px 16px;
+            padding: 8px 12px;
             text-align: left;
-            font-size: 1rem;
+            font-size: 0.875rem;
             color: #60a5fa;
             border-bottom: 2px solid #1e3a8a;
+        }
+        
+        @media (min-width: 768px) {
+            .giornata-header th {
+                padding: 12px 16px;
+                font-size: 1rem;
+            }
+        }
+        
+        /* Ottimizzazione tabelle per mobile */
+        table {
+            font-size: 0.875rem;
+        }
+        
+        @media (min-width: 768px) {
+            table {
+                font-size: 1rem;
+            }
+        }
+        
+        table th, table td {
+            padding: 8px 6px;
+            white-space: nowrap;
+        }
+        
+        @media (min-width: 768px) {
+            table th, table td {
+                padding: 12px 16px;
+            }
         }
 
         /* Stile per la modale di conferma */
@@ -115,15 +202,23 @@
             justify-content: center;
             align-items: center;
             z-index: 9999;
+            padding: 16px;
         }
         .confirm-modal-content {
             background-color: #0f172a;
-            padding: 24px;
+            padding: 20px;
             border-radius: 12px;
-            width: 400px;
+            width: 100%;
+            max-width: 400px;
             box-shadow: 0 10px 20px rgba(37, 99, 235, 0.3);
             border: 1px solid #1e3a8a;
             text-align: center;
+        }
+        
+        @media (min-width: 768px) {
+            .confirm-modal-content {
+                padding: 24px;
+            }
         }
         
         /* Modifica per centrare i messaggi di notifica */
@@ -138,43 +233,139 @@
             justify-content: center;
             align-items: center;
             z-index: 9999;
+            padding: 16px;
+        }
+        #message-box:not(.hidden) {
+            display: flex;
+        }
+        
+        /* Progress bar container */
+        #progress-bar-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(10, 22, 40, 0.9);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            padding: 16px;
+        }
+        
+        #progress-bar-container:not(.hidden) {
+            display: flex;
+        }
+        
+        /* Menu utente mobile */
+        #user-menu-toggle {
+            transition: transform 0.2s;
+        }
+        
+        #user-menu-dropdown {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+        
+        #user-menu-dropdown.open {
+            max-height: 400px;
         }
     </style>
-</head>
-<body class="min-h-screen p-4 sm:p-8">
+    
+    <script>
+        // Funzione per il menu utente - definita prima del body
+        function toggleUserMenu() {
+            const dropdown = document.getElementById('user-menu-dropdown');
+            const button = document.getElementById('user-menu-toggle');
+            
+            if (dropdown && button) {
+                if (dropdown.classList.contains('open')) {
+                    dropdown.classList.remove('open');
+                    button.style.transform = 'rotate(0deg)';
+                } else {
+                    dropdown.classList.add('open');
+                    button.style.transform = 'rotate(90deg)';
+                }
+            }
+        }
+        
+        // Chiudi il menu quando si clicca fuori - si attiva dopo il caricamento del DOM
+        document.addEventListener('DOMContentLoaded', () => {
+            document.addEventListener('click', (event) => {
+                const dropdown = document.getElementById('user-menu-dropdown');
+                const button = document.getElementById('user-menu-toggle');
+                
+                if (dropdown && button && !dropdown.contains(event.target) && !button.contains(event.target)) {
+                    dropdown.classList.remove('open');
+                    button.style.transform = 'rotate(0deg)';
+                }
+            });
+        });
+    </script>
 
-    <div id="auth-status" class="fixed top-2 right-2 text-sm text-green-400">Caricamento...</div>
-    <!-- Rimosso l'input Crediti Bonus qui -->
-    <div id="user-info" class="fixed top-8 right-2 text-xs text-gray-500 flex flex-col items-end space-y-2">
-        <span id="user-display-name"></span>
-        <span id="user-id-display"></span>
-        <span id="user-credits-display" class="mt-1 px-2 py-1 bg-yellow-900 rounded-full text-yellow-300 font-bold text-sm">Crediti Bonus: 100</span>
-        <span id="user-role-display" class="mt-1 px-2 py-1 bg-blue-900 rounded-full text-blue-300 font-bold text-sm"></span>
-        <button id="logout-button" onclick="handleLogout()" class="btn-secondary px-3 py-1 text-xs hidden">Logout</button>
+</head>
+<body class="min-h-screen p-3 sm:p-6 md:p-8">
+
+    <!-- Menu utente compatto -->
+    <div class="fixed top-2 right-2 z-50">
+        <!-- Pulsante menu hamburger -->
+        <button id="user-menu-toggle" onclick="toggleUserMenu()" class="bg-gray-900/90 backdrop-blur-sm border border-blue-500/50 rounded-lg p-2 sm:p-3 shadow-lg hover:bg-gray-800 transition-all">
+            <svg class="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+            </svg>
+        </button>
+        
+        <!-- Dropdown menu -->
+        <div id="user-menu-dropdown" class="absolute top-14 right-0 bg-gray-900/95 backdrop-blur-sm border border-blue-500/50 rounded-lg shadow-xl overflow-hidden min-w-[250px]">
+            <div class="p-4 space-y-3">
+                <div id="auth-status" class="text-xs text-green-400 text-center pb-2 border-b border-gray-700">Caricamento...</div>
+                
+                <div class="space-y-2">
+                    <div id="user-display-name" class="text-sm text-gray-300 font-semibold"></div>
+                    <div id="user-id-display" class="text-xs text-gray-500"></div>
+                </div>
+                
+                <div class="flex flex-col space-y-2 pt-2 border-t border-gray-700">
+                    <div id="user-credits-display" class="px-3 py-2 bg-yellow-900/50 rounded-lg text-yellow-300 font-bold text-sm text-center border border-yellow-700/50">
+                        Crediti: 100
+                    </div>
+                    <div id="user-role-display" class="px-3 py-2 bg-blue-900/50 rounded-lg text-blue-300 font-bold text-sm text-center border border-blue-700/50"></div>
+                </div>
+                
+                <button id="logout-button" onclick="handleLogout()" class="w-full btn-danger text-sm py-2 hidden mt-3">
+                    <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                    </svg>
+                    Logout
+                </button>
+            </div>
+        </div>
     </div>
     
     <div class="max-w-6xl mx-auto">
-        <h1 class="text-4xl font-bold mb-8 text-center text-green-400">
+        <h1 class="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 sm:mb-6 md:mb-8 text-center text-green-400">
             Fantabet OP
         </h1>
         <p class="text-center mb-10 text-gray-400">Gioca e scommetti sulle partite della lega fantacalcio Orecchiette e Prosciutto</p>
 
         <!-- Sezione Login (mostrata se non autenticato) -->
-        <div id="login-container" class="max-w-md mx-auto card p-8 hidden">
-            <h2 id="auth-title" class="text-2xl font-semibold mb-6 text-center">Accedi a Fantabet OP</h2>
+        <div id="login-container" class="max-w-md mx-auto card p-6 sm:p-8 hidden">
+            <h2 id="auth-title" class="text-xl sm:text-2xl font-semibold mb-4 sm:mb-6 text-center">Accedi a Fantabet OP</h2>
             <div class="space-y-4">
                 <div class="flex flex-col">
-                    <label for="auth-email" class="text-sm text-gray-400 mb-1">Email</label>
+                    <label for="auth-email" class="text-sm sm:text-base text-gray-400 mb-1">Email</label>
                     <input type="email" id="auth-email" placeholder="Inserisci la tua email" required>
                 </div>
                 <div class="flex flex-col">
-                    <label for="auth-password" class="text-sm text-gray-400 mb-1">Password</label>
+                    <label for="auth-password" class="text-sm sm:text-base text-gray-400 mb-1">Password</label>
                     <input type="password" id="auth-password" placeholder="Inserisci la tua password" required>
                 </div>
             </div>
             <div class="mt-6 flex flex-col space-y-3">
-                <button onclick="handleLoginRegister(true)" class="btn-primary" id="login-button-ui">Accedi</button>
-                <button onclick="handleLoginRegister(false)" class="btn-secondary" id="register-button-ui">Registrati</button>
+                <button onclick="handleLoginRegister(true)" class="btn-primary w-full" id="login-button-ui">Accedi</button>
+                <button onclick="handleLoginRegister(false)" class="btn-secondary w-full" id="register-button-ui">Registrati</button>
             </div>
         </div>
         
@@ -182,29 +373,29 @@
            <!-- Modale di Conferma Cancellazione -->
             <div id="confirm-modal" class="confirm-modal hidden">
                 <div class="confirm-modal-content">
-                    <p id="confirm-text" class="text-lg mb-6 font-semibold text-red-400">Sei sicuro di voler cancellare TUTTI i dati storici, squadre, partite e scommesse? Questa azione è irreversibile.</p>
-                    <div class="flex justify-center space-x-4">
-                        <button onclick="document.getElementById('confirm-modal').classList.add('hidden');" class="btn-secondary">Annulla</button>
-                        <button onclick="clearHistoricResultsAndTeams(true)" class="btn-danger">Conferma Cancellazione Totale</button>
+                    <p id="confirm-text" class="text-base sm:text-lg mb-4 sm:mb-6 font-semibold text-red-400">Sei sicuro di voler cancellare TUTTI i dati storici, squadre, partite e scommesse? Questa azione è irreversibile.</p>
+                    <div class="flex flex-col sm:flex-row justify-center space-y-3 sm:space-y-0 sm:space-x-4">
+                        <button onclick="document.getElementById('confirm-modal').classList.add('hidden');" class="btn-secondary w-full sm:w-auto">Annulla</button>
+                        <button onclick="clearHistoricResultsAndTeams(true)" class="btn-danger w-full sm:w-auto">Conferma Cancellazione Totale</button>
                     </div>
                 </div>
             </div>
         <div id="main-app-container" class="hidden">
             <!-- Sezione Messaggi (Modale) - CENTRATO -->
             <div id="message-box" class="hidden">
-                <div class="card p-6 w-96 text-center">
-                    <p id="message-text" class="text-lg mb-4"></p>
-                    <button onclick="hideMessageBox()" class="btn-primary">OK</button>
+                <div class="card p-4 sm:p-6 w-11/12 sm:w-96 max-w-md text-center">
+                    <p id="message-text" class="text-base sm:text-lg mb-4"></p>
+                    <button onclick="hideMessageBox()" class="btn-primary w-full sm:w-auto">OK</button>
                 </div>
             </div>
 
             <!-- Barra di Progresso -->
             <div id="progress-bar-container" class="hidden">
-                <div class="card p-6 w-96">
-                    <h3 id="progress-title" class="text-lg font-bold mb-4 text-center">Elaborazione in corso...</h3>
+                <div class="card p-4 sm:p-6 w-11/12 sm:w-96 max-w-md">
+                    <h3 id="progress-title" class="text-base sm:text-lg font-bold mb-4 text-center">Elaborazione in corso...</h3>
                     <div class="mb-2">
-                        <div class="w-full bg-gray-700 rounded-full h-6 overflow-hidden">
-                            <div id="progress-bar-fill" class="bg-blue-500 h-6 transition-all duration-300 flex items-center justify-center text-white text-sm font-bold" style="width: 0%">
+                        <div class="w-full bg-gray-700 rounded-full h-8 sm:h-6 overflow-hidden">
+                            <div id="progress-bar-fill" class="bg-blue-500 h-8 sm:h-6 transition-all duration-300 flex items-center justify-center text-white text-sm font-bold" style="width: 0%">
                                 <span id="progress-percentage">0%</span>
                             </div>
                         </div>
@@ -221,83 +412,104 @@
             <div id="app-content-area">
                 
                 <!-- HOME DASHBOARD (Visibile dopo il login) -->
-                <div id="home-container" class="max-w-4xl mx-auto space-y-6">
-                    <div class="card p-8 text-center space-y-6">
+                <div id="home-container" class="max-w-4xl mx-auto space-y-4 sm:space-y-6">
+                    <div class="card p-4 sm:p-6 md:p-8 text-center space-y-4 sm:space-y-6">
                         <!-- Logo della Lega -->
-                        <div class="flex justify-center mb-6">
-                            <img src="https://raw.githubusercontent.com/savinopi/FantaBet-OP/main/esempio%20stemma%20lega.png" alt="Logo Fantabet" class="w-32 h-32 object-contain" onerror="this.style.display='none'">
+                        <div class="flex justify-center mb-4 sm:mb-6">
+                            <img src="https://raw.githubusercontent.com/savinopi/FantaBet-OP/main/esempio%20stemma%20lega.png" alt="Logo Fantabet" class="w-24 h-24 sm:w-32 sm:h-32 object-contain" onerror="this.style.display='none'">
                         </div>
                         
-                        <h2 class="text-3xl font-bold mb-4">Benvenuto Ludopatico! Scegli la tua area.</h2>
+                        <h2 class="text-xl sm:text-2xl md:text-3xl font-bold mb-3 sm:mb-4">Benvenuto Ludopatico! Scegli la tua area.</h2>
 
-                        <div class="space-y-3">
-                            <button onclick="setAppView('betting')" class="w-full py-4 text-xl btn-primary shadow">
-                                <svg class="w-6 h-6 inline mr-2" fill="currentColor" viewBox="0 0 512 512">
+                        <div class="space-y-3 sm:space-y-4">
+                            <button onclick="setAppView('betting')" class="w-full py-4 sm:py-5 text-lg sm:text-xl btn-primary shadow-lg">
+                                <svg class="w-5 h-5 sm:w-6 sm:h-6 inline mr-2" fill="currentColor" viewBox="0 0 512 512">
                                     <path d="M177.1 228.6L207.9 320h96.5l29.62-91.38L256 172.1L177.1 228.6zM255.1 0C114.6 0 .0001 114.6 .0001 256S114.6 512 256 512s255.1-114.6 255.1-255.1S397.4 0 255.1 0zM416.6 246.8L381.9 214l-22.44 62.32l-22.62 7.816l22.38-61.97l-34.71-32.81l34.71-32.81l-22.38-61.97l22.62 7.816L381.9 166.7l34.71-32.81c-34.46-37.46-81.03-63.03-134.5-69.58l-8.066 75.92l-22.44 7.891L260.1 90.16L273.7 13.36C268.5 13.12 263.3 12.1 258.1 12.1c-6.047 0-11.1 .4766-17.83 .8906l12.36 76.83l8.531 58.02L238.7 139.8l-7.844-75.15C176.4 71.23 129.8 96.8 95.35 134.2l34.71 32.81l-22.38 61.97l22.62-7.816L152.7 166.7l34.71 32.81l-34.71 32.81l22.38 61.97l-22.62-7.816L130.1 214L95.35 246.8C108.7 283.9 134.2 314.3 168.8 334.7l7.775-75.43l22.38-7.922l-8.119 58.18l-12.49 76.62c5.453 .2969 10.86 .875 16.51 .875c6.203 0 12.31-.5781 18.43-1.016l-12.76-77.83l-8.205-58.29l22.46 8.012l7.559 75.75c54.25-6.549 101.6-32.45 136.1-69.91L324.2 231.8l22.38-61.97L323.9 177.7L301.5 214L266.8 246.8l34.71 32.81l22.38 61.97l-22.62-7.816l-7.504-75.11l-22.5-8.066l8.131 58.44l12.69 77.74c54.84-6.699 102.4-32.87 137.1-70.55L416.6 246.8z"/>
                                 </svg>
                                 Vai a Scommesse
                             </button>
 
                             <!-- Bottone Admin (invisibile per default, checkAdminStatus ne gestisce la visibilità) -->
-                            <button id="admin-button-home" onclick="setAppView('admin')" class="w-full py-3 text-lg btn-secondary hidden">
-                                <svg class="w-5 h-5 inline mr-2" fill="currentColor" viewBox="0 0 20 20">
+                            <button id="admin-button-home" onclick="setAppView('admin')" class="w-full py-4 text-base sm:text-lg btn-secondary hidden">
+                                <svg class="w-4 h-4 sm:w-5 sm:h-5 inline mr-2" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd"></path>
                                 </svg>
                                 Area Admin
                             </button>
 
                             <!-- Profilo utente -->
-                            <button onclick="setAppView('profile')" class="w-full py-3 text-lg btn-secondary">
-                                <svg class="w-5 h-5 inline mr-2" fill="currentColor" viewBox="0 0 20 20">
+                            <button onclick="setAppView('profile')" class="w-full py-4 text-base sm:text-lg btn-secondary">
+                                <svg class="w-4 h-4 sm:w-5 sm:h-5 inline mr-2" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path>
                                 </svg>
                                 Profilo
                             </button>
 
                             <!-- Mostra i risultati storici -->
-                            <button onclick="setAppView('historic_results')" class="w-full py-3 text-lg btn-secondary">
-                                <svg class="w-5 h-5 inline mr-2" fill="currentColor" viewBox="0 0 20 20">
+                            <button onclick="setAppView('historic_results')" class="w-full py-4 text-base sm:text-lg btn-secondary">
+                                <svg class="w-4 h-4 sm:w-5 sm:h-5 inline mr-2" fill="currentColor" viewBox="0 0 20 20">
                                     <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"></path>
                                     <path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" clip-rule="evenodd"></path>
                                 </svg>
                                 Risultati Storici
                             </button>
+
+                            <!-- Mostra le Rose -->
+                            <button onclick="setAppView('squads')" class="w-full py-4 text-base sm:text-lg btn-secondary">
+                                <svg class="w-4 h-4 sm:w-5 sm:h-5 inline mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z"></path>
+                                </svg>
+                                Rose
+                            </button>
                         </div>
                     </div>
                     
                     <!-- Classifica -->
-                    <div class="card p-6">
-                        <h3 class="text-2xl font-bold mb-4 text-yellow-500 flex items-center">
-                            <svg class="w-8 h-8 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                    <div class="card p-4 sm:p-6">
+                        <h3 class="text-xl sm:text-2xl font-bold mb-3 sm:mb-4 text-yellow-500 flex items-center">
+                            <svg class="w-6 h-6 sm:w-8 sm:h-8 mr-2" fill="currentColor" viewBox="0 0 20 20">
                                 <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"></path>
                                 <path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" clip-rule="evenodd"></path>
                             </svg>
                             Classifica
                         </h3>
-                        <div id="standings-container" class="overflow-x-auto">
-                            <p class="text-gray-500 text-center py-4">Carica i risultati per visualizzare la classifica</p>
+                        <div id="standings-container" class="overflow-x-auto -mx-4 sm:mx-0">
+                            <p class="text-sm sm:text-base text-gray-500 text-center py-4">Carica i risultati per visualizzare la classifica</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Statistiche -->
+                    <div class="card p-4 sm:p-6">
+                        <h3 class="text-xl sm:text-2xl font-bold mb-3 sm:mb-4 text-purple-500 flex items-center">
+                            <svg class="w-6 h-6 sm:w-8 sm:h-8 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z"></path>
+                            </svg>
+                            Statistiche
+                        </h3>
+                        <div id="statistics-container" class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+                            <p class="text-sm sm:text-base text-gray-500 text-center py-4 col-span-full">Carica i risultati per visualizzare le statistiche</p>
                         </div>
                     </div>
                 </div>
 
                 <!-- RISULTATI STORICI come SIBLING della HOME (prima era annidato dentro home --> 
-                <div id="historic-results-container" class="max-w-6xl mx-auto card p-6 hidden">
-                    <div class="flex justify-between items-center mb-4">
-                        <h2 class="text-2xl font-semibold flex items-center">
-                            <svg class="w-6 h-6 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                <div id="historic-results-container" class="max-w-6xl mx-auto card p-4 sm:p-6 hidden">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 space-y-3 sm:space-y-0">
+                        <h2 class="text-xl sm:text-2xl font-semibold flex items-center">
+                            <svg class="w-5 h-5 sm:w-6 sm:h-6 mr-2" fill="currentColor" viewBox="0 0 20 20">
                                 <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"></path>
                                 <path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" clip-rule="evenodd"></path>
                             </svg>
                             Risultati Storici
                         </h2>
-                        <div class="flex space-x-2">
-                            <button onclick="setAppView('home')" class="btn-secondary">
+                        <div class="flex space-x-2 w-full sm:w-auto">
+                            <button onclick="setAppView('home')" class="btn-secondary flex-1 sm:flex-none px-3 py-2">
                                 <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
                                 </svg>
                                 Home
                             </button>
-                            <button onclick="setAppView(currentView)" class="btn-secondary">
+                            <button onclick="setAppView(currentView)" class="btn-secondary flex-1 sm:flex-none px-3 py-2">
                                 <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
                                 </svg>
@@ -325,6 +537,45 @@
                                 <!-- I risultati storici verranno inseriti qui tramite JavaScript -->
                             </tbody>
                         </table>
+                    </div>
+                </div>
+
+                <!-- SEZIONE ROSE - Visualizzazione rose delle squadre -->
+                <div id="squads-container" class="max-w-6xl mx-auto card p-4 sm:p-6 hidden">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 space-y-3 sm:space-y-0">
+                        <h2 class="text-xl sm:text-2xl font-semibold flex items-center">
+                            <svg class="w-5 h-5 sm:w-6 sm:h-6 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z"></path>
+                            </svg>
+                            Rose delle Squadre
+                        </h2>
+                        <div class="flex space-x-2 w-full sm:w-auto">
+                            <button onclick="setAppView('home')" class="btn-secondary flex-1 sm:flex-none px-3 py-2">
+                                <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+                                </svg>
+                                Home
+                            </button>
+                            <button onclick="loadSquadsData()" class="btn-secondary flex-1 sm:flex-none px-3 py-2">
+                                <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                                </svg>
+                                Aggiorna
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Filtro squadra -->
+                    <div class="mb-4">
+                        <label for="squad-filter" class="block text-sm font-medium text-gray-300 mb-2">Filtra per squadra:</label>
+                        <select id="squad-filter" class="w-full bg-gray-700 border border-gray-600 rounded px-4 py-2 text-white" onchange="filterSquadView()">
+                            <option value="all">Tutte le squadre</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Container per le rose -->
+                    <div id="squads-view-container">
+                        <p class="text-sm sm:text-base text-gray-500 text-center py-4">Caricamento rose in corso...</p>
                     </div>
                 </div>
 
@@ -447,6 +698,25 @@
                             <h4 class="text-lg font-semibold mb-4 text-green-400">Dati Caricati</h4>
                             <div id="csv-data-container" class="overflow-x-auto">
                                 <p class="text-gray-500">Nessun dato da visualizzare. Carica un file CSV.</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Sezione Caricamento Rose -->
+                        <div class="border-t border-gray-700 pt-6 mt-6">
+                            <h4 class="text-lg font-semibold mb-4 text-purple-400">Caricamento Rose Squadre</h4>
+                            <div class="flex items-center space-x-4 mb-4">
+                                <label for="squads-csv-file-input" class="sr-only">Seleziona file CSV Rose</label>
+                                <input type="file" id="squads-csv-file-input" class="hidden" onchange="handleSquadsFileSelect()" accept=".csv" aria-label="Seleziona file CSV Rose">
+                                <button onclick="triggerSquadsFileInput()" class="btn-primary">Seleziona File Rose (.csv)</button>
+                                <button id="upload-squads-button" onclick="confirmSquadsUpload()" class="btn-secondary" disabled>Carica Rose</button>
+                                <span id="squads-file-name-display" class="text-gray-400" aria-live="polite">Nessun file selezionato.</span>
+                            </div>
+                            <p class="text-xs text-gray-500 mb-4">
+                                Il file CSV deve avere il delimitatore ';' e il seguente tracciato: Squadra;Ruolo;Calciatore;Squadra (Serie A);Costo.
+                                Verranno caricate tutte le rose con i calciatori di ogni squadra.
+                            </p>
+                            <div id="squads-data-container" class="overflow-x-auto">
+                                <p class="text-gray-500 text-sm">Nessun dato rose caricato.</p>
                             </div>
                         </div>
                     </div>
@@ -730,7 +1000,8 @@
                 placed_bets: 'placed-bets-area',
                 admin: 'admin-panel-main',
                 profile: 'profile-area',
-                historic_results: 'historic-results-container'
+                historic_results: 'historic-results-container',
+                squads: 'squads-container'
             };
 
             console.log('Container disponibili:', containers);
@@ -767,6 +1038,10 @@
                     if (view === 'profile') {
                         renderProfileArea();
                     }
+                    // Se stiamo passando alla sezione rose, carica i dati
+                    if (view === 'squads') {
+                        loadSquadsData();
+                    }
                 }
             }
 
@@ -785,7 +1060,7 @@
             }
         };
 
-        const hideMessageBox = () => {
+        window.hideMessageBox = () => {
             const messageBoxElement = document.getElementById('message-box');
             if (messageBoxElement) {
                 messageBoxElement.classList.add('hidden');
@@ -1105,6 +1380,8 @@
         // Usa una collezione per le scommesse per singola giornata
         const getGiornataBetsCollectionRef = () => collection(db, 'fantabet_giornata_bets'); 
         const getUsersCollectionRef = () => collection(db, 'fantabet_users');
+        const getSquadsCollectionRef = () => collection(db, 'fantabet_squads'); // Collection per le rose
+        const getPlayersCollectionRef = () => collection(db, 'fantabet_players'); // Collection per i calciatori
         
         // --- Gestione Teams e UI ---
 
@@ -2223,6 +2500,390 @@
             });
         };
 
+        // --- Gestione Caricamento Rose da CSV ---
+        
+        window.triggerSquadsFileInput = () => {
+            document.getElementById('squads-csv-file-input').click();
+        };
+
+        window.handleSquadsFileSelect = () => {
+            const fileInput = document.getElementById('squads-csv-file-input');
+            const file = fileInput?.files[0];
+            
+            const fileNameDisplay = document.getElementById('squads-file-name-display');
+            const uploadButton = document.getElementById('upload-squads-button');
+
+            if (file) {
+                if (fileNameDisplay) fileNameDisplay.textContent = file.name;
+                if (uploadButton) {
+                    uploadButton.disabled = false;
+                    uploadButton.classList.remove('btn-secondary');
+                    uploadButton.classList.add('btn-primary');
+                }
+            } else {
+                if (fileNameDisplay) fileNameDisplay.textContent = 'Nessun file selezionato.';
+                if (uploadButton) {
+                    uploadButton.disabled = true;
+                    uploadButton.classList.add('btn-secondary');
+                    uploadButton.classList.remove('btn-primary');
+                }
+            }
+        };
+
+        window.confirmSquadsUpload = async () => {
+            if (!isUserAdmin) {
+                messageBox("Solo gli admin possono caricare le rose.");
+                return;
+            }
+
+            const fileInput = document.getElementById('squads-csv-file-input');
+            const file = fileInput?.files[0];
+
+            if (!file) {
+                messageBox("Seleziona un file prima di caricarlo.");
+                return;
+            }
+
+            if (confirm("Sei sicuro di voler caricare le rose? I dati esistenti verranno sovrascritti.")) {
+                processSquadsFile();
+            }
+        };
+
+        window.processSquadsFile = async () => {
+            if (!isUserAdmin) return;
+
+            const fileInput = document.getElementById('squads-csv-file-input');
+            const file = fileInput?.files[0];
+
+            if (!file) {
+                messageBox("Nessun file selezionato.");
+                return;
+            }
+
+            showProgressBar('Caricamento rose in corso...');
+
+            const reader = new FileReader();
+            reader.onload = async (e) => {
+                try {
+                    const text = e.target.result;
+                    const lines = text.split('\n').map(line => line.trim()).filter(line => line);
+                    
+                    if (lines.length === 0) {
+                        hideProgressBar();
+                        messageBox("Il file CSV è vuoto.");
+                        return;
+                    }
+
+                    // Parse CSV: Squadra;Ruolo;Calciatore;Squadra (Serie A);Costo
+                    const players = [];
+                    const squads = new Map(); // squadra -> array di giocatori
+                    
+                    let processedLines = 0;
+                    
+                    for (const line of lines) {
+                        const columns = line.split(';').map(col => col.trim());
+                        
+                        // Salta righe vuote o incomplete
+                        if (columns.length < 5) continue;
+                        if (!columns[0] || !columns[1] || !columns[2]) continue;
+                        
+                        const squadName = columns[0];
+                        const role = columns[1];
+                        const playerName = columns[2];
+                        const serieATeam = columns[3];
+                        const cost = parseFloat(columns[4]) || 0;
+                        
+                        // Salta intestazioni o righe non valide
+                        if (role === 'Ruolo' || squadName === 'Squadra') continue;
+                        if (!squadName || squadName.includes('Crediti Residui')) continue;
+                        
+                        const playerData = {
+                            squadName: squadName,
+                            role: role,
+                            playerName: playerName,
+                            serieATeam: serieATeam,
+                            cost: cost
+                        };
+                        
+                        players.push(playerData);
+                        
+                        // Raggruppa per squadra
+                        if (!squads.has(squadName)) {
+                            squads.set(squadName, []);
+                        }
+                        squads.get(squadName).push(playerData);
+                        
+                        processedLines++;
+                        
+                        // Aggiorna progress bar
+                        if (processedLines % 10 === 0) {
+                            const progress = Math.min(50, (processedLines / lines.length) * 50);
+                            updateProgress(progress, `Processate ${processedLines} righe...`);
+                        }
+                    }
+                    
+                    console.log('Rose parsate:', { 
+                        totaleGiocatori: players.length, 
+                        numeroSquadre: squads.size 
+                    });
+                    
+                    updateProgress(50, 'Salvataggio giocatori in corso...');
+                    
+                    // Salva i giocatori in Firestore
+                    const playersCollection = getPlayersCollectionRef();
+                    
+                    // Prima cancella tutti i giocatori esistenti
+                    const existingPlayersSnapshot = await getDocs(playersCollection);
+                    const deletePromises = existingPlayersSnapshot.docs.map(doc => deleteDoc(doc.ref));
+                    await Promise.all(deletePromises);
+                    
+                    updateProgress(60, 'Salvataggio nuovi giocatori...');
+                    
+                    // Salva i nuovi giocatori
+                    let savedCount = 0;
+                    for (const player of players) {
+                        await addDoc(playersCollection, player);
+                        savedCount++;
+                        
+                        if (savedCount % 20 === 0) {
+                            const progress = 60 + (savedCount / players.length) * 30;
+                            updateProgress(progress, `Salvati ${savedCount}/${players.length} giocatori...`);
+                        }
+                    }
+                    
+                    updateProgress(90, 'Salvataggio informazioni squadre...');
+                    
+                    // Salva le informazioni aggregate per squadra
+                    const squadsCollection = getSquadsCollectionRef();
+                    
+                    // Cancella squadre esistenti
+                    const existingSquadsSnapshot = await getDocs(squadsCollection);
+                    const deleteSquadsPromises = existingSquadsSnapshot.docs.map(doc => deleteDoc(doc.ref));
+                    await Promise.all(deleteSquadsPromises);
+                    
+                    // Salva nuove squadre
+                    for (const [squadName, squadPlayers] of squads.entries()) {
+                        const squadData = {
+                            name: squadName,
+                            playerCount: squadPlayers.length,
+                            totalCost: squadPlayers.reduce((sum, p) => sum + p.cost, 0),
+                            roles: {
+                                P: squadPlayers.filter(p => p.role === 'P').length,
+                                D: squadPlayers.filter(p => p.role === 'D').length,
+                                C: squadPlayers.filter(p => p.role === 'C').length,
+                                A: squadPlayers.filter(p => p.role === 'A').length
+                            }
+                        };
+                        await addDoc(squadsCollection, squadData);
+                    }
+                    
+                    updateProgress(100, 'Completato!');
+                    
+                    // Mostra riepilogo
+                    renderSquadsData(squads);
+                    
+                    hideProgressBar();
+                    messageBox(`Rose caricate con successo!\n\nSquadre: ${squads.size}\nGiocatori totali: ${players.length}`);
+                    
+                } catch (error) {
+                    console.error('Errore durante il processamento del file rose:', error);
+                    hideProgressBar();
+                    messageBox("Errore durante il caricamento: " + error.message);
+                }
+            };
+
+            reader.onerror = () => {
+                hideProgressBar();
+                messageBox("Errore nella lettura del file.");
+            };
+
+            reader.readAsText(file, 'UTF-8');
+        };
+
+        const renderSquadsData = (squadsMap) => {
+            const container = document.getElementById('squads-data-container');
+            if (!container) return;
+            
+            let html = '<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">';
+            
+            for (const [squadName, players] of squadsMap.entries()) {
+                const totalCost = players.reduce((sum, p) => sum + p.cost, 0);
+                const roles = {
+                    P: players.filter(p => p.role === 'P').length,
+                    D: players.filter(p => p.role === 'D').length,
+                    C: players.filter(p => p.role === 'C').length,
+                    A: players.filter(p => p.role === 'A').length
+                };
+                
+                html += `
+                    <div class="bg-gray-800 border border-purple-700/50 rounded-lg p-4">
+                        <h5 class="text-lg font-bold text-purple-400 mb-2">${squadName}</h5>
+                        <div class="text-sm text-gray-300 space-y-1">
+                            <p>Giocatori: <span class="font-bold">${players.length}</span></p>
+                            <p>Costo totale: <span class="font-bold text-yellow-400">${totalCost}</span></p>
+                            <div class="flex justify-between mt-2 pt-2 border-t border-gray-700">
+                                <span>P: ${roles.P}</span>
+                                <span>D: ${roles.D}</span>
+                                <span>C: ${roles.C}</span>
+                                <span>A: ${roles.A}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            html += '</div>';
+            container.innerHTML = html;
+        };
+
+        // === FUNZIONI PER LA VISUALIZZAZIONE PUBBLICA DELLE ROSE ===
+        
+        window.loadSquadsData = async () => {
+            try {
+                const playersCollection = getPlayersCollectionRef();
+                const snapshot = await getDocs(playersCollection);
+                
+                if (snapshot.empty) {
+                    document.getElementById('squads-view-container').innerHTML = '<p class="text-center text-gray-500 py-8">Nessuna rosa caricata. Contatta l\'admin per il caricamento.</p>';
+                    return;
+                }
+                
+                // Raggruppa i giocatori per squadra
+                const squadsMap = new Map();
+                snapshot.forEach(doc => {
+                    const player = doc.data();
+                    if (!squadsMap.has(player.squadName)) {
+                        squadsMap.set(player.squadName, []);
+                    }
+                    squadsMap.get(player.squadName).push(player);
+                });
+                
+                // Popola il filtro squadre
+                const filterSelect = document.getElementById('squad-filter');
+                filterSelect.innerHTML = '<option value="all">Tutte le squadre</option>';
+                Array.from(squadsMap.keys()).sort().forEach(squadName => {
+                    filterSelect.innerHTML += `<option value="${squadName}">${squadName}</option>`;
+                });
+                
+                // Salva i dati globalmente per il filtro
+                window.currentSquadsData = squadsMap;
+                
+                // Mostra tutte le squadre
+                renderSquadsView(squadsMap);
+                
+            } catch (error) {
+                console.error('Errore nel caricamento delle rose:', error);
+                showMessage('Errore nel caricamento delle rose.', 'error');
+            }
+        };
+        
+        const renderSquadsView = (squadsMap) => {
+            const container = document.getElementById('squads-view-container');
+            if (!container) return;
+            
+            let html = '<div class="space-y-6">';
+            
+            // Ordina le squadre alfabeticamente
+            const sortedSquads = Array.from(squadsMap.entries()).sort((a, b) => a[0].localeCompare(b[0]));
+            
+            for (const [squadName, players] of sortedSquads) {
+                const totalCost = players.reduce((sum, p) => sum + p.cost, 0);
+                const roles = {
+                    P: players.filter(p => p.role === 'P'),
+                    D: players.filter(p => p.role === 'D'),
+                    C: players.filter(p => p.role === 'C'),
+                    A: players.filter(p => p.role === 'A')
+                };
+                
+                html += `
+                    <div class="bg-gray-800 border border-purple-700/50 rounded-lg overflow-hidden">
+                        <!-- Header squadra -->
+                        <div class="bg-gradient-to-r from-purple-900 to-purple-800 p-4 border-b border-purple-700">
+                            <div class="flex justify-between items-center">
+                                <h3 class="text-xl font-bold text-white">${squadName}</h3>
+                                <div class="text-right">
+                                    <p class="text-sm text-purple-200">Giocatori: <span class="font-bold">${players.length}</span></p>
+                                    <p class="text-sm text-yellow-300">Crediti: <span class="font-bold">${totalCost}</span></p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Giocatori per ruolo -->
+                        <div class="p-4 space-y-4">
+                `;
+                
+                // Mostra i giocatori per ogni ruolo
+                const roleLabels = { P: 'Portieri', D: 'Difensori', C: 'Centrocampisti', A: 'Attaccanti' };
+                const roleColors = { P: 'yellow', D: 'blue', C: 'green', A: 'red' };
+                
+                for (const [roleKey, roleLabel] of Object.entries(roleLabels)) {
+                    const rolePlayers = roles[roleKey];
+                    if (rolePlayers.length > 0) {
+                        const color = roleColors[roleKey];
+                        html += `
+                            <div>
+                                <h4 class="text-sm font-bold text-${color}-400 mb-2 flex items-center">
+                                    <span class="inline-block w-6 h-6 rounded-full bg-${color}-900 text-${color}-300 text-center text-xs leading-6 mr-2">${roleKey}</span>
+                                    ${roleLabel} (${rolePlayers.length})
+                                </h4>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+                        `;
+                        
+                        // Ordina i giocatori per costo decrescente
+                        rolePlayers.sort((a, b) => b.cost - a.cost);
+                        
+                        for (const player of rolePlayers) {
+                            html += `
+                                <div class="bg-gray-700 rounded px-3 py-2 flex justify-between items-center">
+                                    <div>
+                                        <p class="text-sm font-medium text-white">${player.playerName}</p>
+                                        <p class="text-xs text-gray-400">${player.serieATeam}</p>
+                                    </div>
+                                    <span class="text-sm font-bold text-yellow-400">${player.cost}</span>
+                                </div>
+                            `;
+                        }
+                        
+                        html += `
+                                </div>
+                            </div>
+                        `;
+                    }
+                }
+                
+                html += `
+                        </div>
+                    </div>
+                `;
+            }
+            
+            html += '</div>';
+            
+            if (squadsMap.size === 0) {
+                html = '<p class="text-center text-gray-500 py-8">Nessuna squadra trovata.</p>';
+            }
+            
+            container.innerHTML = html;
+        };
+        
+        window.filterSquadView = () => {
+            const filterValue = document.getElementById('squad-filter').value;
+            
+            if (!window.currentSquadsData) return;
+            
+            if (filterValue === 'all') {
+                renderSquadsView(window.currentSquadsData);
+            } else {
+                const filteredMap = new Map();
+                if (window.currentSquadsData.has(filterValue)) {
+                    filteredMap.set(filterValue, window.currentSquadsData.get(filterValue));
+                }
+                renderSquadsView(filteredMap);
+            }
+        };
+
+        // === FINE FUNZIONI ROSE ===
+
         // Funzione di supporto: ricalibra quote pure per ottenere un margine target
 const adjustOddsForMargin = (q1, qX, q2, targetMargin = 0.05) => {
     // Protezione contro divisioni per zero
@@ -2556,6 +3217,160 @@ const renderStandings = () => {
     
     container.innerHTML = '';
     container.appendChild(table);
+};
+
+// Funzione per calcolare le statistiche avanzate
+const calculateStatistics = () => {
+    const stats = {
+        bestAttack: { team: null, goalsFor: 0 },
+        bestDefense: { team: null, goalsAgainst: Infinity },
+        bestGoalDifference: { team: null, goalDifference: -Infinity },
+        highestScore: { team: null, score: 0, opponent: null, giornata: null }
+    };
+    
+    // Raccoglie tutte le squadre
+    const teamsSet = new Set();
+    allResults.forEach(result => {
+        teamsSet.add(result.homeTeam);
+        teamsSet.add(result.awayTeam);
+    });
+    
+    // Analizza ogni squadra
+    teamsSet.forEach(teamName => {
+        const teamStats = calculateTeamStats(teamName);
+        
+        // Miglior attacco (più gol fatti)
+        if (teamStats.goalsFor > stats.bestAttack.goalsFor) {
+            stats.bestAttack = { team: teamName, goalsFor: teamStats.goalsFor };
+        }
+        
+        // Miglior difesa (meno gol subiti)
+        if (teamStats.goalsAgainst < stats.bestDefense.goalsAgainst) {
+            stats.bestDefense = { team: teamName, goalsAgainst: teamStats.goalsAgainst };
+        }
+        
+        // Miglior differenza reti
+        if (teamStats.goalDifference > stats.bestGoalDifference.goalDifference) {
+            stats.bestGoalDifference = { team: teamName, goalDifference: teamStats.goalDifference };
+        }
+    });
+    
+    // Trova il punteggio più alto in una singola partita
+    allResults.forEach(result => {
+        // Controlla punteggio casa
+        if (result.homePoints && result.homePoints > stats.highestScore.score) {
+            stats.highestScore = {
+                team: result.homeTeam,
+                score: result.homePoints,
+                opponent: result.awayTeam,
+                giornata: result.giornata
+            };
+        }
+        
+        // Controlla punteggio ospite
+        if (result.awayPoints && result.awayPoints > stats.highestScore.score) {
+            stats.highestScore = {
+                team: result.awayTeam,
+                score: result.awayPoints,
+                opponent: result.homeTeam,
+                giornata: result.giornata
+            };
+        }
+    });
+    
+    return stats;
+};
+
+// Funzione per renderizzare le statistiche
+const renderStatistics = () => {
+    const container = document.getElementById('statistics-container');
+    if (!container) return;
+    
+    if (allResults.length === 0) {
+        container.innerHTML = '<p class="text-gray-500 text-center py-4 col-span-full">Nessun dato disponibile</p>';
+        return;
+    }
+    
+    const stats = calculateStatistics();
+    
+    container.innerHTML = `
+        <!-- Miglior Attacco -->
+        <div class="bg-gradient-to-br from-red-900/30 to-red-800/20 border border-red-700/50 rounded-lg p-4">
+            <div class="flex items-center mb-2">
+                <svg class="w-6 h-6 text-red-400 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M12.395 2.553a1 1 0 00-1.45-.385c-.345.23-.614.558-.822.88-.214.33-.403.713-.57 1.116-.334.804-.614 1.768-.84 2.734a31.365 31.365 0 00-.613 3.58 2.64 2.64 0 01-.945-1.067c-.328-.68-.398-1.534-.398-2.654A1 1 0 005.05 6.05 6.981 6.981 0 003 11a7 7 0 1011.95-4.95c-.592-.591-.98-.985-1.348-1.467-.363-.476-.724-1.063-1.207-2.03zM12.12 15.12A3 3 0 017 13s.879.5 2.5.5c0-1 .5-4 1.25-4.5.5 1 .786 1.293 1.371 1.879A2.99 2.99 0 0113 13a2.99 2.99 0 01-.879 2.121z" clip-rule="evenodd"></path>
+                </svg>
+                <h4 class="text-sm font-bold text-red-300 uppercase">Miglior Attacco</h4>
+            </div>
+            ${stats.bestAttack.team ? `
+                <div class="flex items-center space-x-3">
+                    <img src="${getTeamLogo(stats.bestAttack.team)}" alt="${stats.bestAttack.team}" class="w-10 h-10 object-contain" onerror="this.style.display='none'">
+                    <div>
+                        <p class="text-lg font-bold text-white">${stats.bestAttack.team}</p>
+                        <p class="text-2xl font-bold text-red-400">${stats.bestAttack.goalsFor} gol</p>
+                    </div>
+                </div>
+            ` : '<p class="text-gray-400 text-sm">Dati non disponibili</p>'}
+        </div>
+        
+        <!-- Miglior Difesa -->
+        <div class="bg-gradient-to-br from-blue-900/30 to-blue-800/20 border border-blue-700/50 rounded-lg p-4">
+            <div class="flex items-center mb-2">
+                <svg class="w-6 h-6 text-blue-400 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                </svg>
+                <h4 class="text-sm font-bold text-blue-300 uppercase">Miglior Difesa</h4>
+            </div>
+            ${stats.bestDefense.team ? `
+                <div class="flex items-center space-x-3">
+                    <img src="${getTeamLogo(stats.bestDefense.team)}" alt="${stats.bestDefense.team}" class="w-10 h-10 object-contain" onerror="this.style.display='none'">
+                    <div>
+                        <p class="text-lg font-bold text-white">${stats.bestDefense.team}</p>
+                        <p class="text-2xl font-bold text-blue-400">${stats.bestDefense.goalsAgainst} gol subiti</p>
+                    </div>
+                </div>
+            ` : '<p class="text-gray-400 text-sm">Dati non disponibili</p>'}
+        </div>
+        
+        <!-- Miglior Differenza Reti -->
+        <div class="bg-gradient-to-br from-green-900/30 to-green-800/20 border border-green-700/50 rounded-lg p-4">
+            <div class="flex items-center mb-2">
+                <svg class="w-6 h-6 text-green-400 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M12 7a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0V8.414l-4.293 4.293a1 1 0 01-1.414 0L8 10.414l-4.293 4.293a1 1 0 01-1.414-1.414l5-5a1 1 0 011.414 0L11 10.586 14.586 7H12z" clip-rule="evenodd"></path>
+                </svg>
+                <h4 class="text-sm font-bold text-green-300 uppercase">Miglior Diff. Reti</h4>
+            </div>
+            ${stats.bestGoalDifference.team ? `
+                <div class="flex items-center space-x-3">
+                    <img src="${getTeamLogo(stats.bestGoalDifference.team)}" alt="${stats.bestGoalDifference.team}" class="w-10 h-10 object-contain" onerror="this.style.display='none'">
+                    <div>
+                        <p class="text-lg font-bold text-white">${stats.bestGoalDifference.team}</p>
+                        <p class="text-2xl font-bold text-green-400">${stats.bestGoalDifference.goalDifference > 0 ? '+' : ''}${stats.bestGoalDifference.goalDifference}</p>
+                    </div>
+                </div>
+            ` : '<p class="text-gray-400 text-sm">Dati non disponibili</p>'}
+        </div>
+        
+        <!-- Punteggio Più Alto -->
+        <div class="bg-gradient-to-br from-purple-900/30 to-purple-800/20 border border-purple-700/50 rounded-lg p-4">
+            <div class="flex items-center mb-2">
+                <svg class="w-6 h-6 text-purple-400 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+                </svg>
+                <h4 class="text-sm font-bold text-purple-300 uppercase">Punteggio Più Alto</h4>
+            </div>
+            ${stats.highestScore.team ? `
+                <div class="flex items-center space-x-3">
+                    <img src="${getTeamLogo(stats.highestScore.team)}" alt="${stats.highestScore.team}" class="w-10 h-10 object-contain" onerror="this.style.display='none'">
+                    <div>
+                        <p class="text-lg font-bold text-white">${stats.highestScore.team}</p>
+                        <p class="text-2xl font-bold text-purple-400">${stats.highestScore.score.toFixed(1)} punti</p>
+                        <p class="text-xs text-gray-400">vs ${stats.highestScore.opponent} - Giornata ${stats.highestScore.giornata}</p>
+                    </div>
+                </div>
+            ` : '<p class="text-gray-400 text-sm">Dati non disponibili</p>'}
+        </div>
+    `;
 };
 
 
@@ -3719,6 +4534,7 @@ const renderStandings = () => {
                     allResults = snapshot.docs.map(doc => doc.data());
                     renderHistoricResults(allResults);
                     renderStandings(); // Aggiorna la classifica quando cambiano i risultati
+                    renderStatistics(); // Aggiorna le statistiche quando cambiano i risultati
                     // Se la vista scommesse è aperta, ricalcola la prossima giornata in base ai risultati
                     if (currentView === 'betting' && allMatches && allMatches.length > 0) {
                         const lastCompleted = determineLastCompletedGiornata();
