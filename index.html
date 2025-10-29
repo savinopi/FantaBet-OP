@@ -100,6 +100,20 @@
         }
         .btn-danger:hover { background-color: #b91c1c; }
         
+        .btn-success { 
+            background-color: #10b981; 
+            color: white; 
+            padding: 14px 20px; 
+            border-radius: 8px; 
+            font-weight: 600; 
+            font-size: 16px;
+            min-height: 44px;
+            transition: background-color 0.2s; 
+            cursor: pointer;
+            touch-action: manipulation;
+        }
+        .btn-success:hover { background-color: #059669; }
+        
         /* Input ottimizzati per mobile */
         input[type="number"], input[type="text"], input[type="email"], input[type="password"], select, input[type="date"] {
             background-color: #0f172a;
@@ -152,6 +166,17 @@
             background-color: #1e40af;
             box-shadow: 0 0 10px #2563eb;
         }
+        
+        /* Stili per il countdown animato */
+        @keyframes pulse-countdown {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
+        }
+        
+        .countdown-urgent {
+            animation: pulse-countdown 2s ease-in-out infinite;
+        }
+        
         /* Stile specifico per l'intestazione della giornata */
         .giornata-header th {
             padding: 8px 12px;
@@ -266,11 +291,15 @@
         #user-menu-dropdown {
             max-height: 0;
             overflow: hidden;
-            transition: max-height 0.3s ease-out;
+            opacity: 0;
+            visibility: hidden;
+            transition: max-height 0.3s ease-out, opacity 0.3s ease-out, visibility 0.3s;
         }
         
         #user-menu-dropdown.open {
             max-height: 400px;
+            opacity: 1;
+            visibility: visible;
         }
     </style>
     
@@ -643,16 +672,16 @@
                                 <option value="A">Attaccanti</option>
                             </select>
                         </div>
-                        <div>
-                            <label for="stats-sort-filter" class="block text-sm font-medium text-gray-300 mb-2">Ordina per:</label>
-                            <select id="stats-sort-filter" class="w-full bg-gray-700 border border-gray-600 rounded px-4 py-2 text-white" onchange="filterPlayerStats()">
-                                <option value="fm">Fantamedia</option>
-                                <option value="mv">Media Voto</option>
-                                <option value="gf">Gol Fatti</option>
-                                <option value="ass">Assist</option>
-                                <option value="pv">Partite Giocate</option>
-                            </select>
-                        </div>
+                    </div>
+                    
+                    <!-- Legenda ordinamento -->
+                    <div class="bg-blue-900/20 border border-blue-500/30 rounded-lg px-4 py-2 mb-4">
+                        <p class="text-xs sm:text-sm text-blue-300">
+                            <svg class="w-4 h-4 inline mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
+                            </svg>
+                            Clicca su un'intestazione della tabella per ordinare
+                        </p>
                     </div>
                     
                     <!-- Container statistiche -->
@@ -677,6 +706,11 @@
                             </svg>
                             Home
                         </button>
+                    </div>
+                    
+                    <!-- Countdown Deadline Scommesse -->
+                    <div id="bet-deadline-countdown" class="mb-4">
+                        <!-- Renderizzato da JS -->
                     </div>
                     
                     <!-- Lista partite -->
@@ -739,6 +773,12 @@
                                 </svg>
                                 Gestione Utenti
                             </button>
+                            <button onclick="showAdminTab('schedules')" class="admin-tab-button px-4 py-2 text-lg font-semibold border-b-2 border-transparent hover:border-blue-400 hover:text-blue-400 focus:outline-none">
+                                <svg class="w-4 h-4 inline mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"></path>
+                                </svg>
+                                Orari Giornate
+                            </button>
                             <button onclick="showAdminTab('bets')" class="admin-tab-button px-4 py-2 text-lg font-semibold border-b-2 border-transparent hover:border-blue-400 hover:text-blue-400 focus:outline-none">
                                 <svg class="w-4 h-4 inline mr-1" fill="currentColor" viewBox="0 0 512 512">
                                     <path d="M177.1 228.6L207.9 320h96.5l29.62-91.38L256 172.1L177.1 228.6zM255.1 0C114.6 0 .0001 114.6 .0001 256S114.6 512 256 512s255.1-114.6 255.1-255.1S397.4 0 255.1 0z"/>
@@ -769,11 +809,19 @@
                             <button id="upload-button" onclick="confirmUpload()" class="btn-secondary" disabled>Carica File</button>
                             <span id="file-name-display" class="text-gray-400" aria-live="polite">Nessun file selezionato.</span>
                         </div>
-                        <p class="text-xs text-gray-500 mb-6">
+                        <p class="text-xs text-gray-500 mb-2">
                             Il file CSV deve avere il delimitatore ';' e il seguente tracciato: Giornata;Casa;P.Casa;P.Ospite;Ospite;Risultato.
                             Le partite con risultato (es. '2-1') verranno importate come risultati storici.
                             Le partite con risultato '-' verranno importate come partite aperte per le scommesse.
                         </p>
+                        <div class="bg-blue-900/20 border border-blue-500/30 rounded-lg px-4 py-2 mb-6">
+                            <p class="text-xs text-blue-300">
+                                <svg class="w-4 h-4 inline mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"></path>
+                                </svg>
+                                <strong>Date automatiche:</strong> Il fantacalcio è iniziato alla 3ª giornata di Serie A 2025/26. Le date vengono mappate automaticamente (Giornata 1 → 13 set 2025, Giornata 2 → 20 set 2025, ecc.)
+                            </p>
+                        </div>
                         
                         <!-- Tabella dati CSV caricati -->
                         <div class="border-t border-gray-700 pt-6">
@@ -842,6 +890,64 @@
                         <h3 class="text-xl font-bold mb-4 text-yellow-400">Gestione Utenti</h3>
                         <div id="admin-users-list" class="space-y-2">
                             <!-- Lista utenti renderizzata da JS -->
+                        </div>
+                    </div>
+
+                    <div id="admin-tab-schedules" class="admin-tab-content card p-6 mt-4 hidden">
+                        <h3 class="text-xl font-bold mb-4 text-yellow-400">Gestione Orari Giornate</h3>
+                        
+                        <div class="bg-blue-900/20 border border-blue-500/30 rounded-lg px-4 py-3 mb-4">
+                            <p class="text-sm text-blue-300">
+                                <svg class="w-5 h-5 inline mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
+                                </svg>
+                                <strong>Importante:</strong> Imposta l'orario della PRIMA partita della giornata. Le scommesse si chiuderanno automaticamente a quell'ora.
+                                <br>Se non confermi l'orario, il sistema userà Venerdì 20:45 come orario "sicuro" di default.
+                            </p>
+                        </div>
+                        
+                        <div class="bg-yellow-900/20 border border-yellow-500/30 rounded-lg px-4 py-3 mb-6">
+                            <p class="text-sm text-yellow-300">
+                                <svg class="w-5 h-5 inline mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"></path>
+                                </svg>
+                                <strong>Nota:</strong> Il Fantacalcio ha 36 giornate (Serie A giornate 3-38). 
+                                Giornata Fanta 1 = Serie A 3 | Giornata Fanta 36 = Serie A 38
+                            </p>
+                        </div>
+
+                        <div class="mb-4 flex space-x-4">
+                            <button onclick="loadSchedulesForAdmin()" class="btn-primary">
+                                <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                                </svg>
+                                Ricarica
+                            </button>
+                            <button onclick="saveAllSchedules()" class="btn-success">
+                                <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                </svg>
+                                Salva Tutte le Modifiche
+                            </button>
+                        </div>
+                        
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-sm">
+                                <thead class="bg-gray-800 border-b-2 border-yellow-500">
+                                    <tr>
+                                        <th class="px-3 py-2 text-left">Giornata Fanta</th>
+                                        <th class="px-3 py-2 text-left text-gray-400 text-xs">(Serie A)</th>
+                                        <th class="px-3 py-2 text-left">Data</th>
+                                        <th class="px-3 py-2 text-left">Ora Inizio</th>
+                                        <th class="px-3 py-2 text-center">Confermato</th>
+                                        <th class="px-3 py-2 text-left">Note</th>
+                                        <th class="px-3 py-2 text-center">Countdown</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="schedules-table-body" class="divide-y divide-gray-700">
+                                    <!-- Righe renderizzate da JS -->
+                                </tbody>
+                            </table>
                         </div>
                     </div>
 
@@ -1090,6 +1196,9 @@
         let userPlacedBets = [];
         let currentPredictions = {}; // Per le scommesse di gruppo
         
+        // Timer per countdown deadline scommesse
+        let countdownInterval = null;
+        
         // --- Variabili per la gestione admin ---
         let adminBetsUnsubscribe = null;
         let allUsersForAdmin = [];
@@ -1128,11 +1237,20 @@
                 const allUsers = usersSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                 
                 renderAdminBetsList(allBets, allUsers, currentBetsFilter);
+            } else if (tabName === 'schedules') {
+                // Carica gli orari delle giornate
+                await loadSchedulesForAdmin();
             }
         };
 
         window.setAppView = (view) => {
             console.log('setAppView chiamato con view:', view);
+            
+            // Ferma il timer del countdown se stiamo uscendo dalla sezione betting
+            if (currentView === 'betting' && view !== 'betting' && countdownInterval) {
+                clearInterval(countdownInterval);
+                countdownInterval = null;
+            }
             
             currentView = view;
             const containers = {
@@ -1623,6 +1741,14 @@
         
         // --- Gestione Risultati Storici ---
 
+        // Funzione per formattare la data in formato leggibile italiano
+        const formatDateItalian = (dateString) => {
+            if (!dateString) return '-';
+            const date = new Date(dateString + 'T00:00:00'); // Aggiungi orario per evitare problemi timezone
+            const options = { day: '2-digit', month: 'short', year: 'numeric' };
+            return date.toLocaleDateString('it-IT', options);
+        };
+
         const renderHistoricResults = (results) => {
             const tableBody = document.getElementById('historic-results-table');
             if (!tableBody) return;
@@ -1663,11 +1789,30 @@
                 resultsByGiornata[giornata].forEach(res => {
                     const row = document.createElement('tr');
                     row.className = 'hover:bg-gray-800';
+                    
+                    // Determina le classi per evidenziare il vincitore
+                    let homeTeamClass = 'text-white font-semibold';
+                    let awayTeamClass = 'text-white font-semibold';
+                    
+                    if (res.result === '1') {
+                        // Vittoria casa
+                        homeTeamClass = 'text-blue-400 font-bold';
+                        awayTeamClass = 'text-gray-500 font-normal';
+                    } else if (res.result === '2') {
+                        // Vittoria ospite
+                        homeTeamClass = 'text-gray-500 font-normal';
+                        awayTeamClass = 'text-blue-400 font-bold';
+                    } else if (res.result === 'X') {
+                        // Pareggio - entrambe in arancione
+                        homeTeamClass = 'text-orange-400 font-semibold';
+                        awayTeamClass = 'text-orange-400 font-semibold';
+                    }
+                    
                     row.innerHTML = `
                         <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">${giornata}</td>
-                        <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-400">${res.date}</td>
-                        <td class="px-4 py-3 whitespace-nowrap text-sm text-white font-semibold">${res.homeTeam}</td>
-                        <td class="px-4 py-3 whitespace-nowrap text-sm text-white font-semibold">${res.awayTeam}</td>
+                        <td class="px-4 py-3 whitespace-nowrap text-sm text-blue-400 font-medium">${formatDateItalian(res.date)}</td>
+                        <td class="px-4 py-3 whitespace-nowrap text-sm ${homeTeamClass}">${res.homeTeam}</td>
+                        <td class="px-4 py-3 whitespace-nowrap text-sm ${awayTeamClass}">${res.awayTeam}</td>
                         <td class="px-4 py-3 whitespace-nowrap text-sm font-bold text-center ${res.result === '1' ? 'text-green-500' : res.result === '2' ? 'text-red-500' : 'text-yellow-500'}">${resultMap[res.result] || '-'}</td>
                         <td class="px-4 py-3 whitespace-nowrap text-sm font-bold text-center text-blue-400">${res.score || '-'}</td>
                     `;
@@ -2056,6 +2201,134 @@
 
         // --- Gestione Caricamento File CSV ---
 
+        // Mappatura date Serie A 2025/2026 - Il fantacalcio parte dalla giornata 3
+        const getSerieAMatchDate = (fantaGiornata) => {
+            // Mappa: giornata fantacalcio -> giornata Serie A
+            // Fantacalcio giornata 1 = Serie A giornata 3
+            // Fantacalcio giornata 36 = Serie A giornata 38
+            const serieAGiornata = parseInt(fantaGiornata) + 2;
+            
+            // Date inizio giornate Serie A 2025/2026 (da calendario ufficiale)
+            const serieADates = {
+                1: '2025-08-23',   // Giornata 1 (23-24 agosto)
+                2: '2025-08-29',   // Giornata 2 (29-30 agosto)
+                3: '2025-09-13',   // Giornata 3 (13-14 settembre) - INIZIO FANTACALCIO (Fanta G.1)
+                4: '2025-09-19',   // Giornata 4 (19-20 settembre) - Fanta G.2
+                5: '2025-09-27',   // Giornata 5 (27-28 settembre) - Fanta G.3
+                6: '2025-10-03',   // Giornata 6 (3-4 ottobre) - Fanta G.4
+                7: '2025-10-18',   // Giornata 7 (18-19 ottobre) - Fanta G.5
+                8: '2025-10-24',   // Giornata 8 (24-25 ottobre) - Fanta G.6
+                9: '2025-10-28',   // Giornata 9 (28-29 ottobre) - Fanta G.7
+                10: '2025-11-01',  // Giornata 10 (1-2 novembre) - Fanta G.8
+                11: '2025-11-07',  // Giornata 11 (7-8 novembre) - Fanta G.9
+                12: '2025-11-22',  // Giornata 12 (22-23 novembre) - Fanta G.10
+                13: '2025-11-28',  // Giornata 13 (28-29 novembre) - Fanta G.11
+                14: '2025-12-06',  // Giornata 14 (6-7 dicembre) - Fanta G.12
+                15: '2025-12-12',  // Giornata 15 (12-13 dicembre) - Fanta G.13
+                16: '2025-12-20',  // Giornata 16 (20-21 dicembre) - Fanta G.14
+                17: '2025-12-27',  // Giornata 17 (27-28 dicembre) - Fanta G.15
+                18: '2026-01-02',  // Giornata 18 (2-3 gennaio) - Fanta G.16
+                19: '2026-01-06',  // Giornata 19 (6-7 gennaio) - Fanta G.17
+                20: '2026-01-10',  // Giornata 20 (10-11 gennaio) - Fanta G.18
+                21: '2026-01-16',  // Giornata 21 (16-17 gennaio) - Fanta G.19
+                22: '2026-01-23',  // Giornata 22 (23-24 gennaio) - Fanta G.20
+                23: '2026-02-01',  // Giornata 23 (1-2 febbraio) - Fanta G.21
+                24: '2026-02-08',  // Giornata 24 (8-9 febbraio) - Fanta G.22
+                25: '2026-02-25',  // Giornata 25 (25-26 febbraio) - Fanta G.23
+                26: '2026-02-22',  // Giornata 26 (22-23 febbraio) - Fanta G.24
+                27: '2026-03-01',  // Giornata 27 (1-2 marzo) - Fanta G.25
+                28: '2026-03-08',  // Giornata 28 (8-9 marzo) - Fanta G.26
+                29: '2026-03-15',  // Giornata 29 (15-16 marzo) - Fanta G.27
+                30: '2026-03-22',  // Giornata 30 (22-23 marzo) - Fanta G.28
+                31: '2026-04-04',  // Giornata 31 (4-5 aprile) - Fanta G.29
+                32: '2026-04-12',  // Giornata 32 (12-13 aprile) - Fanta G.30
+                33: '2026-04-19',  // Giornata 33 (19-20 aprile) - Fanta G.31
+                34: '2026-04-26',  // Giornata 34 (26-27 aprile) - Fanta G.32
+                35: '2026-05-03',  // Giornata 35 (3-4 maggio) - Fanta G.33
+                36: '2026-05-10',  // Giornata 36 (10-11 maggio) - Fanta G.34
+                37: '2026-05-17',  // Giornata 37 (17-18 maggio) - Fanta G.35
+                38: '2026-05-24'   // Giornata 38 (24-25 maggio) - Fanta G.36
+            };
+            
+            return serieADates[serieAGiornata] || new Date().toISOString().split('T')[0];
+        };
+
+        // --- Gestione Orari Giornate (Schedule Management) ---
+        
+        // Reference alla collection degli orari delle giornate
+        const getScheduleCollectionRef = () => collection(db, 'giornate_schedule');
+        
+        // Cache per gli orari delle giornate (evita troppe letture da Firestore)
+        let scheduleCache = null;
+        
+        // Carica tutti gli orari delle giornate (con cache)
+        const loadAllSchedules = async () => {
+            if (scheduleCache) return scheduleCache;
+            
+            try {
+                const snapshot = await getDocs(getScheduleCollectionRef());
+                scheduleCache = {};
+                snapshot.docs.forEach(doc => {
+                    const data = doc.data();
+                    scheduleCache[data.giornata] = data;
+                });
+                console.log('Schedule cache caricata:', scheduleCache);
+                return scheduleCache;
+            } catch (error) {
+                console.error('Errore caricamento schedules:', error);
+                return {};
+            }
+        };
+        
+        // Ottieni l'orario di una specifica giornata
+        const getGiornataSchedule = async (giornata) => {
+            const allSchedules = await loadAllSchedules();
+            
+            if (allSchedules[giornata]) {
+                return allSchedules[giornata];
+            }
+            
+            // Se non esiste, restituisci default
+            return getDefaultSchedule(giornata);
+        };
+        
+        // Orario di default per una giornata (se non configurato dall'admin)
+        const getDefaultSchedule = (giornata) => {
+            // Usa la data dal calendario Serie A
+            const date = getSerieAMatchDate(giornata);
+            
+            // Default: Venerdì sera alle 20:45 (orario "sicuro" per chiusura anticipata)
+            // Questo garantisce che le scommesse si chiudano PRIMA dell'eventuale anticipo
+            return {
+                giornata: giornata.toString(),
+                date: date,
+                time: '20:45',
+                confirmed: false, // Non confermato = orario stimato
+                notes: 'Orario di default (non ancora confermato)'
+            };
+        };
+        
+        // Calcola la deadline (data + ora) per una giornata
+        const getGiornataDeadline = async (giornata) => {
+            const schedule = await getGiornataSchedule(giornata);
+            
+            // Combina data e ora in un oggetto Date
+            const deadlineString = `${schedule.date}T${schedule.time}:00`;
+            const deadline = new Date(deadlineString);
+            
+            return {
+                deadline: deadline,
+                confirmed: schedule.confirmed,
+                notes: schedule.notes
+            };
+        };
+        
+        // Verifica se la deadline è passata
+        const isDeadlinePassed = async (giornata) => {
+            const { deadline } = await getGiornataDeadline(giornata);
+            return new Date() >= deadline;
+        };
+
             const processCsvContent = async (csvContent) => {
             if (!isUserAdmin) return;
 
@@ -2118,8 +2391,8 @@
                 const awayTeam = columns[4] ? columns[4].trim() : null;
                 const score = columns[5] ? columns[5].trim() : null; // Colonna 'Risultato' (es. "1-1", "3-2", "-")
                 
-                // Data fittizia per l'importazione
-                const date = new Date().toISOString().split('T')[0]; 
+                // Mappa la giornata fantacalcio alla data corrispondente della Serie A
+                const date = getSerieAMatchDate(rawGiornata);
 
                 if (rawGiornata && homeTeam && awayTeam) {
                     
@@ -3252,7 +3525,7 @@
                     
                     const playerName = columns[2].trim(); // Nome è ora la colonna 2 (era 3)
                     const normalizedName = playerName.toLowerCase();
-                    const fantaSquad = playerToSquadMap.get(normalizedName) || 'SCONOSCIUTO';
+                    const fantaSquad = playerToSquadMap.get(normalizedName) || 'SVINCOLATI';
                     
                     // Debug: log dei primi 5 giocatori
                     if (i <= 5) {
@@ -3408,15 +3681,20 @@
                 
                 // Salva globalmente per i filtri
                 window.currentPlayerStats = allStats;
+                window.currentFilteredStats = allStats;
                 
-                // Mostra tutte le statistiche
-                renderPlayerStatsView(allStats);
+                // Mostra tutte le statistiche con ordinamento default
+                sortPlayerStats(currentSortColumn);
                 
             } catch (error) {
                 console.error('Errore nel caricamento delle statistiche:', error);
                 messageBox('Errore nel caricamento delle statistiche.');
             }
         };
+        
+        // Variabili per l'ordinamento
+        let currentSortColumn = 'fm';
+        let currentSortDirection = 'desc';
         
         const renderPlayerStatsView = (stats) => {
             const container = document.getElementById('player-stats-view-container');
@@ -3427,28 +3705,73 @@
                 return;
             }
             
+            const getSortIcon = (column) => {
+                if (currentSortColumn !== column) {
+                    return '<svg class="w-3 h-3 inline ml-1 text-gray-500" fill="currentColor" viewBox="0 0 20 20"><path d="M5 12a1 1 0 102 0V6.414l1.293 1.293a1 1 0 001.414-1.414l-3-3a1 1 0 00-1.414 0l-3 3a1 1 0 001.414 1.414L5 6.414V12zM15 8a1 1 0 10-2 0v5.586l-1.293-1.293a1 1 0 00-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L15 13.586V8z"></path></svg>';
+                }
+                if (currentSortDirection === 'asc') {
+                    return '<svg class="w-3 h-3 inline ml-1 text-blue-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5.293 9.707a1 1 0 010-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 01-1.414 1.414L11 7.414V15a1 1 0 11-2 0V7.414L6.707 9.707a1 1 0 01-1.414 0z" clip-rule="evenodd"></path></svg>';
+                } else {
+                    return '<svg class="w-3 h-3 inline ml-1 text-blue-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M14.707 10.293a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 111.414-1.414L9 12.586V5a1 1 0 012 0v7.586l2.293-2.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>';
+                }
+            };
+            
             let html = '<div class="overflow-x-auto">';
             html += '<table class="min-w-full bg-gray-800 rounded-lg overflow-hidden text-sm">';
             html += `
                 <thead>
                     <tr class="bg-gray-700 text-gray-300 text-xs uppercase">
-                        <th class="px-3 py-2 text-left sticky left-0 bg-gray-700 z-10">Calciatore</th>
-                        <th class="px-3 py-2 text-center">Rosa</th>
-                        <th class="px-3 py-2 text-center">Ruolo</th>
-                        <th class="px-3 py-2 text-center">Squadra</th>
-                        <th class="px-3 py-2 text-center">PV</th>
-                        <th class="px-3 py-2 text-center">MV</th>
-                        <th class="px-3 py-2 text-center bg-blue-900/30">FM</th>
-                        <th class="px-3 py-2 text-center">GF</th>
-                        <th class="px-3 py-2 text-center">GS</th>
-                        <th class="px-3 py-2 text-center">RP</th>
-                        <th class="px-3 py-2 text-center">RC</th>
-                        <th class="px-3 py-2 text-center">R+</th>
-                        <th class="px-3 py-2 text-center">R-</th>
-                        <th class="px-3 py-2 text-center">ASS</th>
-                        <th class="px-3 py-2 text-center">AMM</th>
-                        <th class="px-3 py-2 text-center">ESP</th>
-                        <th class="px-3 py-2 text-center">AU</th>
+                        <th onclick="sortPlayerStats('playerName')" class="px-3 py-2 text-left sticky left-0 bg-gray-700 z-10 cursor-pointer hover:bg-gray-600 transition-colors">
+                            Calciatore ${getSortIcon('playerName')}
+                        </th>
+                        <th onclick="sortPlayerStats('fantaSquad')" class="px-3 py-2 text-center cursor-pointer hover:bg-gray-600 transition-colors">
+                            Rosa ${getSortIcon('fantaSquad')}
+                        </th>
+                        <th onclick="sortPlayerStats('role')" class="px-3 py-2 text-center cursor-pointer hover:bg-gray-600 transition-colors">
+                            Ruolo ${getSortIcon('role')}
+                        </th>
+                        <th onclick="sortPlayerStats('serieATeam')" class="px-3 py-2 text-center cursor-pointer hover:bg-gray-600 transition-colors">
+                            Squadra ${getSortIcon('serieATeam')}
+                        </th>
+                        <th onclick="sortPlayerStats('pv')" class="px-3 py-2 text-center cursor-pointer hover:bg-gray-600 transition-colors">
+                            PV ${getSortIcon('pv')}
+                        </th>
+                        <th onclick="sortPlayerStats('mv')" class="px-3 py-2 text-center cursor-pointer hover:bg-gray-600 transition-colors">
+                            MV ${getSortIcon('mv')}
+                        </th>
+                        <th onclick="sortPlayerStats('fm')" class="px-3 py-2 text-center bg-blue-900/30 cursor-pointer hover:bg-blue-800/40 transition-colors">
+                            FM ${getSortIcon('fm')}
+                        </th>
+                        <th onclick="sortPlayerStats('gf')" class="px-3 py-2 text-center cursor-pointer hover:bg-gray-600 transition-colors">
+                            GF ${getSortIcon('gf')}
+                        </th>
+                        <th onclick="sortPlayerStats('gs')" class="px-3 py-2 text-center cursor-pointer hover:bg-gray-600 transition-colors">
+                            GS ${getSortIcon('gs')}
+                        </th>
+                        <th onclick="sortPlayerStats('rp')" class="px-3 py-2 text-center cursor-pointer hover:bg-gray-600 transition-colors">
+                            RP ${getSortIcon('rp')}
+                        </th>
+                        <th onclick="sortPlayerStats('rc')" class="px-3 py-2 text-center cursor-pointer hover:bg-gray-600 transition-colors">
+                            RC ${getSortIcon('rc')}
+                        </th>
+                        <th onclick="sortPlayerStats('rPlus')" class="px-3 py-2 text-center cursor-pointer hover:bg-gray-600 transition-colors">
+                            R+ ${getSortIcon('rPlus')}
+                        </th>
+                        <th onclick="sortPlayerStats('rMinus')" class="px-3 py-2 text-center cursor-pointer hover:bg-gray-600 transition-colors">
+                            R- ${getSortIcon('rMinus')}
+                        </th>
+                        <th onclick="sortPlayerStats('ass')" class="px-3 py-2 text-center cursor-pointer hover:bg-gray-600 transition-colors">
+                            ASS ${getSortIcon('ass')}
+                        </th>
+                        <th onclick="sortPlayerStats('amm')" class="px-3 py-2 text-center cursor-pointer hover:bg-gray-600 transition-colors">
+                            AMM ${getSortIcon('amm')}
+                        </th>
+                        <th onclick="sortPlayerStats('esp')" class="px-3 py-2 text-center cursor-pointer hover:bg-gray-600 transition-colors">
+                            ESP ${getSortIcon('esp')}
+                        </th>
+                        <th onclick="sortPlayerStats('au')" class="px-3 py-2 text-center cursor-pointer hover:bg-gray-600 transition-colors">
+                            AU ${getSortIcon('au')}
+                        </th>
                     </tr>
                 </thead>
                 <tbody>
@@ -3492,12 +3815,49 @@
             container.innerHTML = html;
         };
         
+        window.sortPlayerStats = (column) => {
+            if (!window.currentFilteredStats) return;
+            
+            // Se clicco sulla stessa colonna, inverto la direzione
+            if (currentSortColumn === column) {
+                currentSortDirection = currentSortDirection === 'asc' ? 'desc' : 'asc';
+            } else {
+                // Nuova colonna: default decrescente per numeri, crescente per testo
+                currentSortColumn = column;
+                const textColumns = ['playerName', 'fantaSquad', 'role', 'serieATeam'];
+                currentSortDirection = textColumns.includes(column) ? 'asc' : 'desc';
+            }
+            
+            // Ordina i dati
+            const sorted = [...window.currentFilteredStats].sort((a, b) => {
+                let valA = a[column];
+                let valB = b[column];
+                
+                // Gestione valori nulli/undefined
+                if (valA === null || valA === undefined) valA = 0;
+                if (valB === null || valB === undefined) valB = 0;
+                
+                // Confronto
+                if (typeof valA === 'string' && typeof valB === 'string') {
+                    return currentSortDirection === 'asc' 
+                        ? valA.localeCompare(valB) 
+                        : valB.localeCompare(valA);
+                } else {
+                    return currentSortDirection === 'asc' 
+                        ? valA - valB 
+                        : valB - valA;
+                }
+            });
+            
+            window.currentFilteredStats = sorted;
+            renderPlayerStatsView(sorted);
+        };
+        
         window.filterPlayerStats = () => {
             if (!window.currentPlayerStats) return;
             
             const squadFilter = document.getElementById('stats-squad-filter').value;
             const roleFilter = document.getElementById('stats-role-filter').value;
-            const sortBy = document.getElementById('stats-sort-filter').value;
             
             let filtered = [...window.currentPlayerStats];
             
@@ -3510,14 +3870,9 @@
                 filtered = filtered.filter(s => s.role === roleFilter);
             }
             
-            // Ordina
-            filtered.sort((a, b) => {
-                const valA = a[sortBy] || 0;
-                const valB = b[sortBy] || 0;
-                return valB - valA; // Ordine decrescente
-            });
-            
-            renderPlayerStatsView(filtered);
+            // Salva i dati filtrati e applica l'ordinamento corrente
+            window.currentFilteredStats = filtered;
+            sortPlayerStats(currentSortColumn);
         };
         
         // === FUNZIONI STATISTICHE CALCIATORI HOME PAGE ===
@@ -4018,7 +4373,15 @@ const calculateStatistics = () => {
         bestAttack: { team: null, goalsFor: 0 },
         bestDefense: { team: null, goalsAgainst: Infinity },
         bestGoalDifference: { team: null, goalDifference: -Infinity },
-        highestScore: { team: null, score: 0, opponent: null, giornata: null }
+        worstGoalDifference: { team: null, goalDifference: Infinity },
+        highestScore: { team: null, score: 0, opponent: null, giornata: null },
+        lowestScore: { team: null, score: Infinity, opponent: null, giornata: null },
+        biggestWin: { team: null, margin: 0, score: null, opponent: null, giornata: null },
+        highestDraw: { homeTeam: null, awayTeam: null, score: 0, giornata: null },
+        lowestDraw: { homeTeam: null, awayTeam: null, score: Infinity, giornata: null },
+        mostGoalsMatch: { homeTeam: null, awayTeam: null, totalGoals: 0, score: null, giornata: null },
+        mostGoalsGiornata: { giornata: null, totalGoals: 0 },
+        leastGoalsGiornata: { giornata: null, totalGoals: Infinity }
     };
     
     // Raccoglie tutte le squadre
@@ -4043,31 +4406,137 @@ const calculateStatistics = () => {
         }
         
         // Miglior differenza reti
+        // Miglior differenza reti
         if (teamStats.goalDifference > stats.bestGoalDifference.goalDifference) {
             stats.bestGoalDifference = { team: teamName, goalDifference: teamStats.goalDifference };
         }
+        
+        // Peggior differenza reti
+        if (teamStats.goalDifference < stats.worstGoalDifference.goalDifference) {
+            stats.worstGoalDifference = { team: teamName, goalDifference: teamStats.goalDifference };
+        }
     });
     
-    // Trova il punteggio più alto in una singola partita
+    // Trova il punteggio più alto e più basso in una singola partita, la vittoria più larga, pareggi, maggior gol
     allResults.forEach(result => {
-        // Controlla punteggio casa
-        if (result.homePoints && result.homePoints > stats.highestScore.score) {
+        const homeScore = result.homePoints || 0;
+        const awayScore = result.awayPoints || 0;
+        
+        // Controlla punteggio casa per massimo
+        if (homeScore > stats.highestScore.score) {
             stats.highestScore = {
                 team: result.homeTeam,
-                score: result.homePoints,
+                score: homeScore,
                 opponent: result.awayTeam,
                 giornata: result.giornata
             };
         }
         
-        // Controlla punteggio ospite
-        if (result.awayPoints && result.awayPoints > stats.highestScore.score) {
+        // Controlla punteggio ospite per massimo
+        if (awayScore > stats.highestScore.score) {
             stats.highestScore = {
                 team: result.awayTeam,
-                score: result.awayPoints,
+                score: awayScore,
                 opponent: result.homeTeam,
                 giornata: result.giornata
             };
+        }
+        
+        // Controlla punteggio minimo (escludendo 0 che potrebbe essere dato non valido)
+        if (homeScore > 0 && homeScore < stats.lowestScore.score) {
+            stats.lowestScore = {
+                team: result.homeTeam,
+                score: homeScore,
+                opponent: result.awayTeam,
+                giornata: result.giornata
+            };
+        }
+        
+        if (awayScore > 0 && awayScore < stats.lowestScore.score) {
+            stats.lowestScore = {
+                team: result.awayTeam,
+                score: awayScore,
+                opponent: result.homeTeam,
+                giornata: result.giornata
+            };
+        }
+        
+        // Vittoria con il margine più ampio
+        const margin = Math.abs(homeScore - awayScore);
+        if (result.result !== 'X' && margin > stats.biggestWin.margin) {
+            const winner = result.result === '1' ? result.homeTeam : result.awayTeam;
+            const loser = result.result === '1' ? result.awayTeam : result.homeTeam;
+            stats.biggestWin = {
+                team: winner,
+                margin: margin,
+                score: `${Math.max(homeScore, awayScore).toFixed(1)}-${Math.min(homeScore, awayScore).toFixed(1)}`,
+                opponent: loser,
+                giornata: result.giornata
+            };
+        }
+        
+        // Pareggi con punteggi alti e bassi
+        if (result.result === 'X') {
+            const drawScore = homeScore; // In caso di pareggio homeScore === awayScore
+            
+            if (drawScore > stats.highestDraw.score) {
+                stats.highestDraw = {
+                    homeTeam: result.homeTeam,
+                    awayTeam: result.awayTeam,
+                    score: drawScore,
+                    giornata: result.giornata
+                };
+            }
+            
+            if (drawScore > 0 && drawScore < stats.lowestDraw.score) {
+                stats.lowestDraw = {
+                    homeTeam: result.homeTeam,
+                    awayTeam: result.awayTeam,
+                    score: drawScore,
+                    giornata: result.giornata
+                };
+            }
+        }
+        
+        // Partita con il maggior numero di gol (dal campo score, non dai punti)
+        if (result.score && result.score.includes('-')) {
+            const [homeGoals, awayGoals] = result.score.split('-').map(g => parseInt(g.trim(), 10));
+            const totalGoals = homeGoals + awayGoals;
+            
+            if (totalGoals > stats.mostGoalsMatch.totalGoals) {
+                stats.mostGoalsMatch = {
+                    homeTeam: result.homeTeam,
+                    awayTeam: result.awayTeam,
+                    totalGoals: totalGoals,
+                    score: result.score,
+                    giornata: result.giornata
+                };
+            }
+        }
+    });
+    
+    // Giornate con maggior e minor numero di gol (somma dei gol effettivi, non dei punti)
+    const giornateGoals = {};
+    allResults.forEach(result => {
+        const giornata = result.giornata;
+        if (!giornateGoals[giornata]) {
+            giornateGoals[giornata] = 0;
+        }
+        
+        // Estrai i gol dal campo score
+        if (result.score && result.score.includes('-')) {
+            const [homeGoals, awayGoals] = result.score.split('-').map(g => parseInt(g.trim(), 10));
+            giornateGoals[giornata] += homeGoals + awayGoals;
+        }
+    });
+    
+    Object.entries(giornateGoals).forEach(([giornata, totalGoals]) => {
+        if (totalGoals > stats.mostGoalsGiornata.totalGoals) {
+            stats.mostGoalsGiornata = { giornata, totalGoals };
+        }
+        
+        if (totalGoals < stats.leastGoalsGiornata.totalGoals) {
+            stats.leastGoalsGiornata = { giornata, totalGoals };
         }
     });
     
@@ -4144,6 +4613,25 @@ const renderStatistics = () => {
             ` : '<p class="text-gray-400 text-sm">Dati non disponibili</p>'}
         </div>
         
+        <!-- Peggior Differenza Reti -->
+        <div class="bg-gradient-to-br from-red-900/30 to-red-800/20 border border-red-700/50 rounded-lg p-4">
+            <div class="flex items-center mb-2">
+                <svg class="w-6 h-6 text-red-400 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M12 13a1 1 0 100 2h5a1 1 0 001-1V9a1 1 0 10-2 0v2.586l-4.293-4.293a1 1 0 00-1.414 0L8 9.586 3.707 5.293a1 1 0 00-1.414 1.414l5 5a1 1 0 001.414 0L11 9.414 14.586 13H12z" clip-rule="evenodd"></path>
+                </svg>
+                <h4 class="text-sm font-bold text-red-300 uppercase">Peggior Diff. Reti</h4>
+            </div>
+            ${stats.worstGoalDifference.team && stats.worstGoalDifference.goalDifference !== Infinity ? `
+                <div class="flex items-center space-x-3">
+                    <img src="${getTeamLogo(stats.worstGoalDifference.team)}" alt="${stats.worstGoalDifference.team}" class="w-10 h-10 object-contain" onerror="this.style.display='none'">
+                    <div>
+                        <p class="text-lg font-bold text-white">${stats.worstGoalDifference.team}</p>
+                        <p class="text-2xl font-bold text-red-400">${stats.worstGoalDifference.goalDifference}</p>
+                    </div>
+                </div>
+            ` : '<p class="text-gray-400 text-sm">Dati non disponibili</p>'}
+        </div>
+        
         <!-- Punteggio Più Alto -->
         <div class="bg-gradient-to-br from-purple-900/30 to-purple-800/20 border border-purple-700/50 rounded-lg p-4">
             <div class="flex items-center mb-2">
@@ -4160,6 +4648,129 @@ const renderStatistics = () => {
                         <p class="text-2xl font-bold text-purple-400">${stats.highestScore.score.toFixed(1)} punti</p>
                         <p class="text-xs text-gray-400">vs ${stats.highestScore.opponent} - Giornata ${stats.highestScore.giornata}</p>
                     </div>
+                </div>
+            ` : '<p class="text-gray-400 text-sm">Dati non disponibili</p>'}
+        </div>
+        
+        <!-- Punteggio Più Basso -->
+        <div class="bg-gradient-to-br from-gray-900/30 to-gray-800/20 border border-gray-700/50 rounded-lg p-4">
+            <div class="flex items-center mb-2">
+                <svg class="w-6 h-6 text-gray-400 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M12 13a1 1 0 100 2h5a1 1 0 001-1V9a1 1 0 10-2 0v2.586l-4.293-4.293a1 1 0 00-1.414 0L8 9.586 3.707 5.293a1 1 0 00-1.414 1.414l5 5a1 1 0 001.414 0L11 9.414 14.586 13H12z" clip-rule="evenodd"></path>
+                </svg>
+                <h4 class="text-sm font-bold text-gray-300 uppercase">Punteggio Più Basso</h4>
+            </div>
+            ${stats.lowestScore.team && stats.lowestScore.score !== Infinity ? `
+                <div class="flex items-center space-x-3">
+                    <img src="${getTeamLogo(stats.lowestScore.team)}" alt="${stats.lowestScore.team}" class="w-10 h-10 object-contain" onerror="this.style.display='none'">
+                    <div>
+                        <p class="text-lg font-bold text-white">${stats.lowestScore.team}</p>
+                        <p class="text-2xl font-bold text-gray-400">${stats.lowestScore.score.toFixed(1)} punti</p>
+                        <p class="text-xs text-gray-400">vs ${stats.lowestScore.opponent} - Giornata ${stats.lowestScore.giornata}</p>
+                    </div>
+                </div>
+            ` : '<p class="text-gray-400 text-sm">Dati non disponibili</p>'}
+        </div>
+        
+        <!-- Vittoria con Margine Più Ampio -->
+        <div class="bg-gradient-to-br from-yellow-900/30 to-yellow-800/20 border border-yellow-700/50 rounded-lg p-4">
+            <div class="flex items-center mb-2">
+                <svg class="w-6 h-6 text-yellow-400 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z"></path>
+                </svg>
+                <h4 class="text-sm font-bold text-yellow-300 uppercase">Vittoria Più Larga</h4>
+            </div>
+            ${stats.biggestWin.team ? `
+                <div class="flex items-center space-x-3">
+                    <img src="${getTeamLogo(stats.biggestWin.team)}" alt="${stats.biggestWin.team}" class="w-10 h-10 object-contain" onerror="this.style.display='none'">
+                    <div>
+                        <p class="text-lg font-bold text-white">${stats.biggestWin.team}</p>
+                        <p class="text-2xl font-bold text-yellow-400">+${stats.biggestWin.margin.toFixed(1)} punti</p>
+                        <p class="text-xs text-gray-400">${stats.biggestWin.score} vs ${stats.biggestWin.opponent} - G.${stats.biggestWin.giornata}</p>
+                    </div>
+                </div>
+            ` : '<p class="text-gray-400 text-sm">Dati non disponibili</p>'}
+        </div>
+        
+        <!-- Pareggio con Punteggio Più Alto -->
+        <div class="bg-gradient-to-br from-orange-900/30 to-orange-800/20 border border-orange-700/50 rounded-lg p-4">
+            <div class="flex items-center mb-2">
+                <svg class="w-6 h-6 text-orange-400 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M3 3a1 1 0 000 2v8a2 2 0 002 2h2.586l-1.293 1.293a1 1 0 101.414 1.414L10 15.414l2.293 2.293a1 1 0 001.414-1.414L12.414 15H15a2 2 0 002-2V5a1 1 0 100-2H3zm11 4a1 1 0 10-2 0v4a1 1 0 102 0V7zm-3 1a1 1 0 10-2 0v3a1 1 0 102 0V8zM8 9a1 1 0 00-2 0v2a1 1 0 102 0V9z" clip-rule="evenodd"></path>
+                </svg>
+                <h4 class="text-sm font-bold text-orange-300 uppercase">Pareggio Più Alto</h4>
+            </div>
+            ${stats.highestDraw.homeTeam ? `
+                <div>
+                    <p class="text-lg font-bold text-white">${stats.highestDraw.homeTeam} vs ${stats.highestDraw.awayTeam}</p>
+                    <p class="text-2xl font-bold text-orange-400">${stats.highestDraw.score.toFixed(1)}-${stats.highestDraw.score.toFixed(1)}</p>
+                    <p class="text-xs text-gray-400">Giornata ${stats.highestDraw.giornata}</p>
+                </div>
+            ` : '<p class="text-gray-400 text-sm">Dati non disponibili</p>'}
+        </div>
+        
+        <!-- Pareggio con Punteggio Più Basso -->
+        <div class="bg-gradient-to-br from-cyan-900/30 to-cyan-800/20 border border-cyan-700/50 rounded-lg p-4">
+            <div class="flex items-center mb-2">
+                <svg class="w-6 h-6 text-cyan-400 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M3 3a1 1 0 000 2v8a2 2 0 002 2h2.586l-1.293 1.293a1 1 0 101.414 1.414L10 15.414l2.293 2.293a1 1 0 001.414-1.414L12.414 15H15a2 2 0 002-2V5a1 1 0 100-2H3zm11 4a1 1 0 10-2 0v4a1 1 0 102 0V7zm-3 1a1 1 0 10-2 0v3a1 1 0 102 0V8zM8 9a1 1 0 00-2 0v2a1 1 0 102 0V9z" clip-rule="evenodd"></path>
+                </svg>
+                <h4 class="text-sm font-bold text-cyan-300 uppercase">Pareggio Più Basso</h4>
+            </div>
+            ${stats.lowestDraw.homeTeam && stats.lowestDraw.score !== Infinity ? `
+                <div>
+                    <p class="text-lg font-bold text-white">${stats.lowestDraw.homeTeam} vs ${stats.lowestDraw.awayTeam}</p>
+                    <p class="text-2xl font-bold text-cyan-400">${stats.lowestDraw.score.toFixed(1)}-${stats.lowestDraw.score.toFixed(1)}</p>
+                    <p class="text-xs text-gray-400">Giornata ${stats.lowestDraw.giornata}</p>
+                </div>
+            ` : '<p class="text-gray-400 text-sm">Dati non disponibili</p>'}
+        </div>
+        
+        <!-- Partita con Più Gol -->
+        <div class="bg-gradient-to-br from-pink-900/30 to-pink-800/20 border border-pink-700/50 rounded-lg p-4">
+            <div class="flex items-center mb-2">
+                <svg class="w-6 h-6 text-pink-400 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clip-rule="evenodd"></path>
+                </svg>
+                <h4 class="text-sm font-bold text-pink-300 uppercase">Partita con Più Gol</h4>
+            </div>
+            ${stats.mostGoalsMatch.homeTeam ? `
+                <div>
+                    <p class="text-lg font-bold text-white">${stats.mostGoalsMatch.homeTeam} vs ${stats.mostGoalsMatch.awayTeam}</p>
+                    <p class="text-2xl font-bold text-pink-400">${stats.mostGoalsMatch.totalGoals} gol totali</p>
+                    <p class="text-xs text-gray-400">${stats.mostGoalsMatch.score} - Giornata ${stats.mostGoalsMatch.giornata}</p>
+                </div>
+            ` : '<p class="text-gray-400 text-sm">Dati non disponibili</p>'}
+        </div>
+        
+        <!-- Giornata con Più Gol -->
+        <div class="bg-gradient-to-br from-indigo-900/30 to-indigo-800/20 border border-indigo-700/50 rounded-lg p-4">
+            <div class="flex items-center mb-2">
+                <svg class="w-6 h-6 text-indigo-400 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"></path>
+                </svg>
+                <h4 class="text-sm font-bold text-indigo-300 uppercase">Giornata con Più Gol</h4>
+            </div>
+            ${stats.mostGoalsGiornata.giornata ? `
+                <div>
+                    <p class="text-lg font-bold text-white">Giornata ${stats.mostGoalsGiornata.giornata}</p>
+                    <p class="text-2xl font-bold text-indigo-400">${stats.mostGoalsGiornata.totalGoals} gol totali</p>
+                </div>
+            ` : '<p class="text-gray-400 text-sm">Dati non disponibili</p>'}
+        </div>
+        
+        <!-- Giornata con Meno Gol -->
+        <div class="bg-gradient-to-br from-teal-900/30 to-teal-800/20 border border-teal-700/50 rounded-lg p-4">
+            <div class="flex items-center mb-2">
+                <svg class="w-6 h-6 text-teal-400 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"></path>
+                </svg>
+                <h4 class="text-sm font-bold text-teal-300 uppercase">Giornata con Meno Gol</h4>
+            </div>
+            ${stats.leastGoalsGiornata.giornata && stats.leastGoalsGiornata.totalGoals !== Infinity ? `
+                <div>
+                    <p class="text-lg font-bold text-white">Giornata ${stats.leastGoalsGiornata.giornata}</p>
+                    <p class="text-2xl font-bold text-teal-400">${stats.leastGoalsGiornata.totalGoals} gol totali</p>
                 </div>
             ` : '<p class="text-gray-400 text-sm">Dati non disponibili</p>'}
         </div>
@@ -4508,6 +5119,21 @@ const renderStatistics = () => {
                 currentPredictions
             });
             
+            // CONTROLLO DEADLINE: Verifica se è ancora possibile scommettere
+            try {
+                const deadlinePassed = await isDeadlinePassed(currentGiornata);
+                if (deadlinePassed) {
+                    const { deadline, confirmed } = await getGiornataDeadline(currentGiornata);
+                    const status = confirmed ? 'confermato' : 'stimato';
+                    messageBox(`⏰ SCOMMESSE CHIUSE!\n\nLa deadline per questa giornata è scaduta.\nOrario di chiusura (${status}): ${deadline.toLocaleString('it-IT')}`);
+                    return;
+                }
+            } catch (error) {
+                console.error('Errore verifica deadline:', error);
+                messageBox("Errore nella verifica della deadline. Riprova.");
+                return;
+            }
+            
             // Verifica se ci sono già scommesse SALVATE su Firestore per questa giornata
             try {
                 const qExistingBets = query(
@@ -4654,6 +5280,124 @@ const renderStatistics = () => {
         };
 
 
+        // --- Rendering Countdown Deadline ---
+        
+        const renderBetDeadlineCountdown = async (giornata) => {
+            const countdownEl = document.getElementById('bet-deadline-countdown');
+            if (!countdownEl) return;
+            
+            try {
+                const { deadline, confirmed, notes } = await getGiornataDeadline(giornata);
+                const now = new Date();
+                const isPast = now >= deadline;
+                
+                if (isPast) {
+                    countdownEl.innerHTML = `
+                        <div class="bg-red-900/30 border-l-4 border-red-500 p-4 rounded-lg">
+                            <div class="flex items-center">
+                                <svg class="w-6 h-6 text-red-400 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path>
+                                </svg>
+                                <div>
+                                    <p class="text-red-300 font-bold text-lg">⏰ SCOMMESSE CHIUSE</p>
+                                    <p class="text-red-200 text-sm">La deadline per la Giornata ${giornata} è scaduta il ${deadline.toLocaleString('it-IT')}</p>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                // Calcola tempo rimanente
+                const diff = deadline - now;
+                const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+                
+                // Colore e icona in base al tempo rimanente
+                let bgColor, borderColor, textColor, iconColor, statusIcon;
+                if (days > 2) {
+                    bgColor = 'bg-green-900/20';
+                    borderColor = 'border-green-500';
+                    textColor = 'text-green-300';
+                    iconColor = 'text-green-400';
+                    statusIcon = `<path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>`;
+                } else if (days > 0 || hours > 12) {
+                    bgColor = 'bg-yellow-900/20';
+                    borderColor = 'border-yellow-500';
+                    textColor = 'text-yellow-300';
+                    iconColor = 'text-yellow-400';
+                    statusIcon = `<path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"></path>`;
+                } else {
+                    bgColor = 'bg-red-900/20';
+                    borderColor = 'border-red-500';
+                    textColor = 'text-red-300';
+                    iconColor = 'text-red-400';
+                    statusIcon = `<path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>`;
+                }
+                
+                const confirmedBadge = confirmed 
+                    ? `<span class="ml-2 px-2 py-1 bg-green-600 text-white text-xs rounded-full">✓ Confermato</span>`
+                    : `<span class="ml-2 px-2 py-1 bg-orange-600 text-white text-xs rounded-full">⚠ Da confermare</span>`;
+                
+                // Aggiungi animazione se manca meno di 1 ora
+                const urgentClass = (days === 0 && hours < 1) ? 'countdown-urgent' : '';
+                
+                countdownEl.innerHTML = `
+                    <div class="${bgColor} border-l-4 ${borderColor} p-4 rounded-lg ${urgentClass}">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center">
+                                <svg class="w-6 h-6 ${iconColor} mr-3" fill="currentColor" viewBox="0 0 20 20">
+                                    ${statusIcon}
+                                </svg>
+                                <div>
+                                    <p class="${textColor} font-bold text-lg">
+                                        Chiusura scommesse Giornata ${giornata}
+                                        ${confirmedBadge}
+                                    </p>
+                                    <p class="text-gray-300 text-sm mt-1">
+                                        ${deadline.toLocaleDateString('it-IT', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })} 
+                                        alle ${deadline.toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' })}
+                                    </p>
+                                    ${notes ? `<p class="text-gray-400 text-xs mt-1 italic">${notes}</p>` : ''}
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-gray-400 text-xs mb-1">Tempo rimanente:</p>
+                                <div class="flex space-x-2 text-center">
+                                    ${days > 0 ? `
+                                        <div class="bg-gray-800 px-3 py-2 rounded">
+                                            <p class="${textColor} text-2xl font-bold">${days}</p>
+                                            <p class="text-gray-400 text-xs">giorni</p>
+                                        </div>
+                                    ` : ''}
+                                    <div class="bg-gray-800 px-3 py-2 rounded">
+                                        <p class="${textColor} text-2xl font-bold">${hours}</p>
+                                        <p class="text-gray-400 text-xs">ore</p>
+                                    </div>
+                                    <div class="bg-gray-800 px-3 py-2 rounded">
+                                        <p class="${textColor} text-2xl font-bold">${minutes}</p>
+                                        <p class="text-gray-400 text-xs">min</p>
+                                    </div>
+                                    ${days === 0 && hours < 1 ? `
+                                        <div class="bg-gray-800 px-3 py-2 rounded">
+                                            <p class="${textColor} text-2xl font-bold">${seconds}</p>
+                                            <p class="text-gray-400 text-xs">sec</p>
+                                        </div>
+                                    ` : ''}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } catch (error) {
+                console.error('Errore rendering countdown:', error);
+                countdownEl.innerHTML = '';
+            }
+        };
+
+
         const renderOpenMatches = (matches, nextGiornata) => {
             console.log('renderOpenMatches chiamato con:', { 
                 matches: matches?.map(m => ({
@@ -4666,6 +5410,15 @@ const renderStatistics = () => {
                 })),
                 nextGiornata 
             });
+            
+            // Renderizza il countdown della deadline
+            renderBetDeadlineCountdown(nextGiornata);
+            
+            // Avvia timer per aggiornare il countdown ogni secondo
+            if (countdownInterval) clearInterval(countdownInterval);
+            countdownInterval = setInterval(() => {
+                renderBetDeadlineCountdown(nextGiornata);
+            }, 1000);
             
             const listContainer = document.getElementById('open-matches-list');
             const noMatchesMessage = document.getElementById('no-open-matches');
@@ -5017,6 +5770,146 @@ const renderStatistics = () => {
             } catch (error) {
                 console.error("Errore aggiornamento permessi utente:", error);
                 messageBox("Errore durante l'aggiornamento dei permessi e crediti utente.");
+            }
+        };
+
+        // --- GESTIONE ORARI GIORNATE (ADMIN) ---
+        
+        // Carica e renderizza gli orari delle giornate per l'admin
+        window.loadSchedulesForAdmin = async () => {
+            if (!isUserAdmin) return;
+            
+            try {
+                // Ricarica la cache
+                scheduleCache = null;
+                await loadAllSchedules();
+                
+                const tbody = document.getElementById('schedules-table-body');
+                tbody.innerHTML = '';
+                
+                // Genera righe per tutte le 36 giornate del fantacalcio (Serie A giornate 3-38)
+                for (let g = 1; g <= 36; g++) {
+                    const schedule = await getGiornataSchedule(g);
+                    const deadline = new Date(`${schedule.date}T${schedule.time}:00`);
+                    const now = new Date();
+                    const isPast = now >= deadline;
+                    const isUpcoming = !isPast && (deadline - now) < 7 * 24 * 60 * 60 * 1000; // Prossimi 7 giorni
+                    
+                    const row = document.createElement('tr');
+                    row.className = isPast ? 'bg-gray-800/50 opacity-60' : isUpcoming ? 'bg-yellow-900/20' : '';
+                    
+                    // Calcola la giornata Serie A corrispondente
+                    const serieAGiornata = g + 2;
+                    
+                    // Calcola countdown
+                    let countdownText = '';
+                    if (isPast) {
+                        countdownText = '<span class="text-gray-500 text-xs">Passata</span>';
+                    } else {
+                        const diff = deadline - now;
+                        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                        const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                        if (days > 0) {
+                            countdownText = `<span class="text-blue-400 text-xs">${days}g ${hours}h</span>`;
+                        } else {
+                            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                            countdownText = `<span class="text-yellow-400 font-bold text-xs">${hours}h ${minutes}m</span>`;
+                        }
+                    }
+                    
+                    row.innerHTML = `
+                        <td class="px-3 py-2 font-bold ${isUpcoming ? 'text-yellow-400' : ''}">${g}</td>
+                        <td class="px-3 py-2 text-gray-400 text-xs">${serieAGiornata}</td>
+                        <td class="px-3 py-2">
+                            <input type="date" 
+                                   id="schedule-date-${g}" 
+                                   value="${schedule.date}" 
+                                   class="bg-gray-800 text-white px-2 py-1 rounded text-sm w-full"
+                                   ${isPast ? 'disabled' : ''}>
+                        </td>
+                        <td class="px-3 py-2">
+                            <input type="time" 
+                                   id="schedule-time-${g}" 
+                                   value="${schedule.time}" 
+                                   class="bg-gray-800 text-white px-2 py-1 rounded text-sm w-full"
+                                   ${isPast ? 'disabled' : ''}>
+                        </td>
+                        <td class="px-3 py-2 text-center">
+                            <input type="checkbox" 
+                                   id="schedule-confirmed-${g}" 
+                                   ${schedule.confirmed ? 'checked' : ''}
+                                   class="w-4 h-4"
+                                   ${isPast ? 'disabled' : ''}>
+                        </td>
+                        <td class="px-3 py-2">
+                            <input type="text" 
+                                   id="schedule-notes-${g}" 
+                                   value="${schedule.notes || ''}" 
+                                   placeholder="Es: Anticipo venerdì ore 20:45"
+                                   class="bg-gray-800 text-white px-2 py-1 rounded text-xs w-full"
+                                   ${isPast ? 'disabled' : ''}>
+                        </td>
+                        <td class="px-3 py-2 text-center">
+                            ${countdownText}
+                        </td>
+                    `;
+                    
+                    tbody.appendChild(row);
+                }
+                
+                messageBox("Orari caricati correttamente.");
+            } catch (error) {
+                console.error('Errore caricamento schedules:', error);
+                messageBox("Errore nel caricamento degli orari: " + error.message);
+            }
+        };
+        
+        // Salva tutti gli orari modificati
+        window.saveAllSchedules = async () => {
+            if (!isUserAdmin) return;
+            
+            if (!confirm("Salvare tutte le modifiche agli orari delle giornate?")) {
+                return;
+            }
+            
+            try {
+                const batch = writeBatch(db);
+                
+                // Salva solo le 36 giornate del fantacalcio (Serie A giornate 3-38)
+                for (let g = 1; g <= 36; g++) {
+                    const dateInput = document.getElementById(`schedule-date-${g}`);
+                    const timeInput = document.getElementById(`schedule-time-${g}`);
+                    const confirmedInput = document.getElementById(`schedule-confirmed-${g}`);
+                    const notesInput = document.getElementById(`schedule-notes-${g}`);
+                    
+                    if (!dateInput || !timeInput || !confirmedInput || !notesInput) continue;
+                    if (dateInput.disabled) continue; // Salta le giornate passate
+                    
+                    const scheduleData = {
+                        giornata: g.toString(),
+                        date: dateInput.value,
+                        time: timeInput.value,
+                        confirmed: confirmedInput.checked,
+                        notes: notesInput.value.trim()
+                    };
+                    
+                    const docRef = doc(getScheduleCollectionRef(), `giornata_${g}`);
+                    batch.set(docRef, scheduleData, { merge: true });
+                }
+                
+                await batch.commit();
+                
+                // Ricarica la cache
+                scheduleCache = null;
+                await loadAllSchedules();
+                
+                messageBox("✅ Tutti gli orari sono stati salvati con successo!");
+                
+                // Ricarica la vista
+                await loadSchedulesForAdmin();
+            } catch (error) {
+                console.error('Errore salvataggio schedules:', error);
+                messageBox("Errore nel salvataggio degli orari: " + error.message);
             }
         };
 
