@@ -25,6 +25,7 @@
     <meta name="theme-color" content="#0a1628">
     
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         body { 
@@ -301,6 +302,108 @@
             opacity: 1;
             visibility: visible;
         }
+        
+        /* === EFFETTI HALLOWEEN === */
+        #halloween-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9999;
+            opacity: 0;
+            transition: opacity 1s ease-out;
+        }
+        
+        #halloween-overlay.active {
+            opacity: 1;
+        }
+        
+        .spider {
+            position: absolute;
+            font-size: 24px;
+            animation: spider-walk 8s linear;
+        }
+        
+        @keyframes spider-walk {
+            0% {
+                top: -50px;
+                transform: rotate(0deg);
+            }
+            50% {
+                transform: rotate(180deg);
+            }
+            100% {
+                top: 100vh;
+                transform: rotate(360deg);
+            }
+        }
+        
+        .bat {
+            position: absolute;
+            font-size: 28px;
+            animation: bat-fly 6s ease-in-out;
+        }
+        
+        @keyframes bat-fly {
+            0% {
+                left: -50px;
+                top: 20%;
+                transform: scale(1) rotate(0deg);
+            }
+            25% {
+                top: 40%;
+                transform: scale(1.2) rotate(10deg);
+            }
+            50% {
+                top: 30%;
+                transform: scale(1) rotate(-10deg);
+            }
+            75% {
+                top: 50%;
+                transform: scale(1.2) rotate(5deg);
+            }
+            100% {
+                left: 110%;
+                top: 35%;
+                transform: scale(1) rotate(0deg);
+            }
+        }
+        
+        .web {
+            position: absolute;
+            width: 150px;
+            height: 150px;
+            opacity: 0.6;
+        }
+        
+        .web-corner {
+            position: absolute;
+            width: 0;
+            height: 0;
+            border-style: solid;
+        }
+        
+        .web-corner.top-left {
+            top: 0;
+            left: 0;
+            border-width: 100px 100px 0 0;
+            border-color: rgba(200, 200, 200, 0.3) transparent transparent transparent;
+        }
+        
+        .web-corner.top-right {
+            top: 0;
+            right: 0;
+            border-width: 0 100px 100px 0;
+            border-color: transparent rgba(200, 200, 200, 0.3) transparent transparent;
+        }
+        
+        @keyframes fade-out {
+            0% { opacity: 1; }
+            80% { opacity: 1; }
+            100% { opacity: 0; }
+        }
     </style>
     
     <script>
@@ -336,6 +439,9 @@
 
 </head>
 <body class="min-h-screen p-3 sm:p-6 md:p-8">
+
+    <!-- Effetto Halloween (30 ott - 2 nov 2025) -->
+    <div id="halloween-overlay"></div>
 
     <!-- Menu utente compatto -->
     <div class="fixed top-2 right-2 z-50">
@@ -375,13 +481,13 @@
     
     <div class="max-w-6xl mx-auto">
         <h1 class="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 sm:mb-6 md:mb-8 text-center text-green-400">
-            Fantabet OP
+            FantaBet
         </h1>
         <p class="text-center mb-10 text-gray-400">Gioca e scommetti sulle partite della lega fantacalcio Orecchiette e Prosciutto</p>
 
         <!-- Sezione Login (mostrata se non autenticato) -->
         <div id="login-container" class="max-w-md mx-auto card p-6 sm:p-8 hidden">
-            <h2 id="auth-title" class="text-xl sm:text-2xl font-semibold mb-4 sm:mb-6 text-center">Accedi a Fantabet OP</h2>
+            <h2 id="auth-title" class="text-xl sm:text-2xl font-semibold mb-4 sm:mb-6 text-center">Accedi a FantaBet</h2>
             <div class="space-y-4">
                 <div class="flex flex-col">
                     <label for="auth-email" class="text-sm sm:text-base text-gray-400 mb-1">Email</label>
@@ -538,6 +644,20 @@
                         </h3>
                         <div id="player-statistics-container" class="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
                             <p class="text-sm sm:text-base text-gray-500 text-center py-4 col-span-full">Carica le statistiche calciatori per visualizzare le classifiche</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Andamento Classifica -->
+                    <div class="card p-4 sm:p-6">
+                        <h3 class="text-xl sm:text-2xl font-bold mb-3 sm:mb-4 text-orange-500 flex items-center">
+                            <svg class="w-6 h-6 sm:w-8 sm:h-8 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M3 3a1 1 0 000 2v8a2 2 0 002 2h2.586l-1.293 1.293a1 1 0 101.414 1.414L10 15.414l2.293 2.293a1 1 0 001.414-1.414L12.414 15H15a2 2 0 002-2V5a1 1 0 100-2H3zm11.707 4.707a1 1 0 00-1.414-1.414L10 9.586 8.707 8.293a1 1 0 00-1.414 0l-2 2a1 1 0 101.414 1.414L8 10.414l1.293 1.293a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                            </svg>
+                            Andamento Classifica
+                        </h3>
+                        <div id="standings-trend-container" class="relative" style="min-height: 400px;">
+                            <canvas id="standings-trend-chart"></canvas>
+                            <p id="standings-trend-placeholder" class="text-sm sm:text-base text-gray-500 text-center py-4 absolute inset-0 flex items-center justify-center">Carica i risultati per visualizzare l'andamento della classifica</p>
                         </div>
                     </div>
                 </div>
@@ -1195,6 +1315,10 @@
         // Stato per le scommesse piazzate dall'utente
         let userPlacedBets = [];
         let currentPredictions = {}; // Per le scommesse di gruppo
+        
+        // Stato per l'ordinamento della classifica
+        let standingsSortColumn = null;
+        let standingsSortDirection = 'asc';
         
         // Timer per countdown deadline scommesse
         let countdownInterval = null;
@@ -3665,10 +3789,14 @@
                     return;
                 }
                 
-                // Carica tutte le statistiche
+                // Carica tutte le statistiche (escludi svincolati)
                 const allStats = [];
                 snapshot.forEach(doc => {
-                    allStats.push(doc.data());
+                    const data = doc.data();
+                    // Escludi giocatori svincolati
+                    if (data.fantaSquad && data.fantaSquad !== 'SVINCOLATI') {
+                        allStats.push(data);
+                    }
                 });
                 
                 // Popola i filtri
@@ -3891,15 +4019,28 @@
                 const allStats = [];
                 snapshot.forEach(doc => {
                     const data = doc.data();
-                    allStats.push({
-                        ...data,
-                        gf: Number(data.gf) || 0,
-                        ass: Number(data.ass) || 0,
-                        gs: Number(data.gs) || 0,
-                        fm: Number(data.fm) || 0,
-                        pv: Number(data.pv) || 0
-                    });
+                    // Escludi giocatori svincolati (senza squadra)
+                    if (data.fantaSquad && data.fantaSquad !== 'SVINCOLATI') {
+                        allStats.push({
+                            ...data,
+                            gf: Number(data.gf) || 0,
+                            ass: Number(data.ass) || 0,
+                            gs: Number(data.gs) || 0,
+                            fm: Number(data.fm) || 0,
+                            pv: Number(data.pv) || 0
+                        });
+                    }
                 });
+                
+                // Calcola il numero totale di giornate di Serie A giocate
+                // Fantacalcio giornata 1 = Serie A giornata 3
+                // Quindi: Serie A giornata = Fantacalcio giornata + 2
+                const lastFantaGiornata = allResults.length > 0 
+                    ? Math.max(...allResults.map(r => parseInt(r.giornata) || 0))
+                    : 0;
+                const totalGiornate = lastFantaGiornata + 2; // Converti giornata fanta in giornata Serie A
+                
+                console.log('Ultima giornata Fanta:', lastFantaGiornata, '→ Giornate Serie A:', totalGiornate); // Debug
                 
                 // Top 3 Marcatori (gol segnati)
                 const topScorers = allStats
@@ -3930,7 +4071,7 @@
                     assistmen: topAssistmen,
                     goalkeepers: topGoalkeepers,
                     fantaMedia: topFantaMedia
-                });
+                }, totalGiornate);
                 
             } catch (error) {
                 console.error('Errore caricamento statistiche calciatori:', error);
@@ -3939,7 +4080,7 @@
             }
         };
         
-        const renderPlayerLeaderboards = (data) => {
+        const renderPlayerLeaderboards = (data, totalGiornate = 0) => {
             const container = document.getElementById('player-statistics-container');
             
             const getRoleColor = (role) => {
@@ -3978,6 +4119,8 @@
                 const playersList = players.map((p, idx) => {
                     const logoUrl = getTeamLogo(p.fantaSquad);
                     const isFirst = idx === 0;
+                    const presenze = p.pv || 0;
+                    const presenzeText = `${presenze}/${totalGiornate}`;
                     
                     return `
                         <div class="flex items-center justify-between ${isFirst ? 'py-3 mb-2 border-b-2' : 'py-2.5'} ${idx < players.length - 1 && !isFirst ? 'border-b border-gray-700/30' : ''} ${isFirst ? 'border-' + iconColor.replace('text-', '') + '/50' : ''}">
@@ -3989,6 +4132,7 @@
                                         <div class="flex items-center gap-1.5 mt-0.5 flex-wrap">
                                             <span class="${isFirst ? 'text-xs' : 'text-xs'} px-2 py-0.5 rounded border ${getRoleBadge(p.role)} font-bold">${p.role}</span>
                                             <span class="${isFirst ? 'text-sm' : 'text-xs'} ${isFirst ? iconColor : 'text-gray-400'} font-semibold truncate">${p.fantaSquad || 'N/A'}</span>
+                                            <span class="text-xs text-gray-500">• ${presenzeText}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -4287,27 +4431,123 @@ const calculateStandings = () => {
         });
     });
     
-    // Ordina per: punti (decrescente), differenza reti (decrescente), gol fatti (decrescente)
+    // Ordina per: 1. Punti, 2. Somma punti totale (fantasy), 3. Differenza reti, 4. Gol fatti, 5. Gol subiti, 6. Classifica avulsa (da implementare)
     standings.sort((a, b) => {
+        // 1. Punti in classifica (decrescente)
         if (b.points !== a.points) return b.points - a.points;
+        
+        // 2. Somma punti totale fantacalcio (decrescente)
+        if (b.fantasyPoints !== a.fantasyPoints) return b.fantasyPoints - a.fantasyPoints;
+        
+        // 3. Differenza reti (decrescente)
         if (b.goalDifference !== a.goalDifference) return b.goalDifference - a.goalDifference;
-        return b.goalsFor - a.goalsFor;
+        
+        // 4. Gol fatti (decrescente)
+        if (b.goalsFor !== a.goalsFor) return b.goalsFor - a.goalsFor;
+        
+        // 5. Gol subiti (crescente - meno gol subiti è meglio)
+        if (a.goalsAgainst !== b.goalsAgainst) return a.goalsAgainst - b.goalsAgainst;
+        
+        // 6. Classifica avulsa (da implementare - per ora parità)
+        return 0;
     });
     
     return standings;
 };
 
 // Funzione per renderizzare la classifica nella homepage
-const renderStandings = () => {
+const renderStandings = (sortColumn = null) => {
     const container = document.getElementById('standings-container');
     if (!container) return;
     
-    const standings = calculateStandings();
+    let standings = calculateStandings();
     
     if (standings.length === 0) {
         container.innerHTML = '<p class="text-gray-500 text-center py-4">Nessun dato disponibile</p>';
         return;
     }
+    
+    // Gestisci l'ordinamento personalizzato
+    if (sortColumn) {
+        // Se clicchi sulla stessa colonna, inverti la direzione
+        if (standingsSortColumn === sortColumn) {
+            standingsSortDirection = standingsSortDirection === 'asc' ? 'desc' : 'asc';
+        } else {
+            standingsSortColumn = sortColumn;
+            standingsSortDirection = sortColumn === 'team' ? 'asc' : 'desc'; // Default desc per numeri, asc per nomi
+        }
+        
+        // Ordina in base alla colonna selezionata
+        standings.sort((a, b) => {
+            let valA, valB;
+            
+            switch(sortColumn) {
+                case 'team':
+                    valA = a.team.toLowerCase();
+                    valB = b.team.toLowerCase();
+                    break;
+                case 'points':
+                    valA = a.points;
+                    valB = b.points;
+                    break;
+                case 'fantasyPoints':
+                    valA = a.fantasyPoints || 0;
+                    valB = b.fantasyPoints || 0;
+                    break;
+                case 'played':
+                    valA = a.played;
+                    valB = b.played;
+                    break;
+                case 'wins':
+                    valA = a.wins;
+                    valB = b.wins;
+                    break;
+                case 'draws':
+                    valA = a.draws;
+                    valB = b.draws;
+                    break;
+                case 'losses':
+                    valA = a.losses;
+                    valB = b.losses;
+                    break;
+                case 'goalsFor':
+                    valA = a.goalsFor;
+                    valB = b.goalsFor;
+                    break;
+                case 'goalsAgainst':
+                    valA = a.goalsAgainst;
+                    valB = b.goalsAgainst;
+                    break;
+                case 'goalDifference':
+                    valA = a.goalDifference;
+                    valB = b.goalDifference;
+                    break;
+                default:
+                    return 0;
+            }
+            
+            if (standingsSortDirection === 'asc') {
+                return valA < valB ? -1 : valA > valB ? 1 : 0;
+            } else {
+                return valA > valB ? -1 : valA < valB ? 1 : 0;
+            }
+        });
+    } else {
+        // Reset ordinamento personalizzato se non viene specificata una colonna
+        standingsSortColumn = null;
+    }
+    
+    // Funzione per generare l'icona di ordinamento
+    const getSortIcon = (column) => {
+        if (standingsSortColumn !== column) {
+            return '<svg class="w-3 h-3 inline-block ml-1 opacity-30" fill="currentColor" viewBox="0 0 20 20"><path d="M5 12a1 1 0 102 0V6.414l1.293 1.293a1 1 0 001.414-1.414l-3-3a1 1 0 00-1.414 0l-3 3a1 1 0 001.414 1.414L5 6.414V12zM15 8a1 1 0 10-2 0v5.586l-1.293-1.293a1 1 0 00-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L15 13.586V8z"></path></svg>';
+        }
+        if (standingsSortDirection === 'asc') {
+            return '<svg class="w-3 h-3 inline-block ml-1" fill="currentColor" viewBox="0 0 20 20"><path d="M3 3a1 1 0 000 2h11a1 1 0 100-2H3zM3 7a1 1 0 000 2h7a1 1 0 100-2H3zM3 11a1 1 0 100 2h4a1 1 0 100-2H3zM15 8a1 1 0 10-2 0v5.586l-1.293-1.293a1 1 0 00-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L15 13.586V8z"></path></svg>';
+        } else {
+            return '<svg class="w-3 h-3 inline-block ml-1" fill="currentColor" viewBox="0 0 20 20"><path d="M3 3a1 1 0 000 2h11a1 1 0 100-2H3zM3 7a1 1 0 000 2h5a1 1 0 000-2H3zM3 11a1 1 0 100 2h4a1 1 0 100-2H3zM13 16a1 1 0 102 0v-5.586l1.293 1.293a1 1 0 001.414-1.414l-3-3a1 1 0 00-1.414 0l-3 3a1 1 0 101.414 1.414L13 10.414V16z"></path></svg>';
+        }
+    };
     
     const table = document.createElement('table');
     table.className = 'min-w-full bg-gray-800 rounded-lg overflow-hidden';
@@ -4316,25 +4556,62 @@ const renderStandings = () => {
         <thead>
             <tr class="bg-gray-700 text-gray-400 text-sm">
                 <th class="px-3 py-2 text-center">#</th>
-                <th class="px-4 py-2 text-left" colspan="2">Squadra</th>
-                <th class="px-3 py-2 text-center">Pt</th>
-                <th class="px-3 py-2 text-center">Pti</th>
-                <th class="px-3 py-2 text-center">G</th>
-                <th class="px-3 py-2 text-center">V</th>
-                <th class="px-3 py-2 text-center">N</th>
-                <th class="px-3 py-2 text-center">P</th>
-                <th class="px-3 py-2 text-center">GF</th>
-                <th class="px-3 py-2 text-center">GS</th>
-                <th class="px-3 py-2 text-center">DR</th>
+                <th class="px-4 py-2 text-left cursor-pointer hover:bg-gray-600 transition-colors" colspan="2" onclick="renderStandings('team')">
+                    Squadra ${getSortIcon('team')}
+                </th>
+                <th class="px-3 py-2 text-center cursor-pointer hover:bg-gray-600 transition-colors" onclick="renderStandings('points')">
+                    Pt ${getSortIcon('points')}
+                </th>
+                <th class="px-3 py-2 text-center cursor-pointer hover:bg-gray-600 transition-colors" onclick="renderStandings('fantasyPoints')">
+                    Pti ${getSortIcon('fantasyPoints')}
+                </th>
+                <th class="px-3 py-2 text-center cursor-pointer hover:bg-gray-600 transition-colors" onclick="renderStandings('played')">
+                    G ${getSortIcon('played')}
+                </th>
+                <th class="px-3 py-2 text-center cursor-pointer hover:bg-gray-600 transition-colors" onclick="renderStandings('wins')">
+                    V ${getSortIcon('wins')}
+                </th>
+                <th class="px-3 py-2 text-center cursor-pointer hover:bg-gray-600 transition-colors" onclick="renderStandings('draws')">
+                    N ${getSortIcon('draws')}
+                </th>
+                <th class="px-3 py-2 text-center cursor-pointer hover:bg-gray-600 transition-colors" onclick="renderStandings('losses')">
+                    P ${getSortIcon('losses')}
+                </th>
+                <th class="px-3 py-2 text-center cursor-pointer hover:bg-gray-600 transition-colors" onclick="renderStandings('goalsFor')">
+                    GF ${getSortIcon('goalsFor')}
+                </th>
+                <th class="px-3 py-2 text-center cursor-pointer hover:bg-gray-600 transition-colors" onclick="renderStandings('goalsAgainst')">
+                    GS ${getSortIcon('goalsAgainst')}
+                </th>
+                <th class="px-3 py-2 text-center cursor-pointer hover:bg-gray-600 transition-colors" onclick="renderStandings('goalDifference')">
+                    DR ${getSortIcon('goalDifference')}
+                </th>
             </tr>
         </thead>
         <tbody class="text-gray-300">
             ${standings.map((team, index) => {
                 const position = index + 1;
+                const totalTeams = standings.length;
+                const isLast = position === totalTeams;
+                
+                // Classe per la posizione
                 let positionClass = '';
-                if (position === 1) positionClass = 'text-yellow-400 font-bold';
-                else if (position === 2) positionClass = 'text-gray-300 font-semibold';
-                else if (position === 3) positionClass = 'text-orange-400 font-semibold';
+                if (position === 1) positionClass = 'text-yellow-300 font-bold text-lg';
+                else if (position === 2) positionClass = 'text-gray-200 font-bold';
+                else if (position === 3) positionClass = 'text-orange-300 font-bold';
+                else if (isLast) positionClass = 'text-red-300 font-bold';
+                
+                // Classe per la riga - evidenzia le prime 3 e l'ultima con colori più vivaci
+                let rowClass = 'border-b border-gray-700 hover:bg-gray-750';
+                if (position === 1) {
+                    rowClass = 'border-b-2 border-l-4 border-l-yellow-400 border-b-yellow-400/50 bg-gradient-to-r from-yellow-500/25 to-yellow-500/5 hover:from-yellow-500/35 hover:to-yellow-500/10';
+                } else if (position === 2) {
+                    rowClass = 'border-b-2 border-l-4 border-l-slate-400 border-b-slate-400/50 bg-gradient-to-r from-slate-500/25 to-slate-500/5 hover:from-slate-500/35 hover:to-slate-500/10';
+                } else if (position === 3) {
+                    rowClass = 'border-b-2 border-l-4 border-l-orange-400 border-b-orange-400/50 bg-gradient-to-r from-orange-500/25 to-orange-500/5 hover:from-orange-500/35 hover:to-orange-500/10';
+                } else if (isLast) {
+                    rowClass = 'border-b-2 border-l-4 border-l-red-500 border-b-red-500/50 bg-gradient-to-r from-red-500/25 to-red-500/5 hover:from-red-500/35 hover:to-red-500/10';
+                }
                 
                 // Colore per la differenza reti
                 let drClass = 'text-gray-300';
@@ -4342,7 +4619,7 @@ const renderStandings = () => {
                 else if (team.goalDifference < 0) drClass = 'text-red-400 font-semibold';
                 
                 return `
-                    <tr class="border-b border-gray-700 hover:bg-gray-750">
+                    <tr class="${rowClass}">
                         <td class="px-3 py-3 text-center ${positionClass}">${position}</td>
                         <td class="px-2 py-3 text-center">
                             <img src="${getTeamLogo(team.team)}" alt="${team.team}" class="w-8 h-8 object-contain mx-auto" onerror="this.style.display='none'">
@@ -4365,6 +4642,301 @@ const renderStandings = () => {
     
     container.innerHTML = '';
     container.appendChild(table);
+};
+
+// Funzione per calcolare l'andamento della classifica giornata per giornata
+const calculateStandingsTrend = () => {
+    // Raggruppa i risultati per giornata
+    const resultsByGiornata = new Map();
+    allResults.forEach(r => {
+        const giornataNum = parseInt(r.giornata) || 0;
+        if (giornataNum > 0) {
+            if (!resultsByGiornata.has(giornataNum)) {
+                resultsByGiornata.set(giornataNum, []);
+            }
+            resultsByGiornata.get(giornataNum).push(r);
+        }
+    });
+    
+    if (resultsByGiornata.size === 0) return null;
+    
+    // Ordina le giornate
+    const sortedGiornate = Array.from(resultsByGiornata.keys()).sort((a, b) => a - b);
+    
+    // Calcola la classifica progressiva per ogni giornata
+    const teamTrends = new Map();
+    const allTeamsSet = new Set();
+    
+    // Raccogli tutte le squadre
+    allResults.forEach(r => {
+        allTeamsSet.add(r.homeTeam);
+        allTeamsSet.add(r.awayTeam);
+    });
+    
+    // Inizializza le squadre
+    allTeamsSet.forEach(team => {
+        teamTrends.set(team, []);
+    });
+    
+    // Per ogni giornata, calcola la classifica cumulativa
+    let cumulativeResults = [];
+    sortedGiornate.forEach(giornata => {
+        const giornataResults = resultsByGiornata.get(giornata);
+        cumulativeResults = [...cumulativeResults, ...giornataResults];
+        
+        // Calcola classifica fino a questa giornata
+        const standings = [];
+        allTeamsSet.forEach(teamName => {
+            const teamResults = cumulativeResults.filter(r => 
+                r.homeTeam === teamName || r.awayTeam === teamName
+            );
+            
+            let points = 0;
+            let fantasyPoints = 0;
+            let goalsFor = 0;
+            let goalsAgainst = 0;
+            
+            teamResults.forEach(r => {
+                if (r.homeTeam === teamName) {
+                    // Partita in casa
+                    if (r.result === '1') points += 3;
+                    else if (r.result === 'X') points += 1;
+                    
+                    if (r.score && r.score.includes('-')) {
+                        const [home, away] = r.score.split('-').map(g => parseInt(g.trim(), 10));
+                        if (!isNaN(home) && !isNaN(away)) {
+                            goalsFor += home;
+                            goalsAgainst += away;
+                        }
+                    }
+                    
+                    if (r.homePoints) fantasyPoints += r.homePoints;
+                } else {
+                    // Partita in trasferta
+                    if (r.result === '2') points += 3;
+                    else if (r.result === 'X') points += 1;
+                    
+                    if (r.score && r.score.includes('-')) {
+                        const [home, away] = r.score.split('-').map(g => parseInt(g.trim(), 10));
+                        if (!isNaN(home) && !isNaN(away)) {
+                            goalsFor += away;
+                            goalsAgainst += home;
+                        }
+                    }
+                    
+                    if (r.awayPoints) fantasyPoints += r.awayPoints;
+                }
+            });
+            
+            standings.push({
+                team: teamName,
+                points: points,
+                fantasyPoints: fantasyPoints,
+                goalDifference: goalsFor - goalsAgainst,
+                goalsFor: goalsFor,
+                goalsAgainst: goalsAgainst
+            });
+        });
+        
+        // Ordina usando lo stesso criterio della classifica principale
+        standings.sort((a, b) => {
+            if (b.points !== a.points) return b.points - a.points;
+            if (b.fantasyPoints !== a.fantasyPoints) return b.fantasyPoints - a.fantasyPoints;
+            if (b.goalDifference !== a.goalDifference) return b.goalDifference - a.goalDifference;
+            if (b.goalsFor !== a.goalsFor) return b.goalsFor - a.goalsFor;
+            if (a.goalsAgainst !== b.goalsAgainst) return a.goalsAgainst - b.goalsAgainst;
+            return 0;
+        });
+        
+        // Salva la posizione di ogni squadra in questa giornata
+        standings.forEach((team, index) => {
+            teamTrends.get(team.team).push({
+                giornata: giornata,
+                position: index + 1,
+                points: team.points
+            });
+        });
+    });
+    
+    return {
+        giornate: sortedGiornate,
+        teamTrends: teamTrends
+    };
+};
+
+// Funzione per renderizzare l'andamento della classifica
+let standingsTrendChart = null; // Variabile globale per il grafico
+
+const renderStandingsTrend = () => {
+    const canvas = document.getElementById('standings-trend-chart');
+    const placeholder = document.getElementById('standings-trend-placeholder');
+    
+    if (!canvas) return;
+    
+    const trendData = calculateStandingsTrend();
+    
+    if (!trendData) {
+        if (placeholder) placeholder.style.display = 'flex';
+        if (canvas) canvas.style.display = 'none';
+        return;
+    }
+    
+    const { giornate, teamTrends } = trendData;
+    
+    // Nascondi placeholder e mostra canvas
+    if (placeholder) placeholder.style.display = 'none';
+    if (canvas) canvas.style.display = 'block';
+    
+    // Distruggi il grafico precedente se esiste
+    if (standingsTrendChart) {
+        standingsTrendChart.destroy();
+    }
+    
+    // Colori per ogni squadra
+    const teamColors = [
+        { border: '#3b82f6', bg: 'rgba(59, 130, 246, 0.1)' },  // Blue
+        { border: '#ef4444', bg: 'rgba(239, 68, 68, 0.1)' },   // Red
+        { border: '#10b981', bg: 'rgba(16, 185, 129, 0.1)' },  // Green
+        { border: '#f59e0b', bg: 'rgba(245, 158, 11, 0.1)' },  // Yellow
+        { border: '#8b5cf6', bg: 'rgba(139, 92, 246, 0.1)' },  // Purple
+        { border: '#ec4899', bg: 'rgba(236, 72, 153, 0.1)' },  // Pink
+        { border: '#14b8a6', bg: 'rgba(20, 184, 166, 0.1)' },  // Teal
+        { border: '#f97316', bg: 'rgba(249, 115, 22, 0.1)' },  // Orange
+        { border: '#06b6d4', bg: 'rgba(6, 182, 212, 0.1)' },   // Cyan
+        { border: '#84cc16', bg: 'rgba(132, 204, 22, 0.1)' }   // Lime
+    ];
+    
+    // Ordina le squadre per posizione finale
+    const finalStandings = Array.from(teamTrends.entries())
+        .map(([team, trend]) => ({
+            team: team,
+            finalPosition: trend[trend.length - 1].position,
+            trend: trend
+        }))
+        .sort((a, b) => a.finalPosition - b.finalPosition);
+    
+    // Prepara i dataset per Chart.js
+    const datasets = finalStandings.map(({ team, trend }, idx) => {
+        const color = teamColors[idx % teamColors.length];
+        
+        // Crea array di posizioni per ogni giornata
+        const positions = giornate.map(g => {
+            const data = trend.find(t => t.giornata === g);
+            return data ? data.position : null;
+        });
+        
+        return {
+            label: team,
+            data: positions,
+            borderColor: color.border,
+            backgroundColor: color.bg,
+            borderWidth: 2,
+            pointRadius: 4,
+            pointHoverRadius: 6,
+            tension: 0.1,
+            fill: false
+        };
+    });
+    
+    // Crea il grafico
+    const ctx = canvas.getContext('2d');
+    standingsTrendChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: giornate.map(g => `G${g}`),
+            datasets: datasets
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            aspectRatio: window.innerWidth < 768 ? 1 : 2,
+            interaction: {
+                mode: 'index',
+                intersect: false,
+            },
+            plugins: {
+                title: {
+                    display: false
+                },
+                legend: {
+                    display: true,
+                    position: 'bottom',
+                    labels: {
+                        color: '#e0e7ff',
+                        padding: 12,
+                        font: {
+                            size: window.innerWidth < 768 ? 10 : 12
+                        },
+                        usePointStyle: true,
+                        pointStyle: 'circle'
+                    }
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(15, 23, 42, 0.95)',
+                    titleColor: '#e0e7ff',
+                    bodyColor: '#e0e7ff',
+                    borderColor: '#1e3a8a',
+                    borderWidth: 1,
+                    padding: 12,
+                    displayColors: true,
+                    callbacks: {
+                        label: function(context) {
+                            const teamName = context.dataset.label;
+                            const position = context.parsed.y;
+                            return `${teamName}: ${position}° posto`;
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    reverse: true, // Inverti l'asse Y (1° in alto)
+                    beginAtZero: false,
+                    ticks: {
+                        color: '#9ca3af',
+                        stepSize: 1,
+                        callback: function(value) {
+                            return value + '°';
+                        }
+                    },
+                    grid: {
+                        color: 'rgba(75, 85, 99, 0.3)',
+                        drawBorder: false
+                    },
+                    title: {
+                        display: true,
+                        text: 'Posizione',
+                        color: '#9ca3af',
+                        font: {
+                            size: 12
+                        }
+                    }
+                },
+                x: {
+                    ticks: {
+                        color: '#9ca3af',
+                        maxRotation: 45,
+                        minRotation: 45,
+                        font: {
+                            size: window.innerWidth < 768 ? 9 : 11
+                        }
+                    },
+                    grid: {
+                        color: 'rgba(75, 85, 99, 0.2)',
+                        drawBorder: false
+                    },
+                    title: {
+                        display: true,
+                        text: 'Giornata',
+                        color: '#9ca3af',
+                        font: {
+                            size: 12
+                        }
+                    }
+                }
+            }
+        }
+    });
 };
 
 // Funzione per calcolare le statistiche avanzate
@@ -4556,6 +5128,7 @@ const renderStatistics = () => {
     const stats = calculateStatistics();
     
     container.innerHTML = `
+        <!-- STATISTICHE PRINCIPALI (sempre visibili) -->
         <!-- Miglior Attacco -->
         <div class="bg-gradient-to-br from-red-900/30 to-red-800/20 border border-red-700/50 rounded-lg p-4">
             <div class="flex items-center mb-2">
@@ -4593,6 +5166,59 @@ const renderStatistics = () => {
                 </div>
             ` : '<p class="text-gray-400 text-sm">Dati non disponibili</p>'}
         </div>
+        
+        <!-- Punteggio Più Alto -->
+        <div class="bg-gradient-to-br from-purple-900/30 to-purple-800/20 border border-purple-700/50 rounded-lg p-4">
+            <div class="flex items-center mb-2">
+                <svg class="w-6 h-6 text-purple-400 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+                </svg>
+                <h4 class="text-sm font-bold text-purple-300 uppercase">Punteggio Più Alto</h4>
+            </div>
+            ${stats.highestScore.team ? `
+                <div class="flex items-center space-x-3">
+                    <img src="${getTeamLogo(stats.highestScore.team)}" alt="${stats.highestScore.team}" class="w-10 h-10 object-contain" onerror="this.style.display='none'">
+                    <div>
+                        <p class="text-lg font-bold text-white">${stats.highestScore.team}</p>
+                        <p class="text-2xl font-bold text-purple-400">${stats.highestScore.score.toFixed(1)} punti</p>
+                        <p class="text-xs text-gray-400">vs ${stats.highestScore.opponent} - Giornata ${stats.highestScore.giornata}</p>
+                    </div>
+                </div>
+            ` : '<p class="text-gray-400 text-sm">Dati non disponibili</p>'}
+        </div>
+        
+        <!-- Vittoria con Margine Più Ampio -->
+        <div class="bg-gradient-to-br from-yellow-900/30 to-yellow-800/20 border border-yellow-700/50 rounded-lg p-4">
+            <div class="flex items-center mb-2">
+                <svg class="w-6 h-6 text-yellow-400 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z"></path>
+                </svg>
+                <h4 class="text-sm font-bold text-yellow-300 uppercase">Vittoria Più Larga</h4>
+            </div>
+            ${stats.biggestWin.team ? `
+                <div class="flex items-center space-x-3">
+                    <img src="${getTeamLogo(stats.biggestWin.team)}" alt="${stats.biggestWin.team}" class="w-10 h-10 object-contain" onerror="this.style.display='none'">
+                    <div>
+                        <p class="text-lg font-bold text-white">${stats.biggestWin.team}</p>
+                        <p class="text-2xl font-bold text-yellow-400">+${stats.biggestWin.margin.toFixed(1)} punti</p>
+                        <p class="text-xs text-gray-400">${stats.biggestWin.score} vs ${stats.biggestWin.opponent} - G.${stats.biggestWin.giornata}</p>
+                    </div>
+                </div>
+            ` : '<p class="text-gray-400 text-sm">Dati non disponibili</p>'}
+        </div>
+        
+        <!-- Pulsante Mostra/Nascondi altre statistiche -->
+        <div class="col-span-full flex justify-center mt-2">
+            <button onclick="toggleAdditionalStats()" id="toggle-stats-btn" class="btn-secondary px-6 py-2 flex items-center gap-2">
+                <svg id="toggle-stats-icon" class="w-5 h-5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                </svg>
+                <span id="toggle-stats-text">Vedi altre statistiche</span>
+            </button>
+        </div>
+        
+        <!-- STATISTICHE AGGIUNTIVE (nascoste di default) -->
+        <div id="additional-stats" class="hidden col-span-full grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
         
         <!-- Miglior Differenza Reti -->
         <div class="bg-gradient-to-br from-green-900/30 to-green-800/20 border border-green-700/50 rounded-lg p-4">
@@ -4632,26 +5258,6 @@ const renderStatistics = () => {
             ` : '<p class="text-gray-400 text-sm">Dati non disponibili</p>'}
         </div>
         
-        <!-- Punteggio Più Alto -->
-        <div class="bg-gradient-to-br from-purple-900/30 to-purple-800/20 border border-purple-700/50 rounded-lg p-4">
-            <div class="flex items-center mb-2">
-                <svg class="w-6 h-6 text-purple-400 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
-                </svg>
-                <h4 class="text-sm font-bold text-purple-300 uppercase">Punteggio Più Alto</h4>
-            </div>
-            ${stats.highestScore.team ? `
-                <div class="flex items-center space-x-3">
-                    <img src="${getTeamLogo(stats.highestScore.team)}" alt="${stats.highestScore.team}" class="w-10 h-10 object-contain" onerror="this.style.display='none'">
-                    <div>
-                        <p class="text-lg font-bold text-white">${stats.highestScore.team}</p>
-                        <p class="text-2xl font-bold text-purple-400">${stats.highestScore.score.toFixed(1)} punti</p>
-                        <p class="text-xs text-gray-400">vs ${stats.highestScore.opponent} - Giornata ${stats.highestScore.giornata}</p>
-                    </div>
-                </div>
-            ` : '<p class="text-gray-400 text-sm">Dati non disponibili</p>'}
-        </div>
-        
         <!-- Punteggio Più Basso -->
         <div class="bg-gradient-to-br from-gray-900/30 to-gray-800/20 border border-gray-700/50 rounded-lg p-4">
             <div class="flex items-center mb-2">
@@ -4667,26 +5273,6 @@ const renderStatistics = () => {
                         <p class="text-lg font-bold text-white">${stats.lowestScore.team}</p>
                         <p class="text-2xl font-bold text-gray-400">${stats.lowestScore.score.toFixed(1)} punti</p>
                         <p class="text-xs text-gray-400">vs ${stats.lowestScore.opponent} - Giornata ${stats.lowestScore.giornata}</p>
-                    </div>
-                </div>
-            ` : '<p class="text-gray-400 text-sm">Dati non disponibili</p>'}
-        </div>
-        
-        <!-- Vittoria con Margine Più Ampio -->
-        <div class="bg-gradient-to-br from-yellow-900/30 to-yellow-800/20 border border-yellow-700/50 rounded-lg p-4">
-            <div class="flex items-center mb-2">
-                <svg class="w-6 h-6 text-yellow-400 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z"></path>
-                </svg>
-                <h4 class="text-sm font-bold text-yellow-300 uppercase">Vittoria Più Larga</h4>
-            </div>
-            ${stats.biggestWin.team ? `
-                <div class="flex items-center space-x-3">
-                    <img src="${getTeamLogo(stats.biggestWin.team)}" alt="${stats.biggestWin.team}" class="w-10 h-10 object-contain" onerror="this.style.display='none'">
-                    <div>
-                        <p class="text-lg font-bold text-white">${stats.biggestWin.team}</p>
-                        <p class="text-2xl font-bold text-yellow-400">+${stats.biggestWin.margin.toFixed(1)} punti</p>
-                        <p class="text-xs text-gray-400">${stats.biggestWin.score} vs ${stats.biggestWin.opponent} - G.${stats.biggestWin.giornata}</p>
                     </div>
                 </div>
             ` : '<p class="text-gray-400 text-sm">Dati non disponibili</p>'}
@@ -4774,10 +5360,32 @@ const renderStatistics = () => {
                 </div>
             ` : '<p class="text-gray-400 text-sm">Dati non disponibili</p>'}
         </div>
+        
+        </div>
     `;
 };
 
-
+// Funzione per mostrare/nascondere le statistiche aggiuntive
+window.toggleAdditionalStats = () => {
+    const additionalStats = document.getElementById('additional-stats');
+    const toggleBtn = document.getElementById('toggle-stats-btn');
+    const toggleText = document.getElementById('toggle-stats-text');
+    const toggleIcon = document.getElementById('toggle-stats-icon');
+    
+    if (additionalStats && toggleBtn && toggleText && toggleIcon) {
+        if (additionalStats.classList.contains('hidden')) {
+            // Mostra
+            additionalStats.classList.remove('hidden');
+            toggleText.textContent = 'Nascondi statistiche';
+            toggleIcon.style.transform = 'rotate(180deg)';
+        } else {
+            // Nascondi
+            additionalStats.classList.add('hidden');
+            toggleText.textContent = 'Vedi altre statistiche';
+            toggleIcon.style.transform = 'rotate(0deg)';
+        }
+    }
+};
 
         window.calculateAndSaveMatch = async () => {
              if (!isUserAdmin) return;
@@ -6221,6 +6829,7 @@ const renderStatistics = () => {
                     renderHistoricResults(allResults);
                     renderStandings(); // Aggiorna la classifica quando cambiano i risultati
                     renderStatistics(); // Aggiorna le statistiche quando cambiano i risultati
+                    renderStandingsTrend(); // Aggiorna l'andamento della classifica
                     // Se la vista scommesse è aperta, ricalcola la prossima giornata in base ai risultati
                     if (currentView === 'betting' && allMatches && allMatches.length > 0) {
                         const lastCompleted = determineLastCompletedGiornata();
@@ -6402,10 +7011,189 @@ const renderStatistics = () => {
             }
         };
 
+        // --- Effetto Halloween INTENSO (30 ottobre - 2 novembre 2025) ---
+        function initHalloweenEffect() {
+            const now = new Date();
+            const currentDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+            const startDate = new Date(2025, 9, 30); // 30 ottobre 2025 (mese 9 = ottobre)
+            const endDate = new Date(2025, 10, 2); // 2 novembre 2025 (mese 10 = novembre)
+            
+            // Verifica se siamo nel periodo Halloween
+            if (currentDate >= startDate && currentDate <= endDate) {
+                console.log('🎃👻💀 HALLOWEEN MODE ACTIVATED! 💀👻🎃');
+                const overlay = document.getElementById('halloween-overlay');
+                if (!overlay) return;
+                
+                // Array di emoji Halloween
+                const halloweenEmojis = ['🎃', '👻', '💀', '🕷️', '🕸️', '🦇', '🧛', '🧟', '☠️', '🪦', '🔮', '🧙'];
+                
+                // Crea ragnatele negli angoli (più grandi)
+                const webTopLeft = document.createElement('div');
+                webTopLeft.className = 'web-corner top-left';
+                webTopLeft.style.transform = 'scale(1.5)';
+                overlay.appendChild(webTopLeft);
+                
+                const webTopRight = document.createElement('div');
+                webTopRight.className = 'web-corner top-right';
+                webTopRight.style.transform = 'scale(1.5)';
+                overlay.appendChild(webTopRight);
+                
+                // RAGNI CHE SCENDONO - Molti di più!
+                for (let i = 0; i < 15; i++) {
+                    setTimeout(() => {
+                        const spider = document.createElement('div');
+                        spider.className = 'spider';
+                        spider.innerHTML = '🕷️';
+                        spider.style.left = `${Math.random() * 95}%`;
+                        spider.style.fontSize = `${Math.random() * 20 + 20}px`;
+                        spider.style.animationDelay = `${Math.random() * 3}s`;
+                        spider.style.animationDuration = `${Math.random() * 4 + 6}s`;
+                        overlay.appendChild(spider);
+                        setTimeout(() => spider.remove(), 10000);
+                    }, i * 400);
+                }
+                
+                // PIPISTRELLI CHE VOLANO - Un'invasione!
+                for (let i = 0; i < 20; i++) {
+                    setTimeout(() => {
+                        const bat = document.createElement('div');
+                        bat.className = 'bat';
+                        bat.innerHTML = '🦇';
+                        bat.style.top = `${Math.random() * 80}%`;
+                        bat.style.fontSize = `${Math.random() * 15 + 25}px`;
+                        bat.style.animationDelay = `${Math.random() * 2}s`;
+                        bat.style.animationDuration = `${Math.random() * 3 + 4}s`;
+                        overlay.appendChild(bat);
+                        setTimeout(() => bat.remove(), 8000);
+                    }, i * 300);
+                }
+                
+                // FANTASMI CHE FLUTTUANO
+                for (let i = 0; i < 12; i++) {
+                    setTimeout(() => {
+                        const ghost = document.createElement('div');
+                        ghost.className = 'bat';
+                        ghost.innerHTML = '👻';
+                        ghost.style.top = `${Math.random() * 70 + 10}%`;
+                        ghost.style.fontSize = `${Math.random() * 20 + 30}px`;
+                        ghost.style.animationDelay = `${Math.random() * 1.5}s`;
+                        ghost.style.animationDuration = `${Math.random() * 2 + 5}s`;
+                        ghost.style.opacity = '0.8';
+                        overlay.appendChild(ghost);
+                        setTimeout(() => ghost.remove(), 7000);
+                    }, i * 500);
+                }
+                
+                // ZUCCHE CHE CADONO
+                for (let i = 0; i < 10; i++) {
+                    setTimeout(() => {
+                        const pumpkin = document.createElement('div');
+                        pumpkin.className = 'spider';
+                        pumpkin.innerHTML = '🎃';
+                        pumpkin.style.left = `${Math.random() * 90}%`;
+                        pumpkin.style.fontSize = `${Math.random() * 25 + 30}px`;
+                        pumpkin.style.animationDelay = `${Math.random() * 2}s`;
+                        pumpkin.style.animationDuration = `${Math.random() * 3 + 5}s`;
+                        overlay.appendChild(pumpkin);
+                        setTimeout(() => pumpkin.remove(), 9000);
+                    }, i * 600);
+                }
+                
+                // TESCHI E SCHELETRI
+                for (let i = 0; i < 8; i++) {
+                    setTimeout(() => {
+                        const skull = document.createElement('div');
+                        skull.className = 'spider';
+                        skull.innerHTML = i % 2 === 0 ? '💀' : '☠️';
+                        skull.style.left = `${Math.random() * 90}%`;
+                        skull.style.fontSize = `${Math.random() * 20 + 25}px`;
+                        skull.style.animationDelay = `${Math.random() * 2.5}s`;
+                        skull.style.animationDuration = `${Math.random() * 4 + 6}s`;
+                        overlay.appendChild(skull);
+                        setTimeout(() => skull.remove(), 10000);
+                    }, i * 700);
+                }
+                
+                // RAGNATELE VOLANTI
+                for (let i = 0; i < 8; i++) {
+                    setTimeout(() => {
+                        const web = document.createElement('div');
+                        web.className = 'bat';
+                        web.innerHTML = '🕸️';
+                        web.style.top = `${Math.random() * 80}%`;
+                        web.style.fontSize = `${Math.random() * 25 + 35}px`;
+                        web.style.animationDelay = `${Math.random() * 1}s`;
+                        web.style.animationDuration = `${Math.random() * 4 + 5}s`;
+                        web.style.opacity = '0.7';
+                        overlay.appendChild(web);
+                        setTimeout(() => web.remove(), 9000);
+                    }, i * 800);
+                }
+                
+                // VAMPIRI E ZOMBIE
+                for (let i = 0; i < 6; i++) {
+                    setTimeout(() => {
+                        const monster = document.createElement('div');
+                        monster.className = 'bat';
+                        monster.innerHTML = i % 2 === 0 ? '�' : '🧟';
+                        monster.style.top = `${Math.random() * 70 + 15}%`;
+                        monster.style.fontSize = `${Math.random() * 15 + 35}px`;
+                        monster.style.animationDelay = `${Math.random() * 1.5}s`;
+                        monster.style.animationDuration = `${Math.random() * 3 + 5}s`;
+                        overlay.appendChild(monster);
+                        setTimeout(() => monster.remove(), 8000);
+                    }, i * 1000);
+                }
+                
+                // EXTRA RANDOM MIX
+                for (let i = 0; i < 15; i++) {
+                    setTimeout(() => {
+                        const randomElement = document.createElement('div');
+                        randomElement.className = Math.random() > 0.5 ? 'bat' : 'spider';
+                        randomElement.innerHTML = halloweenEmojis[Math.floor(Math.random() * halloweenEmojis.length)];
+                        randomElement.style.left = `${Math.random() * 95}%`;
+                        randomElement.style.top = `${Math.random() * 80}%`;
+                        randomElement.style.fontSize = `${Math.random() * 20 + 20}px`;
+                        randomElement.style.animationDelay = `${Math.random() * 2}s`;
+                        randomElement.style.animationDuration = `${Math.random() * 3 + 4}s`;
+                        overlay.appendChild(randomElement);
+                        setTimeout(() => randomElement.remove(), 8000);
+                    }, i * 350);
+                }
+                
+                // Attiva l'overlay
+                overlay.classList.add('active');
+                
+                // Rimuovi tutto dopo 12 secondi
+                setTimeout(() => {
+                    overlay.style.animation = 'fade-out 2s ease-out';
+                    setTimeout(() => {
+                        overlay.remove();
+                        console.log('🎃 Happy Halloween! Effetto completato 🎃');
+                    }, 2000);
+                }, 12000);
+            }
+        }
+
         // --- Inizializzazione ---
         window.onload = () => {
             setupFirebase();
+            initHalloweenEffect(); // Attiva effetto Halloween se nel periodo
         };
     </script>
+    
+    <!-- Footer con info versione -->
+    <footer class="bg-gray-900/50 border-t border-gray-800 py-4 mt-8">
+        <div class="container mx-auto px-4 text-center">
+            <p class="text-xs text-gray-500">
+                <span class="font-semibold text-gray-400">FANTABet</span> • 
+                Versione 2.0 • 
+                Ultimo aggiornamento: <span class="text-gray-400">31 ottobre 2025</span>
+            </p>
+            <p class="text-xs text-gray-600 mt-1">
+                © 2025 - Gestionale Fantacalcio con Sistema Scommesse
+            </p>
+        </div>
+    </footer>
 </body>
 </html>
