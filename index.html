@@ -3789,14 +3789,11 @@
                     return;
                 }
                 
-                // Carica tutte le statistiche (escludi svincolati)
+                // Carica tutte le statistiche (inclusi svincolati)
                 const allStats = [];
                 snapshot.forEach(doc => {
                     const data = doc.data();
-                    // Escludi giocatori svincolati
-                    if (data.fantaSquad && data.fantaSquad !== 'SVINCOLATI') {
-                        allStats.push(data);
-                    }
+                    allStats.push(data);
                 });
                 
                 // Popola i filtri
@@ -7187,7 +7184,7 @@ window.toggleAdditionalStats = () => {
         <div class="container mx-auto px-4 text-center">
             <p class="text-xs text-gray-500">
                 <span class="font-semibold text-gray-400">FANTABet</span> • 
-                Versione 2.1 • 
+                Versione 2.0 • 
                 Ultimo aggiornamento: <span class="text-gray-400">31 ottobre 2025</span>
             </p>
             <p class="text-xs text-gray-600 mt-1">
