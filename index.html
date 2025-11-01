@@ -205,6 +205,15 @@
             }
         }
         
+        /* Nascondi scrollbar ma mantieni funzionalità scroll */
+        .hide-scrollbar {
+            -ms-overflow-style: none;  /* IE e Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;  /* Chrome, Safari e Opera */
+        }
+        
         table th, table td {
             padding: 8px 6px;
             white-space: nowrap;
@@ -804,6 +813,26 @@
                         </p>
                     </div>
                     
+                    <!-- Legenda colonne -->
+                    <div class="bg-gray-800/50 border border-gray-600/30 rounded-lg px-4 py-3 mb-4">
+                        <p class="text-xs font-semibold text-gray-300 mb-2">Legenda colonne:</p>
+                        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-x-4 gap-y-1 text-xs text-gray-400">
+                            <span><strong class="text-blue-400">PV:</strong> Punteggio Totale</span>
+                            <span><strong class="text-blue-400">MV:</strong> Media Voto</span>
+                            <span><strong class="text-blue-400">FM:</strong> Fantamedia</span>
+                            <span><strong class="text-blue-400">GF:</strong> Gol Fatti</span>
+                            <span><strong class="text-blue-400">GS:</strong> Gol Subiti</span>
+                            <span><strong class="text-blue-400">RP:</strong> Rigori Parati</span>
+                            <span><strong class="text-blue-400">RC:</strong> Rigori Calciati</span>
+                            <span><strong class="text-blue-400">R+:</strong> Rigori Segnati</span>
+                            <span><strong class="text-blue-400">R-:</strong> Rigori Sbagliati</span>
+                            <span><strong class="text-blue-400">ASS:</strong> Assist</span>
+                            <span><strong class="text-blue-400">AMM:</strong> Ammonizioni</span>
+                            <span><strong class="text-blue-400">ESP:</strong> Espulsioni</span>
+                            <span><strong class="text-blue-400">AU:</strong> Autogol</span>
+                        </div>
+                    </div>
+                    
                     <!-- Container statistiche -->
                     <div id="player-stats-view-container">
                         <p class="text-sm sm:text-base text-gray-500 text-center py-4">Caricamento statistiche in corso...</p>
@@ -840,28 +869,31 @@
                     </div>
                     
                     <!-- Form per la puntata (spostato sotto) -->
-                    <div class="p-4 bg-gray-800 rounded-lg border-t-2 border-green-500">
-                        <div class="flex items-center justify-between mb-4">
-                            <div class="flex-1 mr-4">
-                                <label for="bet-stake-input" class="block text-sm font-medium text-gray-300 mb-2">
-                                    Inserisci la puntata totale per la giornata:
+                    <div class="p-4 sm:p-6 bg-gray-800 rounded-lg border-t-2 border-green-500">
+                        <div class="flex flex-col space-y-4">
+                            <!-- Input puntata -->
+                            <div>
+                                <label for="bet-stake-input" class="block text-base sm:text-lg font-semibold text-gray-200 mb-3">
+                                    💰 Inserisci la puntata totale per la giornata:
                                 </label>
                                 <input type="number" 
                                        id="bet-stake-input" 
                                        min="1" 
-                                       class="w-full bg-gray-700 text-white px-3 py-2 rounded" 
-                                       placeholder="Inserisci crediti..." 
+                                       class="w-full bg-gray-700 text-white px-4 py-3 rounded-lg text-lg font-semibold border-2 border-gray-600 focus:border-green-500 focus:outline-none" 
+                                       placeholder="Es: 100 crediti..." 
                                        oninput="updateGiornataBetButton()"
                                        aria-label="Puntata totale in crediti" />
                             </div>
+                            
+                            <!-- Bottone conferma -->
                             <button id="place-giornata-bet-button" 
                                     onclick="placeBetForGiornata()" 
-                                    class="btn-primary px-6 py-2 h-fit" 
+                                    class="btn-primary w-full py-4 text-lg font-bold" 
                                     disabled>
                                 <svg class="w-5 h-5 inline mr-2" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M5 2a1 1 0 011 1v1h1a1 1 0 010 2H6v1a1 1 0 01-2 0V6H3a1 1 0 010-2h1V3a1 1 0 011-1zm0 10a1 1 0 011 1v1h1a1 1 0 110 2H6v1a1 1 0 11-2 0v-1H3a1 1 0 110-2h1v-1a1 1 0 011-1zM12 2a1 1 0 01.967.744L14.146 7.2 17.5 9.134a1 1 0 010 1.732l-3.354 1.935-1.18 4.455a1 1 0 01-1.933 0L9.854 12.8 6.5 10.866a1 1 0 010-1.732l3.354-1.935 1.18-4.455A1 1 0 0112 2z" clip-rule="evenodd"></path>
                                 </svg>
-                                Piazza Scommessa
+                                Conferma Scommessa
                             </button>
                         </div>
                         
@@ -879,45 +911,48 @@
                 </div>
 
                 <div id="admin-panel-main" class="hidden max-w-4xl mx-auto">
-                    <div class="flex justify-between items-center border-b border-blue-800">
-                        <div class="flex">
-                            <button onclick="showAdminTab('csv')" class="admin-tab-button px-4 py-2 text-lg font-semibold border-b-2 border-transparent hover:border-blue-400 hover:text-blue-400 focus:outline-none">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-2xl font-bold text-blue-400">Pannello Admin</h2>
+                        <button onclick="setAppView('home')" class="btn-secondary whitespace-nowrap">
+                            <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+                            </svg>
+                            Home
+                        </button>
+                    </div>
+                    <div class="border-b border-blue-800 overflow-x-auto hide-scrollbar">
+                        <div class="flex flex-shrink-0">
+                            <button onclick="showAdminTab('csv')" class="admin-tab-button px-4 py-2 text-lg font-semibold border-b-2 border-transparent hover:border-blue-400 hover:text-blue-400 focus:outline-none whitespace-nowrap">
                                 <svg class="w-4 h-4 inline mr-1" fill="currentColor" viewBox="0 0 20 20">
                                     <path d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM6.293 6.707a1 1 0 010-1.414l3-3a1 1 0 011.414 0l3 3a1 1 0 01-1.414 1.414L11 5.414V13a1 1 0 11-2 0V5.414L7.707 6.707a1 1 0 01-1.414 0z"></path>
                                 </svg>
                                 Caricamento CSV
                             </button>
-                            <button onclick="showAdminTab('users')" class="admin-tab-button px-4 py-2 text-lg font-semibold border-b-2 border-transparent hover:border-blue-400 hover:text-blue-400 focus:outline-none">
+                            <button onclick="showAdminTab('users')" class="admin-tab-button px-4 py-2 text-lg font-semibold border-b-2 border-transparent hover:border-blue-400 hover:text-blue-400 focus:outline-none whitespace-nowrap">
                                 <svg class="w-4 h-4 inline mr-1" fill="currentColor" viewBox="0 0 20 20">
                                     <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"></path>
                                 </svg>
                                 Gestione Utenti
                             </button>
-                            <button onclick="showAdminTab('schedules')" class="admin-tab-button px-4 py-2 text-lg font-semibold border-b-2 border-transparent hover:border-blue-400 hover:text-blue-400 focus:outline-none">
+                            <button onclick="showAdminTab('schedules')" class="admin-tab-button px-4 py-2 text-lg font-semibold border-b-2 border-transparent hover:border-blue-400 hover:text-blue-400 focus:outline-none whitespace-nowrap">
                                 <svg class="w-4 h-4 inline mr-1" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"></path>
                                 </svg>
                                 Orari Giornate
                             </button>
-                            <button onclick="showAdminTab('bets')" class="admin-tab-button px-4 py-2 text-lg font-semibold border-b-2 border-transparent hover:border-blue-400 hover:text-blue-400 focus:outline-none">
+                            <button onclick="showAdminTab('bets')" class="admin-tab-button px-4 py-2 text-lg font-semibold border-b-2 border-transparent hover:border-blue-400 hover:text-blue-400 focus:outline-none whitespace-nowrap">
                                 <svg class="w-4 h-4 inline mr-1" fill="currentColor" viewBox="0 0 512 512">
                                     <path d="M177.1 228.6L207.9 320h96.5l29.62-91.38L256 172.1L177.1 228.6zM255.1 0C114.6 0 .0001 114.6 .0001 256S114.6 512 256 512s255.1-114.6 255.1-255.1S397.4 0 255.1 0z"/>
                                 </svg>
                                 Scommesse
                             </button>
-                            <button onclick="showAdminTab('danger')" class="admin-tab-button px-4 py-2 text-lg font-semibold border-b-2 border-transparent hover:border-red-500 hover:text-red-500 focus:outline-none">
+                            <button onclick="showAdminTab('danger')" class="admin-tab-button px-4 py-2 text-lg font-semibold border-b-2 border-transparent hover:border-red-500 hover:text-red-500 focus:outline-none whitespace-nowrap">
                                 <svg class="w-4 h-4 inline mr-1" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
                                 </svg>
                                 Reset Dati
                             </button>
                         </div>
-                        <button onclick="setAppView('home')" class="btn-secondary">
-                            <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
-                            </svg>
-                            Home
-                        </button>
                     </div>
 
                     <div id="admin-tab-csv" class="admin-tab-content card p-6 mt-4">
@@ -6165,15 +6200,35 @@ window.toggleAdditionalStats = () => {
                 }
 
                 matchCard.innerHTML = `
-                    <div class="flex justify-between items-center mb-3 border-b border-gray-800 pb-2">
-                        <div class="flex items-center space-x-3">
-                            <img src="${getTeamLogo(match.homeTeam)}" alt="${match.homeTeam}" class="w-10 h-10 object-contain rounded" onerror="this.style.display='none'">
-                            <h3 class="text-xl font-bold text-green-300">${match.homeTeam} vs ${match.awayTeam}</h3>
-                            <img src="${getTeamLogo(match.awayTeam)}" alt="${match.awayTeam}" class="w-10 h-10 object-contain rounded" onerror="this.style.display='none'">
+                    <div class="mb-4">
+                        <!-- Header con data -->
+                        <div class="flex justify-end mb-3">
+                            <span class="text-xs sm:text-sm text-gray-400 bg-gray-700 px-3 py-1 rounded-full">${match.date}</span>
                         </div>
-                        <span class="text-sm text-gray-400">${match.date}</span>
+                        
+                        <!-- Squadre -->
+                        <div class="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 mb-4 pb-4 border-b border-gray-700">
+                            <!-- Squadra Casa -->
+                            <div class="flex flex-col items-center text-center flex-1 w-full sm:w-auto">
+                                <img src="${getTeamLogo(match.homeTeam)}" alt="${match.homeTeam}" class="w-16 h-16 sm:w-12 sm:h-12 object-contain rounded mb-2" onerror="this.style.display='none'">
+                                <h3 class="text-lg sm:text-xl font-bold text-green-400 break-words">${match.homeTeam}</h3>
+                            </div>
+                            
+                            <!-- VS -->
+                            <div class="text-2xl sm:text-3xl font-bold text-gray-500 px-2">VS</div>
+                            
+                            <!-- Squadra Trasferta -->
+                            <div class="flex flex-col items-center text-center flex-1 w-full sm:w-auto">
+                                <img src="${getTeamLogo(match.awayTeam)}" alt="${match.awayTeam}" class="w-16 h-16 sm:w-12 sm:h-12 object-contain rounded mb-2" onerror="this.style.display='none'">
+                                <h3 class="text-lg sm:text-xl font-bold text-blue-400 break-words">${match.awayTeam}</h3>
+                            </div>
+                        </div>
                     </div>
-                    <p class="mb-4 text-sm text-gray-400">Scommessa: ${stakeStatusText}</p>
+                    
+                    <p class="mb-4 text-sm text-gray-400">
+                        <span class="font-semibold text-gray-300">Scommessa:</span> ${stakeStatusText}
+                    </p>
+                    
                     <div class="grid grid-cols-3 gap-3">
                         ${renderBetOption(match, '1', userBet, hasConfirmedBets)}
                         ${renderBetOption(match, 'X', userBet, hasConfirmedBets)}
@@ -7184,8 +7239,8 @@ window.toggleAdditionalStats = () => {
         <div class="container mx-auto px-4 text-center">
             <p class="text-xs text-gray-500">
                 <span class="font-semibold text-gray-400">FANTABet</span> • 
-                Versione 2.0 • 
-                Ultimo aggiornamento: <span class="text-gray-400">31 ottobre 2025</span>
+                Versione 2.0.2 • 
+                Ultimo aggiornamento: <span class="text-gray-400">01 Novembre 2025</span>
             </p>
             <p class="text-xs text-gray-600 mt-1">
                 © 2025 - Gestionale Fantacalcio con Sistema Scommesse
