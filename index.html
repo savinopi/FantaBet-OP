@@ -178,6 +178,16 @@
             animation: pulse-countdown 2s ease-in-out infinite;
         }
         
+        /* Animazione fade-out per notifiche */
+        @keyframes fade-out {
+            from { opacity: 1; transform: translateX(0); }
+            to { opacity: 0; transform: translateX(100%); }
+        }
+        
+        .animate-fade-out {
+            animation: fade-out 0.3s ease-out forwards;
+        }
+        
         /* Stile specifico per l'intestazione della giornata */
         .giornata-header th {
             padding: 8px 12px;
@@ -589,6 +599,14 @@
                                 Profilo
                             </button>
 
+                            <!-- I Miei Bonus (visible only for users with assigned squad) -->
+                            <button id="user-bonus-button-home" onclick="setAppView('user_bonus')" class="w-full py-4 text-base sm:text-lg btn-secondary hidden">
+                                <svg class="w-4 h-4 sm:w-5 sm:h-5 inline mr-2" fill="currentColor" viewBox="0 0 512 512">
+                                    <path d="M177.1 228.6L207.9 320h96.5l29.62-91.38L256 172.1L177.1 228.6zM255.1 0C114.6 0 .0001 114.6 .0001 256S114.6 512 256 512s255.1-114.6 255.1-255.1S397.4 0 255.1 0zM416.6 246.8L381.9 214l-22.44 62.32l-22.62 7.816l22.38-61.97l-34.71-32.81l34.71-32.81l-22.38-61.97l22.62 7.816L381.9 166.7l34.71-32.81c-34.46-37.46-81.03-63.03-134.5-69.58l-8.066 75.92l-22.44 7.891L260.1 90.16L273.7 13.36C268.5 13.12 263.3 12.1 258.1 12.1c-6.047 0-11.1 .4766-17.83 .8906l12.36 76.83l8.531 58.02L238.7 139.8l-7.844-75.15C176.4 71.23 129.8 96.8 95.35 134.2l34.71 32.81l-22.38 61.97l22.62-7.816L152.7 166.7l34.71 32.81l-34.71 32.81l22.38 61.97l-22.62-7.816L130.1 214L95.35 246.8C108.7 283.9 134.2 314.3 168.8 334.7l7.775-75.43l22.38-7.922l-8.119 58.18l-12.49 76.62c5.453 .2969 10.86 .875 16.51 .875c6.203 0 12.31-.5781 18.43-1.016l-12.76-77.83l-8.205-58.29l22.46 8.012l7.559 75.75c54.25-6.549 101.6-32.45 136.1-69.91L324.2 231.8l22.38-61.97L323.9 177.7L301.5 214L266.8 246.8l34.71 32.81l22.38 61.97l-22.62-7.816l-7.504-75.11l-22.5-8.066l8.131 58.44l12.69 77.74c54.84-6.699 102.4-32.87 137.1-70.55L416.6 246.8z"/>
+                                </svg>
+                                I Miei Bonus
+                            </button>
+
                             <!-- Mostra i risultati storici -->
                             <button onclick="setAppView('historic_results')" class="w-full py-4 text-base sm:text-lg btn-secondary">
                                 <svg class="w-4 h-4 sm:w-5 sm:h-5 inline mr-2" fill="currentColor" viewBox="0 0 20 20">
@@ -946,6 +964,12 @@
                                 </svg>
                                 Scommesse
                             </button>
+                            <button onclick="showAdminTab('bonus')" class="admin-tab-button px-4 py-2 text-lg font-semibold border-b-2 border-transparent hover:border-blue-400 hover:text-blue-400 focus:outline-none whitespace-nowrap">
+                                <svg class="w-4 h-4 inline mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+                                </svg>
+                                Bonus
+                            </button>
                             <button onclick="showAdminTab('danger')" class="admin-tab-button px-4 py-2 text-lg font-semibold border-b-2 border-transparent hover:border-red-500 hover:text-red-500 focus:outline-none whitespace-nowrap">
                                 <svg class="w-4 h-4 inline mr-1" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
@@ -1042,7 +1066,25 @@
                     </div>
 
                     <div id="admin-tab-users" class="admin-tab-content card p-6 mt-4 hidden">
-                        <h3 class="text-xl font-bold mb-4 text-yellow-400">Gestione Utenti</h3>
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-xl font-bold text-yellow-400">Gestione Utenti</h3>
+                            <button onclick="loadUsersForAdmin()" class="btn-primary text-sm">
+                                <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                                </svg>
+                                Ricarica
+                            </button>
+                        </div>
+                        
+                        <div class="bg-blue-900/20 border border-blue-500/30 rounded-lg px-4 py-3 mb-4">
+                            <p class="text-sm text-blue-300">
+                                <svg class="w-5 h-5 inline mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
+                                </svg>
+                                Associa ogni utente alla sua rosa fantacalcio, imposta i crediti e definisci i permessi admin.
+                            </p>
+                        </div>
+                        
                         <div id="admin-users-list" class="space-y-2">
                             <!-- Lista utenti renderizzata da JS -->
                         </div>
@@ -1118,6 +1160,58 @@
                         
                         <div id="admin-bets-list">
                             <!-- Lista scommesse renderizzata da JS -->
+                        </div>
+                    </div>
+
+                    <div id="admin-tab-bonus" class="admin-tab-content card p-6 mt-4 hidden">
+                        <h3 class="text-xl font-bold mb-4 text-yellow-400">Gestione Bonus Squadre</h3>
+                        
+                        <div class="bg-blue-900/20 border border-blue-500/30 rounded-lg px-4 py-3 mb-4">
+                            <p class="text-sm text-blue-300">
+                                <svg class="w-5 h-5 inline mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
+                                </svg>
+                                <strong>Tipologie Bonus:</strong> RG (Raddoppio Goal) | 2G (Assegna 2 Goal) | SC (Scudo)
+                                <br>Imposta quanti bonus ha ogni squadra e seleziona la giornata in cui è stato utilizzato.
+                            </p>
+                        </div>
+                        
+                        <div class="mb-4 flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4">
+                            <button onclick="loadBonusData()" class="btn-primary w-full sm:w-auto">
+                                <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                                </svg>
+                                Ricarica Dati
+                            </button>
+                            <button onclick="saveBonusData()" class="btn-success w-full sm:w-auto">
+                                <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                </svg>
+                                Salva Modifiche
+                            </button>
+                        </div>
+                        
+                        <!-- Legenda bonus compatta -->
+                        <div class="bg-gray-800/50 border border-gray-600/30 rounded-lg px-3 py-2 mb-4">
+                            <div class="flex flex-wrap justify-around gap-2 text-xs">
+                                <div class="flex items-center">
+                                    <span class="w-6 h-6 bg-red-900 text-red-300 rounded font-bold flex items-center justify-center mr-1 text-xs">RG</span>
+                                    <span class="text-gray-400">Raddoppio</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <span class="w-6 h-6 bg-green-900 text-green-300 rounded font-bold flex items-center justify-center mr-1 text-xs">2G</span>
+                                    <span class="text-gray-400">2 Goal</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <span class="w-6 h-6 bg-blue-900 text-blue-300 rounded font-bold flex items-center justify-center mr-1 text-xs">SC</span>
+                                    <span class="text-gray-400">Scudo</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Container per cards mobile-friendly -->
+                        <div id="bonus-cards-container" class="space-y-3">
+                            <!-- Cards renderizzate da JS -->
                         </div>
                     </div>
 
@@ -1258,6 +1352,44 @@
                         </button>
                     </div>
                 </div>
+
+                <!-- User Bonus Management Area -->
+                <div id="user-bonus-area" class="hidden max-w-4xl mx-auto">
+                    <div class="card p-4 sm:p-6">
+                        <h2 class="text-2xl sm:text-3xl font-bold mb-4 sm:mb-6 text-center flex items-center justify-center">
+                            <svg class="w-6 h-6 sm:w-8 sm:h-8 mr-2" fill="currentColor" viewBox="0 0 512 512">
+                                <path d="M177.1 228.6L207.9 320h96.5l29.62-91.38L256 172.1L177.1 228.6zM255.1 0C114.6 0 .0001 114.6 .0001 256S114.6 512 256 512s255.1-114.6 255.1-255.1S397.4 0 255.1 0zM416.6 246.8L381.9 214l-22.44 62.32l-22.62 7.816l22.38-61.97l-34.71-32.81l34.71-32.81l-22.38-61.97l22.62 7.816L381.9 166.7l34.71-32.81c-34.46-37.46-81.03-63.03-134.5-69.58l-8.066 75.92l-22.44 7.891L260.1 90.16L273.7 13.36C268.5 13.12 263.3 12.1 258.1 12.1c-6.047 0-11.1 .4766-17.83 .8906l12.36 76.83l8.531 58.02L238.7 139.8l-7.844-75.15C176.4 71.23 129.8 96.8 95.35 134.2l34.71 32.81l-22.38 61.97l22.62-7.816L152.7 166.7l34.71 32.81l-34.71 32.81l22.38 61.97l-22.62-7.816L130.1 214L95.35 246.8C108.7 283.9 134.2 314.3 168.8 334.7l7.775-75.43l22.38-7.922l-8.119 58.18l-12.49 76.62c5.453 .2969 10.86 .875 16.51 .875c6.203 0 12.31-.5781 18.43-1.016l-12.76-77.83l-8.205-58.29l22.46 8.012l7.559 75.75c54.25-6.549 101.6-32.45 136.1-69.91L324.2 231.8l22.38-61.97L323.9 177.7L301.5 214L266.8 246.8l34.71 32.81l22.38 61.97l-22.62-7.816l-7.504-75.11l-22.5-8.066l8.131 58.44l12.69 77.74c54.84-6.699 102.4-32.87 137.1-70.55L416.6 246.8z"/>
+                            </svg>
+                            I Miei Bonus
+                        </h2>
+
+                        <div id="user-bonus-squad-name" class="text-center text-xl font-semibold text-yellow-500 mb-4"></div>
+                        
+                        <!-- Countdown Deadline Bonus -->
+                        <div id="bonus-deadline-countdown" class="mb-4">
+                            <!-- Countdown timer will be rendered here -->
+                        </div>
+                        
+                        <div id="user-bonus-content" class="space-y-4">
+                            <!-- User bonus management will be rendered here -->
+                        </div>
+
+                        <div class="mt-6 flex justify-center space-x-4">
+                            <button onclick="setAppView('home')" class="btn-secondary px-6 py-3">
+                                <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+                                </svg>
+                                Home
+                            </button>
+                            <button onclick="saveUserBonusData()" class="btn-primary px-6 py-3">
+                                <svg class="w-4 h-4 inline mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M7.707 10.293a1 1 0 10-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 11.586V6h5a2 2 0 012 2v7a2 2 0 01-2 2H4a2 2 0 01-2-2V8a2 2 0 012-2h5v5.586l-1.293-1.293zM9 4a1 1 0 012 0v2H9V4z"></path>
+                                </svg>
+                                Salva Modifiche
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -1355,8 +1487,12 @@
         let standingsSortColumn = null;
         let standingsSortDirection = 'asc';
         
-        // Timer per countdown deadline scommesse
+        // Timer per countdown deadline scommesse e bonus
         let countdownInterval = null;
+        let bonusCountdownInterval = null;
+        
+        // Traccia se la deadline è passata (per mostrare notifica bonus una sola volta)
+        let deadlineHasPassed = false;
         
         // --- Variabili per la gestione admin ---
         let adminBetsUnsubscribe = null;
@@ -1399,6 +1535,9 @@
             } else if (tabName === 'schedules') {
                 // Carica gli orari delle giornate
                 await loadSchedulesForAdmin();
+            } else if (tabName === 'users') {
+                // Carica gli utenti
+                await loadUsersForAdmin();
             }
         };
 
@@ -1411,6 +1550,12 @@
                 countdownInterval = null;
             }
             
+            // Ferma il timer del countdown se stiamo uscendo dalla sezione bonus
+            if (currentView === 'user_bonus' && view !== 'user_bonus' && bonusCountdownInterval) {
+                clearInterval(bonusCountdownInterval);
+                bonusCountdownInterval = null;
+            }
+            
             currentView = view;
             const containers = {
                 home: 'home-container',
@@ -1418,6 +1563,7 @@
                 placed_bets: 'placed-bets-area',
                 admin: 'admin-panel-main',
                 profile: 'profile-area',
+                user_bonus: 'user-bonus-area',
                 historic_results: 'historic-results-container',
                 squads: 'squads-container',
                 player_stats: 'player-stats-container'
@@ -1468,6 +1614,10 @@
                     // Se stiamo passando alla sezione statistiche, carica i dati
                     if (view === 'player_stats') {
                         loadPlayerStats();
+                    }
+                    // Se stiamo passando alla sezione bonus utente, carica i dati
+                    if (view === 'user_bonus') {
+                        loadUserBonuses();
                     }
                 }
             }
@@ -1600,7 +1750,129 @@
              if (adminButton) {
                  adminButton.classList.toggle('hidden', !isUserAdmin);
              }
+             
+             // Mostra il pulsante "I Miei Bonus" solo se l'utente ha una squadra assegnata
+             const userBonusButton = document.getElementById('user-bonus-button-home');
+             if (userBonusButton) {
+                 const hasSquad = currentUserProfile && currentUserProfile.fantaSquad;
+                 userBonusButton.classList.toggle('hidden', !hasSquad);
+             }
+             
              return isUserAdmin;
+        };
+        
+        // Controlla se ci sono richieste di bonus pendenti per la giornata corrente
+        const checkPendingBonusRequests = async () => {
+            // Solo per admin
+            if (!isUserAdmin) return;
+            
+            try {
+                const lastCompletedGiornata = determineLastCompletedGiornata();
+                const currentGiornata = lastCompletedGiornata + 1;
+                
+                // Verifica se la deadline è passata (quindi la giornata è iniziata)
+                const { deadline } = await getGiornataDeadline(currentGiornata);
+                const now = new Date();
+                
+                // Mostra notifica solo se la deadline è passata (giornata iniziata)
+                if (now < deadline) return;
+                
+                // Carica tutti i bonus
+                const bonusSnapshot = await getDocs(getBonusCollectionRef());
+                const teamsWithBonusRequests = [];
+                
+                bonusSnapshot.docs.forEach(doc => {
+                    const bonusData = doc.data();
+                    const teamName = bonusData.teamName;
+                    
+                    // Controlla se c'è un bonus richiesto per questa giornata
+                    const bonusTypes = ['RG', 'twoG', 'SC'];
+                    let requestedBonus = null;
+                    
+                    bonusTypes.forEach(type => {
+                        const usedArray = bonusData[type]?.usedInGiornata || [];
+                        if (usedArray.includes(currentGiornata.toString()) || usedArray.includes(currentGiornata)) {
+                            requestedBonus = type;
+                        }
+                    });
+                    
+                    if (requestedBonus) {
+                        const bonusName = requestedBonus === 'RG' ? 'Raddoppio Goal' : 
+                                         requestedBonus === 'twoG' ? 'Assegna 2 Goal' : 'Scudo';
+                        teamsWithBonusRequests.push({ team: teamName, bonus: bonusName });
+                    }
+                });
+                
+                // Se ci sono richieste, mostra notifica
+                if (teamsWithBonusRequests.length > 0) {
+                    const teamsList = teamsWithBonusRequests
+                        .map(t => `• ${t.team}: <strong>${t.bonus}</strong>`)
+                        .join('<br>');
+                    
+                    const notification = document.createElement('div');
+                    notification.id = 'bonus-notification';
+                    notification.className = 'fixed top-20 right-4 z-50 max-w-md';
+                    notification.innerHTML = `
+                        <div class="bg-gradient-to-br from-yellow-900/95 to-orange-900/95 border-2 border-yellow-500 rounded-lg shadow-2xl p-4 animate-pulse">
+                            <div class="flex items-start">
+                                <div class="flex-shrink-0">
+                                    <svg class="w-8 h-8 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+                                        <path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z"></path>
+                                    </svg>
+                                </div>
+                                <div class="ml-3 flex-1">
+                                    <h3 class="text-lg font-bold text-yellow-300 mb-2">
+                                        ⚡ Richieste Bonus Giornata ${currentGiornata}
+                                    </h3>
+                                    <p class="text-sm text-yellow-100 mb-2">
+                                        ${teamsWithBonusRequests.length} squadra/e ha/hanno richiesto bonus:
+                                    </p>
+                                    <div class="text-sm text-white bg-black/30 rounded p-2 mb-3">
+                                        ${teamsList}
+                                    </div>
+                                    <div class="flex gap-2">
+                                        <button onclick="setAppView('admin'); showAdminTab('bonus'); dismissBonusNotification();" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition-colors">
+                                            Vai ai Bonus
+                                        </button>
+                                        <button onclick="dismissBonusNotification()" class="flex-1 bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded transition-colors">
+                                            OK, chiudi
+                                        </button>
+                                    </div>
+                                </div>
+                                <button onclick="dismissBonusNotification()" class="ml-2 text-yellow-300 hover:text-yellow-100">
+                                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                    
+                    // Rimuovi notifica precedente se esiste
+                    const existingNotification = document.getElementById('bonus-notification');
+                    if (existingNotification) {
+                        existingNotification.remove();
+                    }
+                    
+                    // Aggiungi la nuova notifica
+                    document.body.appendChild(notification);
+                    
+                    // Salva in localStorage che abbiamo già mostrato la notifica per questa giornata
+                    localStorage.setItem('bonusNotificationShown', currentGiornata.toString());
+                }
+                
+            } catch (error) {
+                console.error('Errore controllo bonus pendenti:', error);
+            }
+        };
+        
+        // Funzione per chiudere la notifica
+        window.dismissBonusNotification = () => {
+            const notification = document.getElementById('bonus-notification');
+            if (notification) {
+                notification.classList.add('animate-fade-out');
+                setTimeout(() => notification.remove(), 300);
+            }
         };
         
         window.triggerFileInput = () => {
@@ -1831,6 +2103,7 @@
         const getSquadsCollectionRef = () => collection(db, 'fantabet_squads'); // Collection per le rose
         const getPlayersCollectionRef = () => collection(db, 'fantabet_players'); // Collection per i calciatori
         const getPlayerStatsCollectionRef = () => collection(db, 'fantabet_player_stats'); // Collection per le statistiche calciatori
+        const getBonusCollectionRef = () => collection(db, 'fantabet_bonus'); // Collection per i bonus squadre
         
         // --- Gestione Teams e UI ---
 
@@ -4207,6 +4480,960 @@
         };
         
         // === FINE FUNZIONI STATISTICHE PUBBLICHE ===
+        
+        // === FUNZIONI GESTIONE BONUS ===
+        
+        // Variabile per tenere traccia dei dati bonus
+        let currentBonusData = [];
+        
+        // Carica i dati dei bonus dal database
+        window.loadBonusData = async () => {
+            if (!isUserAdmin) {
+                messageBox('Solo gli admin possono gestire i bonus.');
+                return;
+            }
+            
+            try {
+                // Carica le squadre dal CSV/database
+                const teamsSnapshot = await getDocs(getTeamCollectionRef());
+                const teams = teamsSnapshot.docs.map(doc => doc.data().name).sort();
+                
+                if (teams.length === 0) {
+                    messageBox('Nessuna squadra trovata. Carica prima il calendario CSV.');
+                    return;
+                }
+                
+                // Carica i bonus esistenti
+                const bonusSnapshot = await getDocs(getBonusCollectionRef());
+                const existingBonus = new Map();
+                bonusSnapshot.docs.forEach(doc => {
+                    const data = doc.data();
+                    existingBonus.set(data.teamName, { id: doc.id, ...data });
+                });
+                
+                // Inizializza i dati bonus per ogni squadra
+                currentBonusData = teams.map(teamName => {
+                    if (existingBonus.has(teamName)) {
+                        return existingBonus.get(teamName);
+                    } else {
+                        // Inizializza con valori di default
+                        return {
+                            teamName: teamName,
+                            RG: { total: 1, available: 1, usedInGiornata: null },
+                            twoG: { total: 1, available: 1, usedInGiornata: null },
+                            SC: { total: 1, available: 1, usedInGiornata: null }
+                        };
+                    }
+                });
+                
+                renderBonusTable();
+                
+            } catch (error) {
+                console.error('Errore caricamento bonus:', error);
+                messageBox('Errore nel caricamento dei bonus: ' + error.message);
+            }
+        };
+        
+        // Renderizza la tabella dei bonus
+        const renderBonusTable = () => {
+            const container = document.getElementById('bonus-cards-container');
+            if (!container) return;
+            
+            container.innerHTML = '';
+            
+            currentBonusData.forEach((team, index) => {
+                // Calcola quanti bonus sono stati usati
+                const rgUsedCount = team.RG.usedInGiornata ? team.RG.usedInGiornata.length : 0;
+                const twoGUsedCount = team.twoG.usedInGiornata ? team.twoG.usedInGiornata.length : 0;
+                const scUsedCount = team.SC.usedInGiornata ? team.SC.usedInGiornata.length : 0;
+                
+                const rgAvailable = (team.RG.total || 1) - rgUsedCount;
+                const twoGAvailable = (team.twoG.total || 1) - twoGUsedCount;
+                const scAvailable = (team.SC.total || 1) - scUsedCount;
+                
+                // Crea una card per ogni squadra
+                const card = document.createElement('div');
+                card.className = 'bg-gray-800 border border-gray-700 rounded-lg p-3';
+                
+                card.innerHTML = `
+                    <!-- Header squadra -->
+                    <div class="flex items-center justify-between mb-3 pb-2 border-b border-gray-700">
+                        <h4 class="font-bold text-white text-base">${team.teamName}</h4>
+                    </div>
+                    
+                    <!-- Grid 3 colonne per i bonus -->
+                    <div class="grid grid-cols-3 gap-2">
+                        <!-- Colonna RG -->
+                        <div class="bg-red-900/10 rounded-lg p-2">
+                            <div class="flex items-center justify-center mb-2">
+                                <span class="w-8 h-8 bg-red-900 text-red-300 rounded font-bold flex items-center justify-center text-sm">RG</span>
+                            </div>
+                            
+                            <!-- Totali -->
+                            <div class="mb-2">
+                                <label class="text-xs text-gray-400 block text-center mb-1">Totali</label>
+                                <input 
+                                    type="number" 
+                                    min="0" 
+                                    max="10" 
+                                    value="${team.RG.total || 1}"
+                                    data-team="${team.teamName}" 
+                                    data-bonus="RG"
+                                    class="w-full bg-gray-700 border border-gray-600 rounded px-2 py-1 text-center text-white text-sm"
+                                    onchange="updateBonusTotal(this)">
+                            </div>
+                            
+                            <!-- Disponibili -->
+                            <div class="text-center mb-2">
+                                <span class="text-xs text-gray-400">Disp:</span>
+                                <span class="text-${rgAvailable > 0 ? 'green' : 'gray'}-400 font-bold ml-1">${rgAvailable}</span>
+                            </div>
+                            
+                            <!-- Select Giornate -->
+                            <div class="space-y-1">
+                                ${renderCompactBonusSelects(team.teamName, 'RG', team.RG.usedInGiornata, team.RG.total || 1)}
+                            </div>
+                        </div>
+                        
+                        <!-- Colonna 2G -->
+                        <div class="bg-green-900/10 rounded-lg p-2">
+                            <div class="flex items-center justify-center mb-2">
+                                <span class="w-8 h-8 bg-green-900 text-green-300 rounded font-bold flex items-center justify-center text-sm">2G</span>
+                            </div>
+                            
+                            <!-- Totali -->
+                            <div class="mb-2">
+                                <label class="text-xs text-gray-400 block text-center mb-1">Totali</label>
+                                <input 
+                                    type="number" 
+                                    min="0" 
+                                    max="10" 
+                                    value="${team.twoG.total || 1}"
+                                    data-team="${team.teamName}" 
+                                    data-bonus="twoG"
+                                    class="w-full bg-gray-700 border border-gray-600 rounded px-2 py-1 text-center text-white text-sm"
+                                    onchange="updateBonusTotal(this)">
+                            </div>
+                            
+                            <!-- Disponibili -->
+                            <div class="text-center mb-2">
+                                <span class="text-xs text-gray-400">Disp:</span>
+                                <span class="text-${twoGAvailable > 0 ? 'green' : 'gray'}-400 font-bold ml-1">${twoGAvailable}</span>
+                            </div>
+                            
+                            <!-- Select Giornate -->
+                            <div class="space-y-1">
+                                ${renderCompactBonusSelects(team.teamName, 'twoG', team.twoG.usedInGiornata, team.twoG.total || 1)}
+                            </div>
+                        </div>
+                        
+                        <!-- Colonna SC -->
+                        <div class="bg-blue-900/10 rounded-lg p-2">
+                            <div class="flex items-center justify-center mb-2">
+                                <span class="w-8 h-8 bg-blue-900 text-blue-300 rounded font-bold flex items-center justify-center text-sm">SC</span>
+                            </div>
+                            
+                            <!-- Totali -->
+                            <div class="mb-2">
+                                <label class="text-xs text-gray-400 block text-center mb-1">Totali</label>
+                                <input 
+                                    type="number" 
+                                    min="0" 
+                                    max="10" 
+                                    value="${team.SC.total || 1}"
+                                    data-team="${team.teamName}" 
+                                    data-bonus="SC"
+                                    class="w-full bg-gray-700 border border-gray-600 rounded px-2 py-1 text-center text-white text-sm"
+                                    onchange="updateBonusTotal(this)">
+                            </div>
+                            
+                            <!-- Disponibili -->
+                            <div class="text-center mb-2">
+                                <span class="text-xs text-gray-400">Disp:</span>
+                                <span class="text-${scAvailable > 0 ? 'green' : 'gray'}-400 font-bold ml-1">${scAvailable}</span>
+                            </div>
+                            
+                            <!-- Select Giornate -->
+                            <div class="space-y-1">
+                                ${renderCompactBonusSelects(team.teamName, 'SC', team.SC.usedInGiornata, team.SC.total || 1)}
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                container.appendChild(card);
+            });
+        };
+        
+        // Renderizza i select compatti per i bonus usati (versione ottimizzata mobile)
+        const renderCompactBonusSelects = (teamName, bonusType, usedInGiornata, total) => {
+            const used = usedInGiornata || [];
+            const colorClass = bonusType === 'RG' ? 'text-red-400' : 
+                              bonusType === 'twoG' ? 'text-green-400' : 
+                              'text-blue-400';
+            
+            let html = '';
+            
+            // Mostra un select per ogni bonus totale
+            for (let i = 0; i < total; i++) {
+                const selectedGiornata = used[i] || null;
+                html += `
+                    <select 
+                        data-team="${teamName}" 
+                        data-bonus="${bonusType}"
+                        data-index="${i}"
+                        class="w-full bg-gray-700 border border-gray-600 rounded px-1 py-1 text-xs ${selectedGiornata ? colorClass : 'text-gray-300'}"
+                        onchange="updateBonusUsage(this)">
+                        <option value="">-</option>
+                        ${generateGiornataOptionsAdmin(selectedGiornata)}
+                    </select>
+                `;
+            }
+            
+            return html || '<span class="text-xs text-gray-500 block text-center">Nessuno</span>';
+        };
+        
+        // Genera le opzioni per le giornate - versione ADMIN (tutte selezionabili)
+        const generateGiornataOptionsAdmin = (selected) => {
+            let options = '';
+            for (let i = 1; i <= 36; i++) {
+                options += `<option value="${i}" ${selected === i ? 'selected' : ''}>G.${i}</option>`;
+            }
+            return options;
+        };
+        
+        // Genera le opzioni per le giornate - versione USER (solo prossima giornata)
+        const generateGiornataOptions = (selected) => {
+            const lastCompletedGiornata = determineLastCompletedGiornata();
+            const nextGiornata = lastCompletedGiornata + 1;
+            
+            let options = '';
+            for (let i = 1; i <= 36; i++) {
+                const isSelected = selected === i;
+                // Permetti solo la selezione della prossima giornata (o quella già selezionata)
+                const isNextGiornata = i === nextGiornata;
+                const disabled = !isNextGiornata && !isSelected ? 'disabled' : '';
+                const style = !isNextGiornata && !isSelected ? 'style="color: #6b7280;"' : '';
+                
+                let label = `G.${i}`;
+                if (i < nextGiornata) {
+                    label += ' (passata)';
+                } else if (i === nextGiornata) {
+                    label += ' ⭐';
+                } else {
+                    label += ' (futura)';
+                }
+                
+                options += `<option value="${i}" ${isSelected ? 'selected' : ''} ${disabled} ${style}>${label}</option>`;
+            }
+            return options;
+        };
+        
+        // Aggiorna il totale di bonus disponibili
+        window.updateBonusTotal = (inputElement) => {
+            const teamName = inputElement.getAttribute('data-team');
+            const bonusType = inputElement.getAttribute('data-bonus');
+            const newTotal = parseInt(inputElement.value) || 0;
+            
+            // Trova il team nei dati
+            const team = currentBonusData.find(t => t.teamName === teamName);
+            if (team) {
+                team[bonusType].total = newTotal;
+                
+                // Aggiorna la visualizzazione
+                renderBonusTable();
+            }
+        };
+        
+        // Aggiorna l'uso di un bonus quando si cambia il select
+        window.updateBonusUsage = (selectElement) => {
+            const teamName = selectElement.getAttribute('data-team');
+            const bonusType = selectElement.getAttribute('data-bonus');
+            const index = parseInt(selectElement.getAttribute('data-index'));
+            const giornata = selectElement.value ? parseInt(selectElement.value) : null;
+            
+            // Trova il team nei dati
+            const team = currentBonusData.find(t => t.teamName === teamName);
+            if (team) {
+                // Inizializza l'array se non esiste
+                if (!team[bonusType].usedInGiornata) {
+                    team[bonusType].usedInGiornata = [];
+                }
+                
+                // Aggiorna il valore all'indice specificato
+                if (giornata !== null) {
+                    team[bonusType].usedInGiornata[index] = giornata;
+                } else {
+                    // Se viene deselezionato, rimuovi l'elemento
+                    team[bonusType].usedInGiornata.splice(index, 1);
+                }
+                
+                // Rimuovi elementi undefined/null
+                team[bonusType].usedInGiornata = team[bonusType].usedInGiornata.filter(g => g !== null && g !== undefined);
+                
+                // Aggiorna visivamente
+                const colorClass = bonusType === 'RG' ? 'text-red-400' : 
+                                  bonusType === 'twoG' ? 'text-green-400' : 
+                                  'text-blue-400';
+                
+                if (giornata !== null) {
+                    selectElement.classList.remove('text-gray-300');
+                    selectElement.classList.add(colorClass);
+                } else {
+                    selectElement.classList.add('text-gray-300');
+                    selectElement.classList.remove('text-red-400', 'text-green-400', 'text-blue-400');
+                }
+                
+                // Aggiorna il contatore disponibili
+                renderBonusTable();
+            }
+        };
+        
+        // Salva i dati dei bonus nel database
+        window.saveBonusData = async () => {
+            if (!isUserAdmin) {
+                messageBox('Solo gli admin possono salvare i bonus.');
+                return;
+            }
+            
+            if (!currentBonusData || currentBonusData.length === 0) {
+                messageBox('Nessun dato da salvare. Carica prima i dati.');
+                return;
+            }
+            
+            if (!confirm('Salvare le modifiche ai bonus?')) {
+                return;
+            }
+            
+            try {
+                showProgressBar('Salvataggio Bonus');
+                
+                const bonusCollection = getBonusCollectionRef();
+                let savedCount = 0;
+                
+                for (const team of currentBonusData) {
+                    updateProgress(
+                        (savedCount / currentBonusData.length) * 100, 
+                        `Salvataggio ${team.teamName}...`,
+                        savedCount,
+                        currentBonusData.length
+                    );
+                    
+                    const bonusData = {
+                        teamName: team.teamName,
+                        RG: team.RG,
+                        twoG: team.twoG,
+                        SC: team.SC,
+                        lastUpdate: new Date().toISOString()
+                    };
+                    
+                    // Se esiste già un documento, aggiornalo; altrimenti creane uno nuovo
+                    if (team.id) {
+                        await updateDoc(doc(bonusCollection, team.id), bonusData);
+                    } else {
+                        const docRef = await addDoc(bonusCollection, bonusData);
+                        team.id = docRef.id; // Salva l'ID per futuri aggiornamenti
+                    }
+                    
+                    savedCount++;
+                }
+                
+                updateProgress(100, 'Completato!');
+                
+                setTimeout(() => {
+                    hideProgressBar();
+                    messageBox(`Salvati i bonus per ${savedCount} squadre!`);
+                }, 500);
+                
+            } catch (error) {
+                console.error('Errore salvataggio bonus:', error);
+                hideProgressBar();
+                messageBox('Errore nel salvataggio: ' + error.message);
+            }
+        };
+        
+        // === USER BONUS MANAGEMENT ===
+        
+        let currentUserBonusData = null;
+        
+        // Carica i bonus per l'utente corrente
+        window.loadUserBonuses = async () => {
+            const container = document.getElementById('user-bonus-content');
+            const squadNameEl = document.getElementById('user-bonus-squad-name');
+            
+            if (!container || !squadNameEl) return;
+            
+            // Verifica che l'utente abbia una squadra assegnata
+            if (!currentUserProfile || !currentUserProfile.fantaSquad) {
+                container.innerHTML = `
+                    <div class="text-center py-8">
+                        <svg class="w-16 h-16 mx-auto text-gray-500 mb-4" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                        </svg>
+                        <p class="text-gray-400">Non hai una squadra assegnata.</p>
+                        <p class="text-gray-500 text-sm mt-2">Contatta l'admin per associare una squadra al tuo account.</p>
+                    </div>
+                `;
+                squadNameEl.textContent = '';
+                return;
+            }
+            
+            try {
+                const userSquad = currentUserProfile.fantaSquad;
+                squadNameEl.textContent = userSquad;
+                
+                // Carica i bonus per la squadra dell'utente
+                const bonusSnapshot = await getDocs(getBonusCollectionRef());
+                let userBonusDoc = null;
+                
+                bonusSnapshot.docs.forEach(doc => {
+                    const data = doc.data();
+                    if (data.teamName === userSquad) {
+                        userBonusDoc = { id: doc.id, ...data };
+                    }
+                });
+                
+                // Se non esistono bonus per questa squadra, inizializza
+                if (!userBonusDoc) {
+                    userBonusDoc = {
+                        teamName: userSquad,
+                        RG: { total: 1, available: 1, usedInGiornata: null },
+                        twoG: { total: 1, available: 1, usedInGiornata: null },
+                        SC: { total: 1, available: 1, usedInGiornata: null }
+                    };
+                }
+                
+                currentUserBonusData = userBonusDoc;
+                renderUserBonusCard();
+                
+                // Renderizza il countdown della deadline
+                const lastCompletedGiornata = determineLastCompletedGiornata();
+                const nextGiornata = lastCompletedGiornata + 1;
+                renderBonusDeadlineCountdown(nextGiornata);
+                
+                // Avvia timer per aggiornare il countdown ogni secondo
+                if (bonusCountdownInterval) clearInterval(bonusCountdownInterval);
+                bonusCountdownInterval = setInterval(() => {
+                    renderBonusDeadlineCountdown(nextGiornata);
+                }, 1000);
+                
+            } catch (error) {
+                console.error('Errore caricamento bonus utente:', error);
+                container.innerHTML = `
+                    <div class="text-center py-8">
+                        <p class="text-red-400">Errore nel caricamento dei bonus: ${error.message}</p>
+                    </div>
+                `;
+            }
+        };
+        
+        // Renderizza la card dei bonus per l'utente
+        const renderUserBonusCard = () => {
+            const container = document.getElementById('user-bonus-content');
+            if (!container || !currentUserBonusData) return;
+            
+            const team = currentUserBonusData;
+            const lastCompletedGiornata = determineLastCompletedGiornata();
+            const nextGiornata = lastCompletedGiornata + 1;
+            
+            // Trova la partita della prossima giornata per questa squadra
+            const userSquad = currentUserProfile.fantaSquad;
+            
+            // Le partite nel sistema usano i campi 'homeTeam' e 'awayTeam'
+            const nextMatch = (allMatches || []).find(m => {
+                const matchGiornata = parseInt(m.giornata);
+                return matchGiornata === nextGiornata && 
+                       (m.homeTeam === userSquad || m.awayTeam === userSquad);
+            });
+            
+            console.log('Debug - userSquad:', userSquad);
+            console.log('Debug - nextGiornata:', nextGiornata);
+            console.log('Debug - allMatches length:', allMatches?.length);
+            console.log('Debug - Sample match:', allMatches?.[0]);
+            console.log('Debug - nextMatch trovato:', nextMatch);
+            
+            // Calcola la classifica
+            const standings = calculateStandings();
+            const getTeamPosition = (teamName) => {
+                const pos = standings.findIndex(s => s.team === teamName) + 1;
+                return pos > 0 ? pos : '-';
+            };
+            
+            let opponentInfo = '';
+            if (nextMatch) {
+                const homeTeam = nextMatch.homeTeam;
+                const awayTeam = nextMatch.awayTeam;
+                const isUserHome = homeTeam === userSquad;
+                const opponent = isUserHome ? awayTeam : homeTeam;
+                
+                const userLogo = getTeamLogo(userSquad);
+                const opponentLogo = getTeamLogo(opponent);
+                const userPosition = getTeamPosition(userSquad);
+                const opponentPosition = getTeamPosition(opponent);
+                
+                // Layout con home a sinistra e away a destra
+                opponentInfo = `
+                    <div class="bg-gradient-to-br from-yellow-900/30 to-yellow-800/20 border-2 border-yellow-600 rounded-xl p-4 sm:p-6 mb-6 shadow-2xl">
+                        <div class="flex items-center justify-center mb-4">
+                            <svg class="w-6 h-6 text-yellow-400 mr-2 animate-pulse" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"></path>
+                            </svg>
+                            <h3 class="text-xl sm:text-2xl font-bold text-yellow-400">Giornata ${nextGiornata}</h3>
+                        </div>
+                        
+                        <!-- Match Preview - CASA vs TRASFERTA -->
+                        <div class="flex items-center justify-between gap-3 sm:gap-6">
+                            <!-- Squadra di CASA (sempre a sinistra) -->
+                            <div class="flex flex-col items-center flex-1 ${isUserHome ? 'transform scale-110 sm:scale-125' : 'opacity-75'}">
+                                <div class="relative mb-3">
+                                    ${userLogo && isUserHome ? `
+                                        <div class="absolute -inset-2 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full blur-lg opacity-75 animate-pulse"></div>
+                                        <img src="${userLogo}" alt="${homeTeam}" class="relative w-20 h-20 sm:w-28 sm:h-28 object-contain drop-shadow-2xl" onerror="this.style.display='none'">
+                                    ` : opponentLogo && !isUserHome ? `
+                                        <img src="${opponentLogo}" alt="${homeTeam}" class="w-16 h-16 sm:w-20 sm:h-20 object-contain opacity-90" onerror="this.style.display='none'">
+                                    ` : `
+                                        <div class="w-16 h-16 sm:w-20 sm:h-20 bg-gray-700 rounded-full flex items-center justify-center">
+                                            <span class="text-2xl">🏠</span>
+                                        </div>
+                                    `}
+                                </div>
+                                <p class="text-center font-bold ${isUserHome ? 'text-white text-lg sm:text-xl' : 'text-gray-300 text-sm sm:text-base'} mb-1">
+                                    ${homeTeam}
+                                </p>
+                                <div class="flex items-center gap-2 mb-2">
+                                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-bold bg-blue-900 text-blue-300">
+                                        🏠 CASA
+                                    </span>
+                                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-bold bg-gray-700 text-yellow-400">
+                                        #${isUserHome ? userPosition : opponentPosition}
+                                    </span>
+                                </div>
+                            </div>
+                            
+                            <!-- VS Centrale -->
+                            <div class="flex flex-col items-center px-2 sm:px-4">
+                                <div class="bg-gradient-to-br from-yellow-500 to-orange-500 text-gray-900 font-black text-2xl sm:text-4xl px-3 sm:px-6 py-2 sm:py-3 rounded-lg shadow-xl transform rotate-[-5deg]">
+                                    VS
+                                </div>
+                            </div>
+                            
+                            <!-- Squadra in TRASFERTA (sempre a destra) -->
+                            <div class="flex flex-col items-center flex-1 ${!isUserHome ? 'transform scale-110 sm:scale-125' : 'opacity-75'}">
+                                <div class="relative mb-3">
+                                    ${userLogo && !isUserHome ? `
+                                        <div class="absolute -inset-2 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full blur-lg opacity-75 animate-pulse"></div>
+                                        <img src="${userLogo}" alt="${awayTeam}" class="relative w-20 h-20 sm:w-28 sm:h-28 object-contain drop-shadow-2xl" onerror="this.style.display='none'">
+                                    ` : opponentLogo && isUserHome ? `
+                                        <img src="${opponentLogo}" alt="${awayTeam}" class="w-16 h-16 sm:w-20 sm:h-20 object-contain opacity-90" onerror="this.style.display='none'">
+                                    ` : `
+                                        <div class="w-16 h-16 sm:w-20 sm:h-20 bg-gray-700 rounded-full flex items-center justify-center">
+                                            <span class="text-2xl">✈️</span>
+                                        </div>
+                                    `}
+                                </div>
+                                <p class="text-center font-bold ${!isUserHome ? 'text-white text-lg sm:text-xl' : 'text-gray-300 text-sm sm:text-base'} mb-1">
+                                    ${awayTeam}
+                                </p>
+                                <div class="flex items-center gap-2 mb-2">
+                                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-bold bg-orange-900 text-orange-300">
+                                        ✈️ TRASFERTA
+                                    </span>
+                                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-bold bg-gray-700 text-yellow-400">
+                                        #${!isUserHome ? userPosition : opponentPosition}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } else {
+                opponentInfo = `
+                    <div class="bg-gray-800 border border-gray-700 rounded-lg p-4 mb-6">
+                        <p class="text-center text-gray-400">
+                            <svg class="w-5 h-5 inline mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
+                            </svg>
+                            Prossima Giornata: <span class="font-bold">${nextGiornata}</span> - Partita non ancora disponibile
+                        </p>
+                    </div>
+                `;
+            }
+            
+            // Mini classifica con le due squadre
+            let miniStandings = '';
+            if (nextMatch) {
+                const homeTeam = nextMatch.homeTeam;
+                const awayTeam = nextMatch.awayTeam;
+                const homeStats = standings.find(s => s.team === homeTeam);
+                const awayStats = standings.find(s => s.team === awayTeam);
+                const homePos = getTeamPosition(homeTeam);
+                const awayPos = getTeamPosition(awayTeam);
+                
+                // Ordina le squadre per posizione in classifica (la prima in classifica va in cima)
+                const teams = [
+                    { name: homeTeam, stats: homeStats, position: homePos },
+                    { name: awayTeam, stats: awayStats, position: awayPos }
+                ].sort((a, b) => a.position - b.position);
+                
+                if (homeStats && awayStats) {
+                    miniStandings = `
+                        <div class="bg-gray-900/50 border border-gray-700 rounded-lg p-4 mb-6">
+                            <h4 class="text-center text-lg font-bold text-yellow-500 mb-3 flex items-center justify-center">
+                                <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"></path>
+                                    <path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" clip-rule="evenodd"></path>
+                                </svg>
+                                Classifica
+                            </h4>
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-xs sm:text-sm">
+                                    <thead>
+                                        <tr class="text-gray-400 border-b border-gray-700">
+                                            <th class="text-left py-2 px-2">#</th>
+                                            <th class="text-left py-2 px-2">Squadra</th>
+                                            <th class="text-center py-2 px-1">Pt</th>
+                                            <th class="text-center py-2 px-1 hidden sm:table-cell">G</th>
+                                            <th class="text-center py-2 px-1 hidden sm:table-cell">V</th>
+                                            <th class="text-center py-2 px-1 hidden sm:table-cell">N</th>
+                                            <th class="text-center py-2 px-1 hidden sm:table-cell">P</th>
+                                            <th class="text-center py-2 px-1">GF</th>
+                                            <th class="text-center py-2 px-1">GS</th>
+                                            <th class="text-center py-2 px-1">DR</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        ${teams.map((team, idx) => `
+                                            <tr class="${idx === 0 ? 'border-b border-gray-800' : ''} ${team.name === userSquad ? 'bg-blue-900/30' : ''}">
+                                                <td class="py-3 px-2 font-bold text-yellow-500">${team.position}</td>
+                                                <td class="py-3 px-2">
+                                                    <div class="flex items-center gap-2">
+                                                        ${getTeamLogo(team.name) ? `<img src="${getTeamLogo(team.name)}" alt="${team.name}" class="w-6 h-6 object-contain" onerror="this.style.display='none'">` : ''}
+                                                        <span class="font-semibold ${team.name === userSquad ? 'text-blue-400' : 'text-white'}">${team.name}</span>
+                                                    </div>
+                                                </td>
+                                                <td class="text-center py-3 px-1 font-bold text-green-400">${team.stats.points}</td>
+                                                <td class="text-center py-3 px-1 text-gray-300 hidden sm:table-cell">${team.stats.played}</td>
+                                                <td class="text-center py-3 px-1 text-gray-300 hidden sm:table-cell">${team.stats.wins}</td>
+                                                <td class="text-center py-3 px-1 text-gray-300 hidden sm:table-cell">${team.stats.draws}</td>
+                                                <td class="text-center py-3 px-1 text-gray-300 hidden sm:table-cell">${team.stats.losses}</td>
+                                                <td class="text-center py-3 px-1 text-gray-300">${team.stats.goalsFor}</td>
+                                                <td class="text-center py-3 px-1 text-gray-300">${team.stats.goalsAgainst}</td>
+                                                <td class="text-center py-3 px-1 font-semibold ${team.stats.goalDifference > 0 ? 'text-green-400' : team.stats.goalDifference < 0 ? 'text-red-400' : 'text-gray-400'}">${team.stats.goalDifference > 0 ? '+' : ''}${team.stats.goalDifference}</td>
+                                            </tr>
+                                        `).join('')}
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="text-center mt-3 text-xs text-gray-500">
+                                <span class="hidden sm:inline">Pt=Punti | G=Giocate | V=Vittorie | N=Pareggi | P=Perse | </span>GF=Gol Fatti | GS=Gol Subiti | DR=Diff. Reti
+                            </div>
+                        </div>
+                    `;
+                }
+            }
+            
+            // Verifica quali bonus sono già richiesti per questa giornata
+            const rgRequestedForNext = team.RG.usedInGiornata && team.RG.usedInGiornata.includes(nextGiornata);
+            const twoGRequestedForNext = team.twoG.usedInGiornata && team.twoG.usedInGiornata.includes(nextGiornata);
+            const scRequestedForNext = team.SC.usedInGiornata && team.SC.usedInGiornata.includes(nextGiornata);
+            
+            // Calcola quanti bonus sono disponibili in totale
+            const rgUsedCount = team.RG.usedInGiornata ? team.RG.usedInGiornata.length : 0;
+            const twoGUsedCount = team.twoG.usedInGiornata ? team.twoG.usedInGiornata.length : 0;
+            const scUsedCount = team.SC.usedInGiornata ? team.SC.usedInGiornata.length : 0;
+            
+            const rgAvailable = (team.RG.total || 1) - rgUsedCount;
+            const twoGAvailable = (team.twoG.total || 1) - twoGUsedCount;
+            const scAvailable = (team.SC.total || 1) - scUsedCount;
+            
+            container.innerHTML = `
+                ${opponentInfo}
+                
+                ${miniStandings}
+                
+                <!-- Info header -->
+                <div class="bg-gradient-to-r from-blue-900/30 to-purple-900/30 border border-blue-700 rounded-lg p-4 mb-6">
+                    <p class="text-sm sm:text-base text-gray-200 flex items-center">
+                        <svg class="w-5 h-5 mr-2 text-blue-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
+                        </svg>
+                        <span>Richiedi i <span class="font-bold text-yellow-400">bonus</span> che vuoi utilizzare per la Giornata ${nextGiornata}. Ogni giornata può essere usato <span class="font-bold">solo un bonus.</span></span>
+                    </p>
+                </div>
+                
+                <!-- Grid 3 colonne per i bonus con icone accattivanti -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
+                    <!-- Colonna RG (Raddoppio Goal) -->
+                    <div class="bg-gradient-to-br from-red-900/20 to-red-800/10 border-2 border-red-700/50 rounded-xl p-4 sm:p-6 hover:border-red-500 transition-all duration-300 hover:shadow-lg hover:shadow-red-500/30">
+                        <div class="flex items-center justify-center mb-4">
+                            <div class="relative">
+                                <div class="absolute inset-0 bg-red-500 rounded-full blur-xl opacity-50 animate-pulse"></div>
+                                <div class="relative w-20 h-20 sm:w-24 sm:h-24 bg-gradient-to-br from-red-600 to-red-800 rounded-full flex items-center justify-center shadow-2xl border-4 border-red-400">
+                                    <svg class="w-12 h-12 sm:w-14 sm:h-14 text-red-100" fill="currentColor" viewBox="0 0 20 20">
+                                        <path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z"></path>
+                                    </svg>
+                                    <span class="absolute -top-1 -right-1 flex h-6 w-6">
+                                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                                        <span class="relative inline-flex rounded-full h-6 w-6 bg-red-500 items-center justify-center text-white text-xs font-bold">×2</span>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <h3 class="text-center text-lg sm:text-xl font-black text-red-400 mb-2 tracking-wide">RADDOPPIO GOAL</h3>
+                        <p class="text-center text-xs sm:text-sm text-gray-400 mb-4 italic">Raddoppia i gol effettuati della tua squadra</p>
+                        
+                        <div class="text-center mb-4 bg-gray-900/50 rounded-lg py-2 px-3">
+                            <span class="text-xs sm:text-sm text-gray-400">Disponibili: </span>
+                            <span class="text-2xl sm:text-3xl font-black ${rgAvailable > 0 ? 'text-green-400' : 'text-gray-500'}">${rgAvailable}</span>
+                            <span class="text-gray-500"> / ${team.RG.total || 1}</span>
+                        </div>
+                        
+                        <div class="flex items-center justify-center">
+                            <label class="flex items-center cursor-pointer ${rgAvailable === 0 && !rgRequestedForNext ? 'opacity-50 cursor-not-allowed' : ''} group">
+                                <input 
+                                    type="checkbox" 
+                                    data-bonus="RG"
+                                    ${rgRequestedForNext ? 'checked' : ''}
+                                    ${rgAvailable === 0 && !rgRequestedForNext ? 'disabled' : ''}
+                                    onchange="toggleBonusRequest(this, ${nextGiornata})"
+                                    class="w-6 h-6 text-red-600 bg-gray-700 border-2 border-gray-600 rounded focus:ring-2 focus:ring-red-500 cursor-pointer">
+                                <span class="ml-3 text-white font-bold group-hover:text-red-400 transition-colors">
+                                    ${rgRequestedForNext ? '✓ Richiesto' : 'Richiedi bonus'}
+                                </span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <!-- Colonna 2G (Assegna 2 Goal) -->
+                    <div class="bg-gradient-to-br from-green-900/20 to-green-800/10 border-2 border-green-700/50 rounded-xl p-4 sm:p-6 hover:border-green-500 transition-all duration-300 hover:shadow-lg hover:shadow-green-500/30">
+                        <div class="flex items-center justify-center mb-4">
+                            <div class="relative">
+                                <div class="absolute inset-0 bg-green-500 rounded-full blur-xl opacity-50 animate-pulse"></div>
+                                <div class="relative w-20 h-20 sm:w-24 sm:h-24 bg-gradient-to-br from-green-600 to-green-800 rounded-full flex items-center justify-center shadow-2xl border-4 border-green-400">
+                                    <svg class="w-12 h-12 sm:w-14 sm:h-14 text-green-100" fill="currentColor" viewBox="0 0 512 512">
+                                        <path d="M177.1 228.6L207.9 320h96.5l29.62-91.38L256 172.1L177.1 228.6zM255.1 0C114.6 0 .0001 114.6 .0001 256S114.6 512 256 512s255.1-114.6 255.1-255.1S397.4 0 255.1 0zM416.6 246.8L381.9 214l-22.44 62.32l-22.62 7.816l22.38-61.97l-34.71-32.81l34.71-32.81l-22.38-61.97l22.62 7.816L381.9 166.7l34.71-32.81c-34.46-37.46-81.03-63.03-134.5-69.58l-8.066 75.92l-22.44 7.891L260.1 90.16L273.7 13.36C268.5 13.12 263.3 12.1 258.1 12.1c-6.047 0-11.1 .4766-17.83 .8906l12.36 76.83l8.531 58.02L238.7 139.8l-7.844-75.15C176.4 71.23 129.8 96.8 95.35 134.2l34.71 32.81l-22.38 61.97l22.62-7.816L152.7 166.7l34.71 32.81l-34.71 32.81l22.38 61.97l-22.62-7.816L130.1 214L95.35 246.8C108.7 283.9 134.2 314.3 168.8 334.7l7.775-75.43l22.38-7.922l-8.119 58.18l-12.49 76.62c5.453 .2969 10.86 .875 16.51 .875c6.203 0 12.31-.5781 18.43-1.016l-12.76-77.83l-8.205-58.29l22.46 8.012l7.559 75.75c54.25-6.549 101.6-32.45 136.1-69.91L324.2 231.8l22.38-61.97L323.9 177.7L301.5 214L266.8 246.8l34.71 32.81l22.38 61.97l-22.62-7.816l-7.504-75.11l-22.5-8.066l8.131 58.44l12.69 77.74c54.84-6.699 102.4-32.87 137.1-70.55L416.6 246.8z"/>
+                                    </svg>
+                                    <span class="absolute -top-1 -right-1 flex h-6 w-6">
+                                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                                        <span class="relative inline-flex rounded-full h-6 w-6 bg-green-500 items-center justify-center text-white text-xs font-bold">+2</span>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <h3 class="text-center text-lg sm:text-xl font-black text-green-400 mb-2 tracking-wide">ASSEGNA 2 GOAL</h3>
+                        <p class="text-center text-xs sm:text-sm text-gray-400 mb-4 italic">Aggiungi 2 gol extra alla tua squadra</p>
+                        
+                        <div class="text-center mb-4 bg-gray-900/50 rounded-lg py-2 px-3">
+                            <span class="text-xs sm:text-sm text-gray-400">Disponibili: </span>
+                            <span class="text-2xl sm:text-3xl font-black ${twoGAvailable > 0 ? 'text-green-400' : 'text-gray-500'}">${twoGAvailable}</span>
+                            <span class="text-gray-500"> / ${team.twoG.total || 1}</span>
+                        </div>
+                        
+                        <div class="flex items-center justify-center">
+                            <label class="flex items-center cursor-pointer ${twoGAvailable === 0 && !twoGRequestedForNext ? 'opacity-50 cursor-not-allowed' : ''} group">
+                                <input 
+                                    type="checkbox" 
+                                    data-bonus="twoG"
+                                    ${twoGRequestedForNext ? 'checked' : ''}
+                                    ${twoGAvailable === 0 && !twoGRequestedForNext ? 'disabled' : ''}
+                                    onchange="toggleBonusRequest(this, ${nextGiornata})"
+                                    class="w-6 h-6 text-green-600 bg-gray-700 border-2 border-gray-600 rounded focus:ring-2 focus:ring-green-500 cursor-pointer">
+                                <span class="ml-3 text-white font-bold group-hover:text-green-400 transition-colors">
+                                    ${twoGRequestedForNext ? '✓ Richiesto' : 'Richiedi bonus'}
+                                </span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <!-- Colonna SC (Scudo) -->
+                    <div class="bg-gradient-to-br from-blue-900/20 to-blue-800/10 border-2 border-blue-700/50 rounded-xl p-4 sm:p-6 hover:border-blue-500 transition-all duration-300 hover:shadow-lg hover:shadow-blue-500/30">
+                        <div class="flex items-center justify-center mb-4">
+                            <div class="relative">
+                                <div class="absolute inset-0 bg-blue-500 rounded-full blur-xl opacity-50 animate-pulse"></div>
+                                <div class="relative w-20 h-20 sm:w-24 sm:h-24 bg-gradient-to-br from-blue-600 to-blue-800 rounded-full flex items-center justify-center shadow-2xl border-4 border-blue-400">
+                                    <svg class="w-12 h-12 sm:w-14 sm:h-14 text-blue-100" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                                    </svg>
+                                    <span class="absolute -top-1 -right-1 flex h-6 w-6">
+                                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                                        <span class="relative inline-flex rounded-full h-6 w-6 bg-blue-500 items-center justify-center text-white text-xs font-bold">🛡️</span>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <h3 class="text-center text-lg sm:text-xl font-black text-blue-400 mb-2 tracking-wide">SCUDO</h3>
+                        <p class="text-center text-xs sm:text-sm text-gray-400 mb-4 italic">Registra un clean-sheet per questa giornata</p>
+                        
+                        <div class="text-center mb-4 bg-gray-900/50 rounded-lg py-2 px-3">
+                            <span class="text-xs sm:text-sm text-gray-400">Disponibili: </span>
+                            <span class="text-2xl sm:text-3xl font-black ${scAvailable > 0 ? 'text-green-400' : 'text-gray-500'}">${scAvailable}</span>
+                            <span class="text-gray-500"> / ${team.SC.total || 1}</span>
+                        </div>
+                        
+                        <div class="flex items-center justify-center">
+                            <label class="flex items-center cursor-pointer ${scAvailable === 0 && !scRequestedForNext ? 'opacity-50 cursor-not-allowed' : ''} group">
+                                <input 
+                                    type="checkbox" 
+                                    data-bonus="SC"
+                                    ${scRequestedForNext ? 'checked' : ''}
+                                    ${scAvailable === 0 && !scRequestedForNext ? 'disabled' : ''}
+                                    onchange="toggleBonusRequest(this, ${nextGiornata})"
+                                    class="w-6 h-6 text-blue-600 bg-gray-700 border-2 border-gray-600 rounded focus:ring-2 focus:ring-blue-500 cursor-pointer">
+                                <span class="ml-3 text-white font-bold group-hover:text-blue-400 transition-colors">
+                                    ${scRequestedForNext ? '✓ Richiesto' : 'Richiedi bonus'}
+                                </span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            `;
+        };
+        
+        // Gestisce il toggle della richiesta bonus per la prossima giornata
+        // REGOLA: Un solo bonus può essere selezionato per giornata
+        window.toggleBonusRequest = async (checkbox, giornata) => {
+            const bonusType = checkbox.getAttribute('data-bonus');
+            
+            if (!currentUserBonusData) return;
+            
+            // Verifica che la deadline non sia scaduta
+            try {
+                const { deadline } = await getGiornataDeadline(giornata);
+                const now = new Date();
+                
+                if (now >= deadline) {
+                    checkbox.checked = !checkbox.checked; // Ripristina lo stato precedente
+                    messageBox('⏰ La deadline per richiedere i bonus è scaduta!');
+                    return;
+                }
+            } catch (error) {
+                console.error('Errore controllo deadline:', error);
+            }
+            
+            // Se l'utente sta selezionando un bonus
+            if (checkbox.checked) {
+                // Verifica se c'è già un altro bonus richiesto per questa giornata
+                const bonusTypes = ['RG', 'twoG', 'SC'];
+                let anotherBonusAlreadyRequested = false;
+                
+                bonusTypes.forEach(type => {
+                    if (type !== bonusType) {
+                        const usedArray = currentUserBonusData[type].usedInGiornata || [];
+                        if (usedArray.includes(giornata)) {
+                            anotherBonusAlreadyRequested = true;
+                        }
+                    }
+                });
+                
+                // Se un altro bonus è già richiesto, mostra errore e deseleziona
+                if (anotherBonusAlreadyRequested) {
+                    checkbox.checked = false;
+                    messageBox('⚠️ Puoi richiedere solo UN bonus per giornata! Deseleziona prima l\'altro bonus.');
+                    return;
+                }
+                
+                // Inizializza l'array se non esiste
+                if (!currentUserBonusData[bonusType].usedInGiornata) {
+                    currentUserBonusData[bonusType].usedInGiornata = [];
+                }
+                
+                const usedArray = currentUserBonusData[bonusType].usedInGiornata;
+                const alreadyRequested = usedArray.includes(giornata);
+                
+                if (!alreadyRequested) {
+                    // Aggiungi la richiesta
+                    usedArray.push(giornata);
+                }
+            } else {
+                // L'utente sta deselezionando
+                const usedArray = currentUserBonusData[bonusType].usedInGiornata || [];
+                const alreadyRequested = usedArray.includes(giornata);
+                
+                if (alreadyRequested) {
+                    // Rimuovi la richiesta
+                    const index = usedArray.indexOf(giornata);
+                    if (index > -1) {
+                        usedArray.splice(index, 1);
+                    }
+                }
+            }
+            
+            // Aggiorna la visualizzazione
+            renderUserBonusCard();
+        };
+        
+        // Salva i bonus dell'utente
+        window.saveUserBonusData = async () => {
+            if (!currentUserBonusData) {
+                messageBox('Nessun dato da salvare.');
+                return;
+            }
+            
+            if (!currentUserProfile || !currentUserProfile.fantaSquad) {
+                messageBox('Non hai una squadra assegnata.');
+                return;
+            }
+            
+            // Verifica che la deadline non sia scaduta
+            try {
+                const lastCompletedGiornata = determineLastCompletedGiornata();
+                const nextGiornata = lastCompletedGiornata + 1;
+                const { deadline } = await getGiornataDeadline(nextGiornata);
+                const now = new Date();
+                
+                if (now >= deadline) {
+                    messageBox('⏰ La deadline per richiedere i bonus è scaduta! Non è possibile salvare modifiche.');
+                    return;
+                }
+            } catch (error) {
+                console.error('Errore controllo deadline:', error);
+            }
+            
+            if (!confirm('Salvare le modifiche ai tuoi bonus?')) {
+                return;
+            }
+            
+            try {
+                showProgressBar('Salvataggio Bonus');
+                
+                const bonusCollection = getBonusCollectionRef();
+                
+                const bonusData = {
+                    teamName: currentUserBonusData.teamName,
+                    RG: currentUserBonusData.RG,
+                    twoG: currentUserBonusData.twoG,
+                    SC: currentUserBonusData.SC,
+                    lastUpdate: new Date().toISOString()
+                };
+                
+                // Se esiste già un documento, aggiornalo; altrimenti creane uno nuovo
+                if (currentUserBonusData.id) {
+                    await updateDoc(doc(bonusCollection, currentUserBonusData.id), bonusData);
+                } else {
+                    const docRef = await addDoc(bonusCollection, bonusData);
+                    currentUserBonusData.id = docRef.id;
+                }
+                
+                updateProgress(100, 'Completato!');
+                
+                setTimeout(() => {
+                    hideProgressBar();
+                    messageBox('Bonus salvati con successo!');
+                }, 500);
+                
+            } catch (error) {
+                console.error('Errore salvataggio bonus utente:', error);
+                hideProgressBar();
+                messageBox('Errore nel salvataggio: ' + error.message);
+            }
+        };
+        
+        // === FINE USER BONUS MANAGEMENT ===
+        
+        // === FINE FUNZIONI GESTIONE BONUS ===
 
         // Funzione di supporto: ricalibra quote pure per ottenere un margine target
 const adjustOddsForMargin = (q1, qX, q2, targetMargin = 0.05) => {
@@ -5931,6 +7158,15 @@ window.toggleAdditionalStats = () => {
                 const now = new Date();
                 const isPast = now >= deadline;
                 
+                // Se la deadline è appena passata, controlla i bonus per l'admin
+                if (isPast && !deadlineHasPassed && isUserAdmin) {
+                    deadlineHasPassed = true;
+                    const notificationShown = localStorage.getItem('bonusNotificationShown');
+                    if (notificationShown !== giornata.toString()) {
+                        checkPendingBonusRequests();
+                    }
+                }
+                
                 if (isPast) {
                     countdownEl.innerHTML = `
                         <div class="bg-red-900/30 border-l-4 border-red-500 p-4 rounded-lg">
@@ -6037,6 +7273,150 @@ window.toggleAdditionalStats = () => {
             }
         };
 
+        // --- Rendering Countdown Deadline Bonus ---
+        
+        const renderBonusDeadlineCountdown = async (giornata) => {
+            const countdownEl = document.getElementById('bonus-deadline-countdown');
+            if (!countdownEl) return;
+            
+            try {
+                const { deadline, confirmed, notes } = await getGiornataDeadline(giornata);
+                const now = new Date();
+                const isPast = now >= deadline;
+                
+                if (isPast) {
+                    countdownEl.innerHTML = `
+                        <div class="bg-red-900/30 border-l-4 border-red-500 p-4 rounded-lg">
+                            <div class="flex items-center">
+                                <svg class="w-6 h-6 text-red-400 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path>
+                                </svg>
+                                <div>
+                                    <p class="text-red-300 font-bold text-lg">⏰ BONUS CHIUSI</p>
+                                    <p class="text-red-200 text-sm">La deadline per richiedere i bonus della Giornata ${giornata} è scaduta il ${deadline.toLocaleString('it-IT')}</p>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    
+                    // Disabilita tutte le checkbox
+                    document.querySelectorAll('#user-bonus-content input[type="checkbox"]').forEach(checkbox => {
+                        checkbox.disabled = true;
+                    });
+                    
+                    // Disabilita il pulsante salva
+                    const saveButtons = document.querySelectorAll('button[onclick="saveUserBonusData()"]');
+                    saveButtons.forEach(btn => {
+                        btn.disabled = true;
+                        btn.classList.add('opacity-50', 'cursor-not-allowed');
+                    });
+                    
+                    return;
+                }
+                
+                // Abilita le checkbox se non è scaduto
+                document.querySelectorAll('#user-bonus-content input[type="checkbox"]').forEach(checkbox => {
+                    if (!checkbox.disabled) {
+                        checkbox.disabled = false;
+                    }
+                });
+                
+                // Abilita il pulsante salva
+                const saveButtons = document.querySelectorAll('button[onclick="saveUserBonusData()"]');
+                saveButtons.forEach(btn => {
+                    btn.disabled = false;
+                    btn.classList.remove('opacity-50', 'cursor-not-allowed');
+                });
+                
+                // Calcola tempo rimanente
+                const diff = deadline - now;
+                const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+                
+                // Colore e icona in base al tempo rimanente
+                let bgColor, borderColor, textColor, iconColor, statusIcon;
+                if (days > 2) {
+                    bgColor = 'bg-green-900/20';
+                    borderColor = 'border-green-500';
+                    textColor = 'text-green-300';
+                    iconColor = 'text-green-400';
+                    statusIcon = `<path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>`;
+                } else if (days > 0 || hours > 12) {
+                    bgColor = 'bg-yellow-900/20';
+                    borderColor = 'border-yellow-500';
+                    textColor = 'text-yellow-300';
+                    iconColor = 'text-yellow-400';
+                    statusIcon = `<path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"></path>`;
+                } else {
+                    bgColor = 'bg-red-900/20';
+                    borderColor = 'border-red-500';
+                    textColor = 'text-red-300';
+                    iconColor = 'text-red-400';
+                    statusIcon = `<path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>`;
+                }
+                
+                const confirmedBadge = confirmed 
+                    ? `<span class="ml-2 px-2 py-1 bg-green-600 text-white text-xs rounded-full">✓ Confermato</span>`
+                    : `<span class="ml-2 px-2 py-1 bg-orange-600 text-white text-xs rounded-full">⚠ Da confermare</span>`;
+                
+                // Aggiungi animazione se manca meno di 1 ora
+                const urgentClass = (days === 0 && hours < 1) ? 'countdown-urgent' : '';
+                
+                countdownEl.innerHTML = `
+                    <div class="${bgColor} border-l-4 ${borderColor} p-4 rounded-lg ${urgentClass}">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center">
+                                <svg class="w-6 h-6 ${iconColor} mr-3" fill="currentColor" viewBox="0 0 20 20">
+                                    ${statusIcon}
+                                </svg>
+                                <div>
+                                    <p class="${textColor} font-bold text-lg">
+                                        Scadenza richiesta bonus Giornata ${giornata}
+                                        ${confirmedBadge}
+                                    </p>
+                                    <p class="text-gray-300 text-sm mt-1">
+                                        ${deadline.toLocaleDateString('it-IT', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })} 
+                                        alle ${deadline.toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' })}
+                                    </p>
+                                    ${notes ? `<p class="text-gray-400 text-xs mt-1 italic">${notes}</p>` : ''}
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-gray-400 text-xs mb-1">Tempo rimanente:</p>
+                                <div class="flex space-x-2 text-center">
+                                    ${days > 0 ? `
+                                        <div class="bg-gray-800 px-3 py-2 rounded">
+                                            <p class="${textColor} text-2xl font-bold">${days}</p>
+                                            <p class="text-gray-400 text-xs">giorni</p>
+                                        </div>
+                                    ` : ''}
+                                    <div class="bg-gray-800 px-3 py-2 rounded">
+                                        <p class="${textColor} text-2xl font-bold">${hours}</p>
+                                        <p class="text-gray-400 text-xs">ore</p>
+                                    </div>
+                                    <div class="bg-gray-800 px-3 py-2 rounded">
+                                        <p class="${textColor} text-2xl font-bold">${minutes}</p>
+                                        <p class="text-gray-400 text-xs">min</p>
+                                    </div>
+                                    ${days === 0 && hours < 1 ? `
+                                        <div class="bg-gray-800 px-3 py-2 rounded">
+                                            <p class="${textColor} text-2xl font-bold">${seconds}</p>
+                                            <p class="text-gray-400 text-xs">sec</p>
+                                        </div>
+                                    ` : ''}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } catch (error) {
+                console.error('Errore rendering countdown bonus:', error);
+                countdownEl.innerHTML = '';
+            }
+        };
+
 
         const renderOpenMatches = (matches, nextGiornata) => {
             console.log('renderOpenMatches chiamato con:', { 
@@ -6050,6 +7430,9 @@ window.toggleAdditionalStats = () => {
                 })),
                 nextGiornata 
             });
+            
+            // Reset del flag quando si cambia giornata
+            deadlineHasPassed = false;
             
             // Renderizza il countdown della deadline
             renderBetDeadlineCountdown(nextGiornata);
@@ -6385,7 +7768,7 @@ window.toggleAdditionalStats = () => {
         };
 
         // Renderizza la lista degli utenti per l'admin
-        const renderAdminUsersList = (users) => {
+        const renderAdminUsersList = async (users) => {
             const listContainer = document.getElementById('admin-users-list');
             if (!listContainer) return;
             listContainer.innerHTML = '';
@@ -6395,19 +7778,103 @@ window.toggleAdditionalStats = () => {
                 return;
             }
 
+            // Carica le rose disponibili
+            const squadsSnapshot = await getDocs(getSquadsCollectionRef());
+            const availableSquads = squadsSnapshot.docs.map(doc => doc.data().name).sort();
+
             users.forEach(user => {
                 const row = document.createElement('div');
-                row.className = 'flex items-center justify-between p-2 bg-gray-900 rounded mb-2';
+                row.className = 'bg-gray-900 rounded-lg p-4 mb-3 border border-gray-700';
+                
+                // Crea le opzioni per il select delle rose
+                let squadOptions = '<option value="">Nessuna rosa</option>';
+                availableSquads.forEach(squadName => {
+                    const selected = user.fantaSquad === squadName ? 'selected' : '';
+                    squadOptions += `<option value="${squadName}" ${selected}>${squadName}</option>`;
+                });
+                
                 row.innerHTML = `
-                    <div class="text-sm text-gray-300">${user.email || user.id}</div>
-                    <div class="flex items-center space-x-2">
-                        <label class="text-sm text-gray-400">Admin: <input type="checkbox" id="isAdmin-${user.id}" ${user.isAdmin ? 'checked' : ''}></label>
-                        <input type="number" id="credits-${user.id}" value="${user.credits || 0}" class="bg-gray-800 text-sm p-1 rounded w-24" />
-                        <button onclick="updateUserPermissionsAndCredits('${user.id}')" class="btn-secondary px-3 py-1 text-sm">Salva</button>
+                    <div class="flex flex-col space-y-3">
+                        <!-- Header con email -->
+                        <div class="flex items-center justify-between border-b border-gray-700 pb-2">
+                            <div class="font-medium text-white">${user.displayName || user.email || user.id}</div>
+                            <div class="text-xs text-gray-500">${user.email || ''}</div>
+                        </div>
+                        
+                        <!-- Grid informazioni utente -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                            <!-- Rosa Fantacalcio -->
+                            <div class="flex flex-col">
+                                <label class="text-xs text-gray-400 mb-1">Rosa Fantacalcio</label>
+                                <select 
+                                    id="squad-${user.id}" 
+                                    class="bg-gray-800 text-sm p-2 rounded border border-gray-600 text-white">
+                                    ${squadOptions}
+                                </select>
+                            </div>
+                            
+                            <!-- Crediti -->
+                            <div class="flex flex-col">
+                                <label class="text-xs text-gray-400 mb-1">Crediti</label>
+                                <input 
+                                    type="number" 
+                                    id="credits-${user.id}" 
+                                    value="${user.credits || 0}" 
+                                    class="bg-gray-800 text-sm p-2 rounded border border-gray-600 text-white" />
+                            </div>
+                            
+                            <!-- Admin -->
+                            <div class="flex flex-col justify-center">
+                                <label class="text-xs text-gray-400 mb-1">Ruolo</label>
+                                <label class="flex items-center cursor-pointer">
+                                    <input 
+                                        type="checkbox" 
+                                        id="isAdmin-${user.id}" 
+                                        ${user.isAdmin ? 'checked' : ''}
+                                        class="mr-2 w-4 h-4">
+                                    <span class="text-sm ${user.isAdmin ? 'text-yellow-400 font-bold' : 'text-gray-300'}">
+                                        ${user.isAdmin ? 'Admin' : 'Utente'}
+                                    </span>
+                                </label>
+                            </div>
+                            
+                            <!-- Pulsante Salva -->
+                            <div class="flex items-end">
+                                <button 
+                                    onclick="updateUserPermissionsAndCredits('${user.id}')" 
+                                    class="btn-primary w-full text-sm py-2">
+                                    <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                    </svg>
+                                    Salva
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 `;
                 listContainer.appendChild(row);
             });
+        };
+        
+        // Carica gli utenti per l'admin
+        window.loadUsersForAdmin = async () => {
+            if (!isUserAdmin) {
+                messageBox('Solo gli admin possono accedere a questa sezione.');
+                return;
+            }
+            
+            try {
+                const usersSnapshot = await getDocs(getUsersCollectionRef());
+                allUsersForAdmin = usersSnapshot.docs.map(doc => ({ 
+                    id: doc.id, 
+                    ...doc.data() 
+                }));
+                
+                await renderAdminUsersList(allUsersForAdmin);
+            } catch (error) {
+                console.error('Errore caricamento utenti:', error);
+                messageBox('Errore nel caricamento degli utenti: ' + error.message);
+            }
         };
 
         // Aggiorna il nome visualizzato di un utente (admin)
@@ -6415,6 +7882,7 @@ window.toggleAdditionalStats = () => {
             if (!isUserAdmin) return;
             const isAdmin = document.getElementById(`isAdmin-${uid}`).checked;
             const credits = parseInt(document.getElementById(`credits-${uid}`).value, 10);
+            const fantaSquad = document.getElementById(`squad-${uid}`).value || null;
 
             if (isNaN(credits)) {
                 messageBox("I crediti devono essere un numero.");
@@ -6424,12 +7892,13 @@ window.toggleAdditionalStats = () => {
             try {
                 await updateDoc(doc(getUsersCollectionRef(), uid), { 
                     isAdmin: isAdmin,
-                    credits: credits
+                    credits: credits,
+                    fantaSquad: fantaSquad
                 });
-                messageBox("Permessi e crediti utente aggiornati.");
+                messageBox("Dati utente aggiornati con successo!");
             } catch (error) {
-                console.error("Errore aggiornamento permessi utente:", error);
-                messageBox("Errore durante l'aggiornamento dei permessi e crediti utente.");
+                console.error("Errore aggiornamento utente:", error);
+                messageBox("Errore durante l'aggiornamento: " + error.message);
             }
         };
 
@@ -6805,6 +8274,20 @@ window.toggleAdditionalStats = () => {
                             userCredits = currentUserProfile.credits || 100; // Aggiorna i crediti globali
                             isUserAdmin = currentUserProfile.isAdmin || false; // Aggiorna lo stato admin
                             updateUserInfoDisplay(); // Aggiorna la UI con il nuovo nome
+                            checkAdminStatus(); // Aggiorna la visibilità dei pulsanti admin e bonus
+                            
+                            // Controlla richieste bonus pendenti per admin (solo una volta per giornata)
+                            if (isUserAdmin) {
+                                const lastCompletedGiornata = determineLastCompletedGiornata();
+                                const currentGiornata = lastCompletedGiornata + 1;
+                                const notificationShown = localStorage.getItem('bonusNotificationShown');
+                                
+                                // Mostra notifica solo se non è già stata mostrata per questa giornata
+                                if (notificationShown !== currentGiornata.toString()) {
+                                    checkPendingBonusRequests();
+                                }
+                            }
+                            
                             if (currentView === 'profile') {
                                 renderProfileArea(); // Ricarica la sezione profilo se è aperta
                             }
@@ -7239,8 +8722,8 @@ window.toggleAdditionalStats = () => {
         <div class="container mx-auto px-4 text-center">
             <p class="text-xs text-gray-500">
                 <span class="font-semibold text-gray-400">FANTABet</span> • 
-                Versione 2.0.2 • 
-                Ultimo aggiornamento: <span class="text-gray-400">01 Novembre 2025</span>
+                Versione 2.1 • 
+                Ultimo aggiornamento: <span class="text-gray-400">07 Novembre 2025</span>
             </p>
             <p class="text-xs text-gray-600 mt-1">
                 © 2025 - Gestionale Fantacalcio con Sistema Scommesse
