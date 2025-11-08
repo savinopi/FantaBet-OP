@@ -188,6 +188,22 @@
             animation: fade-out 0.3s ease-out forwards;
         }
         
+        /* Animazione scale-in per modal */
+        @keyframes scale-in {
+            from { 
+                opacity: 0; 
+                transform: scale(0.9);
+            }
+            to { 
+                opacity: 1; 
+                transform: scale(1);
+            }
+        }
+        
+        .animate-scale-in {
+            animation: scale-in 0.2s ease-out forwards;
+        }
+        
         /* Stile specifico per l'intestazione della giornata */
         .giornata-header th {
             padding: 8px 12px;
@@ -499,11 +515,6 @@
     </div>
     
     <div class="max-w-6xl mx-auto">
-        <h1 class="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 sm:mb-6 md:mb-8 text-center text-green-400">
-            FantaBet
-        </h1>
-        <p class="text-center mb-10 text-gray-400">Gioca e scommetti sulle partite della lega fantacalcio Orecchiette e Prosciutto</p>
-
         <!-- Sezione Login (mostrata se non autenticato) -->
         <div id="login-container" class="max-w-md mx-auto card p-6 sm:p-8 hidden">
             <h2 id="auth-title" class="text-xl sm:text-2xl font-semibold mb-4 sm:mb-6 text-center">Accedi a FantaBet</h2>
@@ -566,125 +577,191 @@
             <div id="app-content-area">
                 
                 <!-- HOME DASHBOARD (Visibile dopo il login) -->
-                <div id="home-container" class="max-w-4xl mx-auto space-y-4 sm:space-y-6">
-                    <div class="card p-4 sm:p-6 md:p-8 text-center space-y-4 sm:space-y-6">
-                        <!-- Logo della Lega -->
-                        <div class="flex justify-center mb-4 sm:mb-6">
-                            <img src="https://raw.githubusercontent.com/savinopi/FantaBet-OP/main/esempio%20stemma%20lega.png" alt="Logo Fantabet" class="w-24 h-24 sm:w-32 sm:h-32 object-contain" onerror="this.style.display='none'">
+                <div id="home-container" class="max-w-4xl mx-auto px-3 sm:px-6">
+                    <!-- Logo e Titolo -->
+                    <div class="text-center mb-6">
+                        <div class="flex justify-center mb-4">
+                            <img src="https://raw.githubusercontent.com/savinopi/FantaBet-OP/main/esempio%20stemma%20lega.png" alt="Logo Fantabet" class="w-20 h-20 sm:w-24 sm:h-24 object-contain" onerror="this.style.display='none'">
                         </div>
-                        
-                        <h2 class="text-xl sm:text-2xl md:text-3xl font-bold mb-3 sm:mb-4">Benvenuto Ludopatico! Scegli la tua area.</h2>
+                        <h2 class="text-xl sm:text-2xl font-bold text-yellow-400">Benvenuto in FantaBet</h2>
+                        <p class="text-sm text-gray-400 mt-2">Scegli una sezione per iniziare</p>
+                    </div>
 
-                        <div class="space-y-3 sm:space-y-4">
-                            <button onclick="setAppView('betting')" class="w-full py-4 sm:py-5 text-lg sm:text-xl btn-primary shadow-lg">
-                                <svg class="w-5 h-5 sm:w-6 sm:h-6 inline mr-2" fill="currentColor" viewBox="0 0 512 512">
-                                    <path d="M177.1 228.6L207.9 320h96.5l29.62-91.38L256 172.1L177.1 228.6zM255.1 0C114.6 0 .0001 114.6 .0001 256S114.6 512 256 512s255.1-114.6 255.1-255.1S397.4 0 255.1 0zM416.6 246.8L381.9 214l-22.44 62.32l-22.62 7.816l22.38-61.97l-34.71-32.81l34.71-32.81l-22.38-61.97l22.62 7.816L381.9 166.7l34.71-32.81c-34.46-37.46-81.03-63.03-134.5-69.58l-8.066 75.92l-22.44 7.891L260.1 90.16L273.7 13.36C268.5 13.12 263.3 12.1 258.1 12.1c-6.047 0-11.1 .4766-17.83 .8906l12.36 76.83l8.531 58.02L238.7 139.8l-7.844-75.15C176.4 71.23 129.8 96.8 95.35 134.2l34.71 32.81l-22.38 61.97l22.62-7.816L152.7 166.7l34.71 32.81l-34.71 32.81l22.38 61.97l-22.62-7.816L130.1 214L95.35 246.8C108.7 283.9 134.2 314.3 168.8 334.7l7.775-75.43l22.38-7.922l-8.119 58.18l-12.49 76.62c5.453 .2969 10.86 .875 16.51 .875c6.203 0 12.31-.5781 18.43-1.016l-12.76-77.83l-8.205-58.29l22.46 8.012l7.559 75.75c54.25-6.549 101.6-32.45 136.1-69.91L324.2 231.8l22.38-61.97L323.9 177.7L301.5 214L266.8 246.8l34.71 32.81l22.38 61.97l-22.62-7.816l-7.504-75.11l-22.5-8.066l8.131 58.44l12.69 77.74c54.84-6.699 102.4-32.87 137.1-70.55L416.6 246.8z"/>
-                                </svg>
-                                Vai a Scommesse
-                            </button>
+                    <!-- Grid Menu a 2 colonne -->
+                    <div class="grid grid-cols-2 gap-4 sm:gap-5 mb-6">
+                        <!-- Scommesse -->
+                        <button onclick="setAppView('betting')" class="group relative bg-gradient-to-br from-slate-800/90 to-slate-900 hover:from-emerald-900/40 hover:to-slate-900 rounded-2xl p-5 sm:p-6 shadow-xl hover:shadow-emerald-500/20 transform hover:scale-[1.03] transition-all duration-300 flex flex-col items-center justify-center aspect-square border-2 border-slate-700/50 hover:border-emerald-500/60 backdrop-blur-sm overflow-hidden">
+                            <div class="absolute inset-0 bg-gradient-to-br from-emerald-500/0 to-emerald-500/0 group-hover:from-emerald-500/5 group-hover:to-emerald-500/10 transition-all duration-300"></div>
+                            <svg class="relative w-12 h-12 sm:w-14 sm:h-14 mb-3 text-emerald-400 drop-shadow-lg" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            <span class="relative text-white font-bold text-base sm:text-lg tracking-wide">Scommesse</span>
+                        </button>
 
-                            <!-- Bottone Admin (invisibile per default, checkAdminStatus ne gestisce la visibilità) -->
-                            <button id="admin-button-home" onclick="setAppView('admin')" class="w-full py-4 text-base sm:text-lg btn-secondary hidden">
-                                <svg class="w-4 h-4 sm:w-5 sm:h-5 inline mr-2" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd"></path>
-                                </svg>
-                                Area Admin
-                            </button>
+                        <!-- I Miei Bonus -->
+                        <button id="user-bonus-button-home" onclick="setAppView('user_bonus')" class="hidden group relative bg-gradient-to-br from-slate-800/90 to-slate-900 hover:from-violet-900/40 hover:to-slate-900 rounded-2xl p-5 sm:p-6 shadow-xl hover:shadow-violet-500/20 transform hover:scale-[1.03] transition-all duration-300 flex flex-col items-center justify-center aspect-square border-2 border-slate-700/50 hover:border-violet-500/60 backdrop-blur-sm overflow-hidden">
+                            <div class="absolute inset-0 bg-gradient-to-br from-violet-500/0 to-violet-500/0 group-hover:from-violet-500/5 group-hover:to-violet-500/10 transition-all duration-300"></div>
+                            <svg class="relative w-12 h-12 sm:w-14 sm:h-14 mb-3 text-violet-400 drop-shadow-lg" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M5 2a1 1 0 011 1v1h1a1 1 0 010 2H6v1a1 1 0 01-2 0V6H3a1 1 0 010-2h1V3a1 1 0 011-1zm0 10a1 1 0 011 1v1h1a1 1 0 110 2H6v1a1 1 0 11-2 0v-1H3a1 1 0 110-2h1v-1a1 1 0 011-1zM12 2a1 1 0 01.967.744L14.146 7.2 17.5 9.134a1 1 0 010 1.732l-3.354 1.935-1.18 4.455a1 1 0 01-1.933 0L9.854 12.8 6.5 10.866a1 1 0 010-1.732l3.354-1.935 1.18-4.455A1 1 0 0112 2z" clip-rule="evenodd"></path>
+                            </svg>
+                            <span class="relative text-white font-bold text-base sm:text-lg tracking-wide text-center">I Miei Bonus</span>
+                        </button>
 
-                            <!-- Profilo utente -->
-                            <button onclick="setAppView('profile')" class="w-full py-4 text-base sm:text-lg btn-secondary">
-                                <svg class="w-4 h-4 sm:w-5 sm:h-5 inline mr-2" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path>
-                                </svg>
-                                Profilo
-                            </button>
+                        <!-- Profilo -->
+                        <button onclick="setAppView('profile')" class="group relative bg-gradient-to-br from-slate-800/90 to-slate-900 hover:from-sky-900/40 hover:to-slate-900 rounded-2xl p-5 sm:p-6 shadow-xl hover:shadow-sky-500/20 transform hover:scale-[1.03] transition-all duration-300 flex flex-col items-center justify-center aspect-square border-2 border-slate-700/50 hover:border-sky-500/60 backdrop-blur-sm overflow-hidden">
+                            <div class="absolute inset-0 bg-gradient-to-br from-sky-500/0 to-sky-500/0 group-hover:from-sky-500/5 group-hover:to-sky-500/10 transition-all duration-300"></div>
+                            <svg class="relative w-12 h-12 sm:w-14 sm:h-14 mb-3 text-sky-400 drop-shadow-lg" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path>
+                            </svg>
+                            <span class="relative text-white font-bold text-base sm:text-lg tracking-wide">Profilo</span>
+                        </button>
 
-                            <!-- I Miei Bonus (visible only for users with assigned squad) -->
-                            <button id="user-bonus-button-home" onclick="setAppView('user_bonus')" class="w-full py-4 text-base sm:text-lg btn-secondary hidden">
-                                <svg class="w-4 h-4 sm:w-5 sm:h-5 inline mr-2" fill="currentColor" viewBox="0 0 512 512">
-                                    <path d="M177.1 228.6L207.9 320h96.5l29.62-91.38L256 172.1L177.1 228.6zM255.1 0C114.6 0 .0001 114.6 .0001 256S114.6 512 256 512s255.1-114.6 255.1-255.1S397.4 0 255.1 0zM416.6 246.8L381.9 214l-22.44 62.32l-22.62 7.816l22.38-61.97l-34.71-32.81l34.71-32.81l-22.38-61.97l22.62 7.816L381.9 166.7l34.71-32.81c-34.46-37.46-81.03-63.03-134.5-69.58l-8.066 75.92l-22.44 7.891L260.1 90.16L273.7 13.36C268.5 13.12 263.3 12.1 258.1 12.1c-6.047 0-11.1 .4766-17.83 .8906l12.36 76.83l8.531 58.02L238.7 139.8l-7.844-75.15C176.4 71.23 129.8 96.8 95.35 134.2l34.71 32.81l-22.38 61.97l22.62-7.816L152.7 166.7l34.71 32.81l-34.71 32.81l22.38 61.97l-22.62-7.816L130.1 214L95.35 246.8C108.7 283.9 134.2 314.3 168.8 334.7l7.775-75.43l22.38-7.922l-8.119 58.18l-12.49 76.62c5.453 .2969 10.86 .875 16.51 .875c6.203 0 12.31-.5781 18.43-1.016l-12.76-77.83l-8.205-58.29l22.46 8.012l7.559 75.75c54.25-6.549 101.6-32.45 136.1-69.91L324.2 231.8l22.38-61.97L323.9 177.7L301.5 214L266.8 246.8l34.71 32.81l22.38 61.97l-22.62-7.816l-7.504-75.11l-22.5-8.066l8.131 58.44l12.69 77.74c54.84-6.699 102.4-32.87 137.1-70.55L416.6 246.8z"/>
-                                </svg>
-                                I Miei Bonus
-                            </button>
+                        <!-- Analisi Dati (aggregato) -->
+                        <button onclick="showDataAnalysisMenu()" class="group relative bg-gradient-to-br from-slate-800/90 to-slate-900 hover:from-amber-900/40 hover:to-slate-900 rounded-2xl p-5 sm:p-6 shadow-xl hover:shadow-amber-500/20 transform hover:scale-[1.03] transition-all duration-300 flex flex-col items-center justify-center aspect-square border-2 border-slate-700/50 hover:border-amber-500/60 backdrop-blur-sm overflow-hidden">
+                            <div class="absolute inset-0 bg-gradient-to-br from-amber-500/0 to-amber-500/0 group-hover:from-amber-500/5 group-hover:to-amber-500/10 transition-all duration-300"></div>
+                            <svg class="relative w-12 h-12 sm:w-14 sm:h-14 mb-3 text-amber-400 drop-shadow-lg" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z"></path>
+                            </svg>
+                            <span class="relative text-white font-bold text-base sm:text-lg tracking-wide text-center">Analisi Dati</span>
+                        </button>
 
-                            <!-- Mostra i risultati storici -->
-                            <button onclick="setAppView('historic_results')" class="w-full py-4 text-base sm:text-lg btn-secondary">
-                                <svg class="w-4 h-4 sm:w-5 sm:h-5 inline mr-2" fill="currentColor" viewBox="0 0 20 20">
-                                    <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"></path>
-                                    <path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" clip-rule="evenodd"></path>
-                                </svg>
-                                Risultati Storici
-                            </button>
+                        <!-- Area Admin (solo admin, in fondo, larga 2 colonne) -->
+                        <button id="admin-button-home" onclick="setAppView('admin')" class="hidden col-span-2 group relative bg-gradient-to-br from-slate-800/90 to-slate-950 hover:from-red-900/40 hover:to-slate-950 rounded-2xl p-5 sm:p-6 shadow-xl hover:shadow-red-500/20 transform hover:scale-[1.03] transition-all duration-300 flex flex-col items-center justify-center min-h-[100px] border-2 border-slate-700/50 hover:border-red-500/60 backdrop-blur-sm overflow-hidden">
+                            <div class="absolute inset-0 bg-gradient-to-br from-red-500/0 to-red-500/0 group-hover:from-red-500/5 group-hover:to-red-500/10 transition-all duration-300"></div>
+                            <svg class="relative w-12 h-12 sm:w-14 sm:h-14 mb-3 text-red-400 drop-shadow-lg" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd"></path>
+                            </svg>
+                            <span class="relative text-white font-bold text-base sm:text-lg tracking-wide">Area Admin</span>
+                        </button>
+                    </div>
 
-                            <!-- Mostra le Rose -->
-                            <button onclick="setAppView('squads')" class="w-full py-4 text-base sm:text-lg btn-secondary">
-                                <svg class="w-4 h-4 sm:w-5 sm:h-5 inline mr-2" fill="currentColor" viewBox="0 0 20 20">
-                                    <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z"></path>
-                                </svg>
-                                Rose
-                            </button>
+                    <!-- Modal Menu Analisi Dati -->
+                    <div id="data-analysis-modal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+                        <div class="bg-gray-800 rounded-2xl border-2 border-orange-500 shadow-2xl max-w-md w-full p-6 animate-scale-in">
+                            <div class="flex items-center justify-between mb-6">
+                                <h3 class="text-2xl font-bold text-orange-400 flex items-center">
+                                    <svg class="w-7 h-7 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                        <path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z"></path>
+                                    </svg>
+                                    Analisi Dati
+                                </h3>
+                                <button onclick="hideDataAnalysisMenu()" class="text-gray-400 hover:text-white transition-colors">
+                                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                                    </svg>
+                                </button>
+                            </div>
+                            
+                            <div class="space-y-3">
+                                <!-- Risultati Storici -->
+                                <button onclick="setAppView('historic_results'); hideDataAnalysisMenu();" class="w-full bg-gradient-to-br from-yellow-600 to-yellow-800 hover:from-yellow-500 hover:to-yellow-700 rounded-xl p-4 shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200 flex items-center border-2 border-yellow-500/30">
+                                    <svg class="w-10 h-10 mr-4 text-white flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                        <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"></path>
+                                        <path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" clip-rule="evenodd"></path>
+                                    </svg>
+                                    <div class="text-left">
+                                        <p class="text-white font-bold text-base">Risultati Storici</p>
+                                        <p class="text-yellow-200 text-xs">Consulta i risultati passati</p>
+                                    </div>
+                                </button>
 
-                            <!-- Mostra Statistiche Calciatori -->
-                            <button onclick="setAppView('player_stats')" class="w-full py-4 text-base sm:text-lg btn-secondary">
-                                <svg class="w-4 h-4 sm:w-5 sm:h-5 inline mr-2" fill="currentColor" viewBox="0 0 20 20">
-                                    <path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z"></path>
-                                </svg>
-                                Statistiche Calciatori
+                                <!-- Rose -->
+                                <button onclick="setAppView('squads'); hideDataAnalysisMenu();" class="w-full bg-gradient-to-br from-cyan-600 to-cyan-800 hover:from-cyan-500 hover:to-cyan-700 rounded-xl p-4 shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200 flex items-center border-2 border-cyan-500/30">
+                                    <svg class="w-10 h-10 mr-4 text-white flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                        <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z"></path>
+                                    </svg>
+                                    <div class="text-left">
+                                        <p class="text-white font-bold text-base">Rose</p>
+                                        <p class="text-cyan-200 text-xs">Visualizza le rose delle squadre</p>
+                                    </div>
+                                </button>
+
+                                <!-- Statistiche Calciatori -->
+                                <button onclick="setAppView('player_stats'); hideDataAnalysisMenu();" class="w-full bg-gradient-to-br from-indigo-600 to-indigo-800 hover:from-indigo-500 hover:to-indigo-700 rounded-xl p-4 shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200 flex items-center border-2 border-indigo-500/30">
+                                    <svg class="w-10 h-10 mr-4 text-white flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                        <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"></path>
+                                    </svg>
+                                    <div class="text-left">
+                                        <p class="text-white font-bold text-base">Statistiche Calciatori</p>
+                                        <p class="text-indigo-200 text-xs">Analizza le prestazioni</p>
+                                    </div>
+                                </button>
+
+                                <!-- Statistiche Lega -->
+                                <button onclick="setAppView('league_stats'); hideDataAnalysisMenu();" class="w-full bg-gradient-to-br from-emerald-600 to-emerald-800 hover:from-emerald-500 hover:to-emerald-700 rounded-xl p-4 shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200 flex items-center border-2 border-emerald-500/30">
+                                    <svg class="w-10 h-10 mr-4 text-white flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                        <path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z"></path>
+                                    </svg>
+                                    <div class="text-left">
+                                        <p class="text-white font-bold text-base">Statistiche Lega</p>
+                                        <p class="text-emerald-200 text-xs">Statistiche generali della lega</p>
+                                    </div>
+                                </button>
+
+                                <!-- Andamento Classifica -->
+                                <button onclick="setAppView('standings_trend'); hideDataAnalysisMenu();" class="w-full bg-gradient-to-br from-violet-600 to-violet-800 hover:from-violet-500 hover:to-violet-700 rounded-xl p-4 shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200 flex items-center border-2 border-violet-500/30">
+                                    <svg class="w-10 h-10 mr-4 text-white flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M12 7a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0V8.414l-4.293 4.293a1 1 0 01-1.414 0L8 10.414l-4.293 4.293a1 1 0 01-1.414-1.414l5-5a1 1 0 011.414 0L11 10.586 14.586 7H12z" clip-rule="evenodd"></path>
+                                    </svg>
+                                    <div class="text-left">
+                                        <p class="text-white font-bold text-base">Andamento Classifica</p>
+                                        <p class="text-violet-200 text-xs">Evoluzione delle posizioni</p>
+                                    </div>
+                                </button>
+                            </div>
+
+                            <button onclick="hideDataAnalysisMenu()" class="w-full mt-4 bg-gray-700 hover:bg-gray-600 text-white font-bold py-3 px-4 rounded-lg transition-colors">
+                                Chiudi
                             </button>
                         </div>
                     </div>
                     
                     <!-- Classifica -->
                     <div class="card p-4 sm:p-6">
-                        <h3 class="text-xl sm:text-2xl font-bold mb-3 sm:mb-4 text-yellow-500 flex items-center">
-                            <svg class="w-6 h-6 sm:w-8 sm:h-8 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                                <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"></path>
-                                <path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" clip-rule="evenodd"></path>
-                            </svg>
-                            Classifica
-                        </h3>
+                        <div class="flex items-center justify-between mb-3 sm:mb-4">
+                            <h3 class="text-xl sm:text-2xl font-bold text-yellow-500 flex items-center">
+                                <svg class="w-6 h-6 sm:w-8 sm:h-8 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"></path>
+                                    <path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" clip-rule="evenodd"></path>
+                                </svg>
+                                Classifica
+                            </h3>
+                            <!-- Bottone espandi (solo su mobile) -->
+                            <button onclick="expandStandings()" class="md:hidden bg-yellow-600 hover:bg-yellow-700 text-white px-3 py-2 rounded-lg text-xs font-bold flex items-center gap-1 transition-colors">
+                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M3 4a1 1 0 011-1h4a1 1 0 010 2H6.414l2.293 2.293a1 1 0 11-1.414 1.414L5 6.414V8a1 1 0 01-2 0V4zm9 1a1 1 0 110-2h4a1 1 0 011 1v4a1 1 0 11-2 0V6.414l-2.293 2.293a1 1 0 11-1.414-1.414L13.586 5H12zm-9 7a1 1 0 112 0v1.586l2.293-2.293a1 1 0 011.414 1.414L6.414 15H8a1 1 0 110 2H4a1 1 0 01-1-1v-4zm13-1a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 110-2h1.586l-2.293-2.293a1 1 0 011.414-1.414L15 13.586V12a1 1 0 011-1z" clip-rule="evenodd"></path>
+                                </svg>
+                                Espandi
+                            </button>
+                        </div>
                         <div id="standings-container" class="overflow-x-auto -mx-4 sm:mx-0">
                             <p class="text-sm sm:text-base text-gray-500 text-center py-4">Carica i risultati per visualizzare la classifica</p>
                         </div>
                     </div>
-                    
-                    <!-- Statistiche Lega -->
-                    <div class="card p-4 sm:p-6">
-                        <h3 class="text-xl sm:text-2xl font-bold mb-3 sm:mb-4 text-purple-500 flex items-center">
-                            <svg class="w-6 h-6 sm:w-8 sm:h-8 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                                <path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z"></path>
-                            </svg>
-                            Statistiche Lega
-                        </h3>
-                        <div id="statistics-container" class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-                            <p class="text-sm sm:text-base text-gray-500 text-center py-4 col-span-full">Carica i risultati per visualizzare le statistiche</p>
-                        </div>
-                    </div>
-                    
-                    <!-- Statistiche Calciatori -->
-                    <div class="card p-4 sm:p-6">
-                        <h3 class="text-xl sm:text-2xl font-bold mb-3 sm:mb-4 text-blue-500 flex items-center">
-                            <svg class="w-6 h-6 sm:w-8 sm:h-8 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                                <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"></path>
-                            </svg>
-                            Statistiche Calciatori
-                        </h3>
-                        <div id="player-statistics-container" class="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
-                            <p class="text-sm sm:text-base text-gray-500 text-center py-4 col-span-full">Carica le statistiche calciatori per visualizzare le classifiche</p>
-                        </div>
-                    </div>
-                    
-                    <!-- Andamento Classifica -->
-                    <div class="card p-4 sm:p-6">
-                        <h3 class="text-xl sm:text-2xl font-bold mb-3 sm:mb-4 text-orange-500 flex items-center">
-                            <svg class="w-6 h-6 sm:w-8 sm:h-8 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M3 3a1 1 0 000 2v8a2 2 0 002 2h2.586l-1.293 1.293a1 1 0 101.414 1.414L10 15.414l2.293 2.293a1 1 0 001.414-1.414L12.414 15H15a2 2 0 002-2V5a1 1 0 100-2H3zm11.707 4.707a1 1 0 00-1.414-1.414L10 9.586 8.707 8.293a1 1 0 00-1.414 0l-2 2a1 1 0 101.414 1.414L8 10.414l1.293 1.293a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
-                            </svg>
-                            Andamento Classifica
-                        </h3>
-                        <div id="standings-trend-container" class="relative" style="min-height: 400px;">
-                            <canvas id="standings-trend-chart"></canvas>
-                            <p id="standings-trend-placeholder" class="text-sm sm:text-base text-gray-500 text-center py-4 absolute inset-0 flex items-center justify-center">Carica i risultati per visualizzare l'andamento della classifica</p>
+
+                    <!-- Modal Classifica Espansa -->
+                    <div id="standings-fullscreen-modal" class="hidden fixed inset-0 bg-black/95 z-50 overflow-auto">
+                        <div class="min-h-screen p-4">
+                            <!-- Header -->
+                            <div class="flex items-center justify-between mb-4 sticky top-0 bg-black/80 backdrop-blur-sm py-3 px-2 rounded-lg">
+                                <h3 class="text-xl font-bold text-yellow-400 flex items-center">
+                                    <svg class="w-6 h-6 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                        <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"></path>
+                                        <path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" clip-rule="evenodd"></path>
+                                    </svg>
+                                    Classifica Completa
+                                </h3>
+                                <button onclick="closeStandings()" class="text-white bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg font-bold transition-colors flex items-center gap-2">
+                                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                                    </svg>
+                                    Chiudi
+                                </button>
+                            </div>
+                            <!-- Contenuto classifica espansa -->
+                            <div id="standings-fullscreen-content" class="bg-gray-900 rounded-lg p-4">
+                                <!-- Verrà popolato dinamicamente -->
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -700,11 +777,11 @@
                             Risultati Storici
                         </h2>
                         <div class="flex space-x-2 w-full sm:w-auto">
-                            <button onclick="setAppView('home')" class="btn-secondary flex-1 sm:flex-none px-3 py-2">
+                            <button onclick="showDataAnalysisMenu()" class="bg-orange-600 hover:bg-orange-700 text-white font-bold flex-1 sm:flex-none px-3 py-2 rounded-lg transition-colors">
                                 <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
                                 </svg>
-                                Home
+                                Indietro
                             </button>
                             <button onclick="setAppView(currentView)" class="btn-secondary flex-1 sm:flex-none px-3 py-2">
                                 <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -747,11 +824,11 @@
                             Rose delle Squadre
                         </h2>
                         <div class="flex space-x-2 w-full sm:w-auto">
-                            <button onclick="setAppView('home')" class="btn-secondary flex-1 sm:flex-none px-3 py-2">
+                            <button onclick="showDataAnalysisMenu()" class="bg-orange-600 hover:bg-orange-700 text-white font-bold flex-1 sm:flex-none px-3 py-2 rounded-lg transition-colors">
                                 <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
                                 </svg>
-                                Home
+                                Indietro
                             </button>
                             <button onclick="loadSquadsData()" class="btn-secondary flex-1 sm:flex-none px-3 py-2">
                                 <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -786,11 +863,11 @@
                             Statistiche Calciatori
                         </h2>
                         <div class="flex space-x-2 w-full sm:w-auto">
-                            <button onclick="setAppView('home')" class="btn-secondary flex-1 sm:flex-none px-3 py-2">
+                            <button onclick="showDataAnalysisMenu()" class="bg-orange-600 hover:bg-orange-700 text-white font-bold flex-1 sm:flex-none px-3 py-2 rounded-lg transition-colors">
                                 <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
                                 </svg>
-                                Home
+                                Indietro
                             </button>
                             <button onclick="loadPlayerStats()" class="btn-secondary flex-1 sm:flex-none px-3 py-2">
                                 <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -854,6 +931,73 @@
                     <!-- Container statistiche -->
                     <div id="player-stats-view-container">
                         <p class="text-sm sm:text-base text-gray-500 text-center py-4">Caricamento statistiche in corso...</p>
+                    </div>
+                </div>
+
+                <!-- SEZIONE STATISTICHE LEGA -->
+                <div id="league-stats-container" class="max-w-6xl mx-auto card p-4 sm:p-6 hidden">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 space-y-3 sm:space-y-0">
+                        <h2 class="text-xl sm:text-2xl font-semibold flex items-center">
+                            <svg class="w-5 h-5 sm:w-6 sm:h-6 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z"></path>
+                            </svg>
+                            Statistiche Lega
+                        </h2>
+                        <div class="flex space-x-2 w-full sm:w-auto">
+                            <button onclick="showDataAnalysisMenu()" class="bg-orange-600 hover:bg-orange-700 text-white font-bold flex-1 sm:flex-none px-3 py-2 rounded-lg transition-colors">
+                                <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                                </svg>
+                                Indietro
+                            </button>
+                            <button onclick="loadLeagueStatsData()" class="btn-secondary flex-1 sm:flex-none px-3 py-2">
+                                <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                                </svg>
+                                Aggiorna
+                            </button>
+                        </div>
+                    </div>
+                    <div id="statistics-container" class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mb-6">
+                        <p class="text-sm sm:text-base text-gray-500 text-center py-4 col-span-full">Carica i risultati per visualizzare le statistiche</p>
+                    </div>
+                    
+                    <!-- Statistiche Calciatori (Top Classifiche) -->
+                    <div class="mb-4">
+                        <h3 class="text-xl font-bold text-blue-400 mb-3">Top Classifiche Calciatori</h3>
+                    </div>
+                    <div id="player-statistics-container" class="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
+                        <p class="text-sm sm:text-base text-gray-500 text-center py-4 col-span-full">Carica le statistiche calciatori per visualizzare le classifiche</p>
+                    </div>
+                </div>
+
+                <!-- SEZIONE ANDAMENTO CLASSIFICA -->
+                <div id="standings-trend-container-full" class="max-w-6xl mx-auto card p-4 sm:p-6 hidden">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 space-y-3 sm:space-y-0">
+                        <h2 class="text-xl sm:text-2xl font-semibold flex items-center">
+                            <svg class="w-5 h-5 sm:w-6 sm:h-6 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M12 7a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0V8.414l-4.293 4.293a1 1 0 01-1.414 0L8 10.414l-4.293 4.293a1 1 0 01-1.414-1.414l5-5a1 1 0 011.414 0L11 10.586 14.586 7H12z" clip-rule="evenodd"></path>
+                            </svg>
+                            Andamento Classifica
+                        </h2>
+                        <div class="flex space-x-2 w-full sm:w-auto">
+                            <button onclick="showDataAnalysisMenu()" class="bg-orange-600 hover:bg-orange-700 text-white font-bold flex-1 sm:flex-none px-3 py-2 rounded-lg transition-colors">
+                                <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                                </svg>
+                                Indietro
+                            </button>
+                            <button onclick="loadStandingsTrendChart()" class="btn-secondary flex-1 sm:flex-none px-3 py-2">
+                                <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                                </svg>
+                                Aggiorna
+                            </button>
+                        </div>
+                    </div>
+                    <div id="standings-trend-container" class="relative" style="min-height: 400px;">
+                        <canvas id="standings-trend-chart"></canvas>
+                        <p id="standings-trend-placeholder" class="text-sm sm:text-base text-gray-500 text-center py-4 absolute inset-0 flex items-center justify-center">Carica i risultati per visualizzare l'andamento della classifica</p>
                     </div>
                 </div>
 
@@ -1318,13 +1462,30 @@
                     </div>
                 </div>
 
-                <div id="profile-area" class="hidden max-w-md mx-auto card p-6">
-                    <h2 class="text-2xl font-bold mb-6 text-center flex items-center justify-center">
-                        <svg class="w-6 h-6 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path>
-                        </svg>
-                        Profilo Utente
-                    </h2>
+                <div id="profile-area" class="hidden max-w-md mx-auto card p-4 sm:p-6">
+                    <!-- Header con pulsanti -->
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 space-y-3 sm:space-y-0">
+                        <h2 class="text-xl sm:text-2xl font-semibold flex items-center">
+                            <svg class="w-5 h-5 sm:w-6 sm:h-6 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path>
+                            </svg>
+                            Profilo Utente
+                        </h2>
+                        <div class="flex space-x-2 w-full sm:w-auto">
+                            <button onclick="setAppView('home')" class="btn-secondary flex-1 sm:flex-none px-3 py-2">
+                                <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+                                </svg>
+                                Home
+                            </button>
+                            <button onclick="saveUserProfile()" class="btn-primary flex-1 sm:flex-none px-3 py-2">
+                                <svg class="w-4 h-4 inline mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M7.707 10.293a1 1 0 10-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 11.586V6h5a2 2 0 012 2v7a2 2 0 01-2 2H4a2 2 0 01-2-2V8a2 2 0 012-2h5v5.586l-1.293-1.293zM9 4a1 1 0 012 0v2H9V4z"></path>
+                                </svg>
+                                Salva
+                            </button>
+                        </div>
+                    </div>
                     
                     <div class="mb-4">
                         <label class="block text-sm font-medium text-gray-300 mb-2">Email (non modificabile)</label>
@@ -1337,7 +1498,7 @@
                         <p class="text-xs text-gray-500 mt-1">Questo nome sarà visibile agli altri utenti</p>
                     </div>
                     
-                    <div class="flex justify-center space-x-4">
+                    <div class="hidden">
                         <button onclick="setAppView('home')" class="btn-secondary">
                             <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
@@ -1356,12 +1517,29 @@
                 <!-- User Bonus Management Area -->
                 <div id="user-bonus-area" class="hidden max-w-4xl mx-auto">
                     <div class="card p-4 sm:p-6">
-                        <h2 class="text-2xl sm:text-3xl font-bold mb-4 sm:mb-6 text-center flex items-center justify-center">
-                            <svg class="w-6 h-6 sm:w-8 sm:h-8 mr-2" fill="currentColor" viewBox="0 0 512 512">
-                                <path d="M177.1 228.6L207.9 320h96.5l29.62-91.38L256 172.1L177.1 228.6zM255.1 0C114.6 0 .0001 114.6 .0001 256S114.6 512 256 512s255.1-114.6 255.1-255.1S397.4 0 255.1 0zM416.6 246.8L381.9 214l-22.44 62.32l-22.62 7.816l22.38-61.97l-34.71-32.81l34.71-32.81l-22.38-61.97l22.62 7.816L381.9 166.7l34.71-32.81c-34.46-37.46-81.03-63.03-134.5-69.58l-8.066 75.92l-22.44 7.891L260.1 90.16L273.7 13.36C268.5 13.12 263.3 12.1 258.1 12.1c-6.047 0-11.1 .4766-17.83 .8906l12.36 76.83l8.531 58.02L238.7 139.8l-7.844-75.15C176.4 71.23 129.8 96.8 95.35 134.2l34.71 32.81l-22.38 61.97l22.62-7.816L152.7 166.7l34.71 32.81l-34.71 32.81l22.38 61.97l-22.62-7.816L130.1 214L95.35 246.8C108.7 283.9 134.2 314.3 168.8 334.7l7.775-75.43l22.38-7.922l-8.119 58.18l-12.49 76.62c5.453 .2969 10.86 .875 16.51 .875c6.203 0 12.31-.5781 18.43-1.016l-12.76-77.83l-8.205-58.29l22.46 8.012l7.559 75.75c54.25-6.549 101.6-32.45 136.1-69.91L324.2 231.8l22.38-61.97L323.9 177.7L301.5 214L266.8 246.8l34.71 32.81l22.38 61.97l-22.62-7.816l-7.504-75.11l-22.5-8.066l8.131 58.44l12.69 77.74c54.84-6.699 102.4-32.87 137.1-70.55L416.6 246.8z"/>
-                            </svg>
-                            I Miei Bonus
-                        </h2>
+                        <!-- Header con pulsanti -->
+                        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 space-y-3 sm:space-y-0">
+                            <h2 class="text-xl sm:text-2xl font-semibold flex items-center">
+                                <svg class="w-5 h-5 sm:w-6 sm:h-6 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M5 2a1 1 0 011 1v1h1a1 1 0 010 2H6v1a1 1 0 01-2 0V6H3a1 1 0 010-2h1V3a1 1 0 011-1zm0 10a1 1 0 011 1v1h1a1 1 0 110 2H6v1a1 1 0 11-2 0v-1H3a1 1 0 110-2h1v-1a1 1 0 011-1zM12 2a1 1 0 01.967.744L14.146 7.2 17.5 9.134a1 1 0 010 1.732l-3.354 1.935-1.18 4.455a1 1 0 01-1.933 0L9.854 12.8 6.5 10.866a1 1 0 010-1.732l3.354-1.935 1.18-4.455A1 1 0 0112 2z" clip-rule="evenodd"></path>
+                                </svg>
+                                I Miei Bonus
+                            </h2>
+                            <div class="flex space-x-2 w-full sm:w-auto">
+                                <button onclick="setAppView('home')" class="btn-secondary flex-1 sm:flex-none px-3 py-2">
+                                    <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+                                    </svg>
+                                    Home
+                                </button>
+                                <button onclick="saveUserBonusData()" class="btn-primary flex-1 sm:flex-none px-3 py-2">
+                                    <svg class="w-4 h-4 inline mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                        <path d="M7.707 10.293a1 1 0 10-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 11.586V6h5a2 2 0 012 2v7a2 2 0 01-2 2H4a2 2 0 01-2-2V8a2 2 0 012-2h5v5.586l-1.293-1.293zM9 4a1 1 0 012 0v2H9V4z"></path>
+                                    </svg>
+                                    Salva
+                                </button>
+                            </div>
+                        </div>
 
                         <div id="user-bonus-squad-name" class="text-center text-xl font-semibold text-yellow-500 mb-4"></div>
                         
@@ -1372,21 +1550,6 @@
                         
                         <div id="user-bonus-content" class="space-y-4">
                             <!-- User bonus management will be rendered here -->
-                        </div>
-
-                        <div class="mt-6 flex justify-center space-x-4">
-                            <button onclick="setAppView('home')" class="btn-secondary px-6 py-3">
-                                <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
-                                </svg>
-                                Home
-                            </button>
-                            <button onclick="saveUserBonusData()" class="btn-primary px-6 py-3">
-                                <svg class="w-4 h-4 inline mr-2" fill="currentColor" viewBox="0 0 20 20">
-                                    <path d="M7.707 10.293a1 1 0 10-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 11.586V6h5a2 2 0 012 2v7a2 2 0 01-2 2H4a2 2 0 01-2-2V8a2 2 0 012-2h5v5.586l-1.293-1.293zM9 4a1 1 0 012 0v2H9V4z"></path>
-                                </svg>
-                                Salva Modifiche
-                            </button>
                         </div>
                     </div>
                 </div>
@@ -1566,7 +1729,9 @@
                 user_bonus: 'user-bonus-area',
                 historic_results: 'historic-results-container',
                 squads: 'squads-container',
-                player_stats: 'player-stats-container'
+                player_stats: 'player-stats-container',
+                league_stats: 'league-stats-container',
+                standings_trend: 'standings-trend-container-full'
             };
 
             console.log('Container disponibili:', containers);
@@ -1618,6 +1783,14 @@
                     // Se stiamo passando alla sezione bonus utente, carica i dati
                     if (view === 'user_bonus') {
                         loadUserBonuses();
+                    }
+                    // Se stiamo passando alla sezione statistiche lega, carica i dati
+                    if (view === 'league_stats') {
+                        loadLeagueStatsData();
+                    }
+                    // Se stiamo passando alla sezione andamento classifica, carica i dati
+                    if (view === 'standings_trend') {
+                        loadStandingsTrendChart();
                     }
                 }
             }
@@ -1878,6 +2051,125 @@
         window.triggerFileInput = () => {
             document.getElementById('csv-file-input').click();
         }
+
+        // Gestione modal Analisi Dati
+        window.showDataAnalysisMenu = () => {
+            // Nascondi tutte le sezioni di Analisi Dati
+            document.getElementById('historic-results-container')?.classList.add('hidden');
+            document.getElementById('squads-container')?.classList.add('hidden');
+            document.getElementById('player-stats-container')?.classList.add('hidden');
+            document.getElementById('league-stats-container')?.classList.add('hidden');
+            document.getElementById('standings-trend-container-full')?.classList.add('hidden');
+            
+            // Mostra la home se non è già visibile
+            const homeContainer = document.getElementById('home-container');
+            if (homeContainer && homeContainer.classList.contains('hidden')) {
+                setAppView('home');
+            }
+            
+            // Mostra il modal menu
+            document.getElementById('data-analysis-modal').classList.remove('hidden');
+        };
+
+        window.hideDataAnalysisMenu = () => {
+            document.getElementById('data-analysis-modal').classList.add('hidden');
+        };
+
+        // Gestione modal Classifica Espansa
+        window.expandStandings = () => {
+            const modal = document.getElementById('standings-fullscreen-modal');
+            const content = document.getElementById('standings-fullscreen-content');
+            
+            // Copia la tabella completa nel modal
+            let standings = calculateStandings();
+            
+            if (standings.length === 0) {
+                content.innerHTML = '<p class="text-gray-500 text-center py-4">Nessun dato disponibile</p>';
+                modal.classList.remove('hidden');
+                return;
+            }
+            
+            // Crea tabella completa senza hidden classes
+            const table = document.createElement('table');
+            table.className = 'min-w-full bg-gray-800 rounded-lg overflow-hidden text-sm';
+            
+            table.innerHTML = `
+                <thead>
+                    <tr class="bg-gray-700 text-gray-400">
+                        <th class="px-2 py-2 text-center">#</th>
+                        <th class="px-3 py-2 text-left" colspan="2">Squadra</th>
+                        <th class="px-2 py-2 text-center">Pt</th>
+                        <th class="px-2 py-2 text-center">Pti</th>
+                        <th class="px-2 py-2 text-center">G</th>
+                        <th class="px-2 py-2 text-center">V</th>
+                        <th class="px-2 py-2 text-center">N</th>
+                        <th class="px-2 py-2 text-center">P</th>
+                        <th class="px-2 py-2 text-center">GF</th>
+                        <th class="px-2 py-2 text-center">GS</th>
+                        <th class="px-2 py-2 text-center">DR</th>
+                    </tr>
+                </thead>
+                <tbody class="text-gray-300">
+                    ${standings.map((team, index) => {
+                        const position = index + 1;
+                        const totalTeams = standings.length;
+                        const isLast = position === totalTeams;
+                        
+                        let positionClass = '';
+                        if (position === 1) positionClass = 'text-yellow-300 font-bold';
+                        else if (position === 2) positionClass = 'text-gray-200 font-bold';
+                        else if (position === 3) positionClass = 'text-orange-300 font-bold';
+                        else if (isLast) positionClass = 'text-red-300 font-bold';
+                        
+                        let rowClass = 'border-b border-gray-700';
+                        if (position === 1) {
+                            rowClass = 'border-b-2 border-l-4 border-l-yellow-400 border-b-yellow-400/50 bg-gradient-to-r from-yellow-500/25 to-yellow-500/5';
+                        } else if (position === 2) {
+                            rowClass = 'border-b-2 border-l-4 border-l-slate-400 border-b-slate-400/50 bg-gradient-to-r from-slate-500/25 to-slate-500/5';
+                        } else if (position === 3) {
+                            rowClass = 'border-b-2 border-l-4 border-l-orange-400 border-b-orange-400/50 bg-gradient-to-r from-orange-500/25 to-orange-500/5';
+                        } else if (isLast) {
+                            rowClass = 'border-b-2 border-l-4 border-l-red-500 border-b-red-500/50 bg-gradient-to-r from-red-500/25 to-red-500/5';
+                        }
+                        
+                        let drClass = 'text-gray-400';
+                        if (team.goalDifference > 0) drClass = 'text-green-400 font-semibold';
+                        else if (team.goalDifference < 0) drClass = 'text-red-400 font-semibold';
+                        
+                        return `
+                            <tr class="${rowClass}">
+                                <td class="px-2 py-2 text-center ${positionClass}">${position}</td>
+                                <td class="px-1 py-2 text-center">
+                                    <img src="${getTeamLogo(team.team)}" alt="${team.team}" class="w-6 h-6 object-contain mx-auto" onerror="this.style.display='none'">
+                                </td>
+                                <td class="px-2 py-2 text-left font-semibold">${team.team}</td>
+                                <td class="px-2 py-2 text-center font-bold text-green-400">${team.points}</td>
+                                <td class="px-2 py-2 text-center font-bold text-blue-400">${team.fantasyPoints ? team.fantasyPoints.toFixed(1) : '0.0'}</td>
+                                <td class="px-2 py-2 text-center">${team.played}</td>
+                                <td class="px-2 py-2 text-center text-green-300">${team.wins}</td>
+                                <td class="px-2 py-2 text-center text-yellow-300">${team.draws}</td>
+                                <td class="px-2 py-2 text-center text-red-300">${team.losses}</td>
+                                <td class="px-2 py-2 text-center">${team.goalsFor}</td>
+                                <td class="px-2 py-2 text-center">${team.goalsAgainst}</td>
+                                <td class="px-2 py-2 text-center font-semibold ${drClass}">${team.goalDifference > 0 ? '+' : ''}${team.goalDifference}</td>
+                            </tr>
+                        `;
+                    }).join('')}
+                </tbody>
+            `;
+            
+            content.innerHTML = '';
+            content.appendChild(table);
+            modal.classList.remove('hidden');
+            
+            // Previeni scroll della pagina sottostante
+            document.body.style.overflow = 'hidden';
+        };
+
+        window.closeStandings = () => {
+            document.getElementById('standings-fullscreen-modal').classList.add('hidden');
+            document.body.style.overflow = '';
+        };
 
         // --- Gestione Autenticazione ---
         
@@ -4481,6 +4773,26 @@
         
         // === FINE FUNZIONI STATISTICHE PUBBLICHE ===
         
+        // Funzione per caricare i dati della sezione Statistiche Lega
+        window.loadLeagueStatsData = () => {
+            try {
+                // Richiama le funzioni esistenti per popolare i container
+                renderStatistics(); // Popola statistics-container
+                loadPlayerLeaderboards(); // Popola player-statistics-container
+            } catch (error) {
+                console.error('Errore caricamento statistiche lega:', error);
+            }
+        };
+        
+        // Funzione per caricare il grafico dell'andamento classifica
+        window.loadStandingsTrendChart = () => {
+            try {
+                renderStandingsTrend();
+            } catch (error) {
+                console.error('Errore caricamento andamento classifica:', error);
+            }
+        };
+        
         // === FUNZIONI GESTIONE BONUS ===
         
         // Variabile per tenere traccia dei dati bonus
@@ -5811,6 +6123,7 @@ window.renderStandings = (sortColumn = null) => {
     const table = document.createElement('table');
     table.className = 'min-w-full bg-gray-800 rounded-lg overflow-hidden';
     
+    // Header con colonne visibili in base alla dimensione schermo
     table.innerHTML = `
         <thead>
             <tr class="bg-gray-700 text-gray-400 text-sm">
@@ -5824,25 +6137,26 @@ window.renderStandings = (sortColumn = null) => {
                 <th class="px-3 py-2 text-center cursor-pointer hover:bg-gray-600 transition-colors" onclick="renderStandings('fantasyPoints')">
                     Pti ${getSortIcon('fantasyPoints')}
                 </th>
-                <th class="px-3 py-2 text-center cursor-pointer hover:bg-gray-600 transition-colors" onclick="renderStandings('played')">
+                <!-- Colonne nascoste su mobile (< 768px) -->
+                <th class="px-3 py-2 text-center cursor-pointer hover:bg-gray-600 transition-colors hidden md:table-cell" onclick="renderStandings('played')">
                     G ${getSortIcon('played')}
                 </th>
-                <th class="px-3 py-2 text-center cursor-pointer hover:bg-gray-600 transition-colors" onclick="renderStandings('wins')">
+                <th class="px-3 py-2 text-center cursor-pointer hover:bg-gray-600 transition-colors hidden md:table-cell" onclick="renderStandings('wins')">
                     V ${getSortIcon('wins')}
                 </th>
-                <th class="px-3 py-2 text-center cursor-pointer hover:bg-gray-600 transition-colors" onclick="renderStandings('draws')">
+                <th class="px-3 py-2 text-center cursor-pointer hover:bg-gray-600 transition-colors hidden md:table-cell" onclick="renderStandings('draws')">
                     N ${getSortIcon('draws')}
                 </th>
-                <th class="px-3 py-2 text-center cursor-pointer hover:bg-gray-600 transition-colors" onclick="renderStandings('losses')">
+                <th class="px-3 py-2 text-center cursor-pointer hover:bg-gray-600 transition-colors hidden md:table-cell" onclick="renderStandings('losses')">
                     P ${getSortIcon('losses')}
                 </th>
-                <th class="px-3 py-2 text-center cursor-pointer hover:bg-gray-600 transition-colors" onclick="renderStandings('goalsFor')">
+                <th class="px-3 py-2 text-center cursor-pointer hover:bg-gray-600 transition-colors hidden md:table-cell" onclick="renderStandings('goalsFor')">
                     GF ${getSortIcon('goalsFor')}
                 </th>
-                <th class="px-3 py-2 text-center cursor-pointer hover:bg-gray-600 transition-colors" onclick="renderStandings('goalsAgainst')">
+                <th class="px-3 py-2 text-center cursor-pointer hover:bg-gray-600 transition-colors hidden md:table-cell" onclick="renderStandings('goalsAgainst')">
                     GS ${getSortIcon('goalsAgainst')}
                 </th>
-                <th class="px-3 py-2 text-center cursor-pointer hover:bg-gray-600 transition-colors" onclick="renderStandings('goalDifference')">
+                <th class="px-3 py-2 text-center cursor-pointer hover:bg-gray-600 transition-colors hidden md:table-cell" onclick="renderStandings('goalDifference')">
                     DR ${getSortIcon('goalDifference')}
                 </th>
             </tr>
@@ -5886,13 +6200,14 @@ window.renderStandings = (sortColumn = null) => {
                         <td class="px-2 py-3 text-left font-semibold">${team.team}</td>
                         <td class="px-3 py-3 text-center font-bold text-green-400">${team.points}</td>
                         <td class="px-3 py-3 text-center font-bold text-blue-400">${team.fantasyPoints ? team.fantasyPoints.toFixed(1) : '0.0'}</td>
-                        <td class="px-3 py-3 text-center text-sm">${team.played}</td>
-                        <td class="px-3 py-3 text-center text-sm text-green-300">${team.wins}</td>
-                        <td class="px-3 py-3 text-center text-sm text-yellow-300">${team.draws}</td>
-                        <td class="px-3 py-3 text-center text-sm text-red-300">${team.losses}</td>
-                        <td class="px-3 py-3 text-center text-sm">${team.goalsFor}</td>
-                        <td class="px-3 py-3 text-center text-sm">${team.goalsAgainst}</td>
-                        <td class="px-3 py-3 text-center text-sm font-semibold ${drClass}">${team.goalDifference > 0 ? '+' : ''}${team.goalDifference}</td>
+                        <!-- Colonne nascoste su mobile -->
+                        <td class="px-3 py-3 text-center text-sm hidden md:table-cell">${team.played}</td>
+                        <td class="px-3 py-3 text-center text-sm text-green-300 hidden md:table-cell">${team.wins}</td>
+                        <td class="px-3 py-3 text-center text-sm text-yellow-300 hidden md:table-cell">${team.draws}</td>
+                        <td class="px-3 py-3 text-center text-sm text-red-300 hidden md:table-cell">${team.losses}</td>
+                        <td class="px-3 py-3 text-center text-sm hidden md:table-cell">${team.goalsFor}</td>
+                        <td class="px-3 py-3 text-center text-sm hidden md:table-cell">${team.goalsAgainst}</td>
+                        <td class="px-3 py-3 text-center text-sm font-semibold ${drClass} hidden md:table-cell">${team.goalDifference > 0 ? '+' : ''}${team.goalDifference}</td>
                     </tr>
                 `;
             }).join('')}
