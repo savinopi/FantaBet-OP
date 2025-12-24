@@ -1102,6 +1102,12 @@
                                 </svg>
                                 Orari Giornate
                             </button>
+                            <button onclick="showAdminTab('simulate_draw')" class="admin-tab-button px-4 py-2 text-lg font-semibold border-b-2 border-transparent hover:border-amber-400 hover:text-amber-400 focus:outline-none whitespace-nowrap">
+                                <svg class="w-4 h-4 inline mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M10 2a1 1 0 00-.894.553L7.382 6H4a1 1 0 000 2h3l1.724 3.447A1 1 0 0010 12a1 1 0 00.276-.035L13 10h3a1 1 0 100-2h-3l-1.724-3.447A1 1 0 0010 2z"></path>
+                                </svg>
+                                Simula Sorteggio
+                            </button>
                             <button onclick="showAdminTab('bets')" class="admin-tab-button px-4 py-2 text-lg font-semibold border-b-2 border-transparent hover:border-blue-400 hover:text-blue-400 focus:outline-none whitespace-nowrap">
                                 <svg class="w-4 h-4 inline mr-1" fill="currentColor" viewBox="0 0 512 512">
                                     <path d="M177.1 228.6L207.9 320h96.5l29.62-91.38L256 172.1L177.1 228.6zM255.1 0C114.6 0 .0001 114.6 .0001 256S114.6 512 256 512s255.1-114.6 255.1-255.1S397.4 0 255.1 0z"/>
@@ -1121,6 +1127,16 @@
                                 Reset Dati
                             </button>
                         </div>
+                    </div>
+
+                    <div id="admin-tab-simulate_draw" class="admin-tab-content hidden card p-6 mt-4">
+                        <h3 class="text-xl font-bold mb-4 text-amber-400">Simula Sorteggio — Coppa Italia</h3>
+                        <p class="text-sm text-gray-300 mb-4">Simula il sorteggio delle 10 squadre della lega per creare 2 gruppi da 5 squadre.</p>
+                        <div class="flex items-center space-x-3 mb-4">
+                            <button onclick="simulateCoppaDraw()" class="btn-primary">Simula Sorteggio</button>
+                            <button onclick="copyLastDraw()" class="btn-secondary">Copia JSON</button>
+                        </div>
+                        <div id="coppa-draw-result" class="grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
                     </div>
 
                     <div id="admin-tab-csv" class="admin-tab-content card p-6 mt-4">
@@ -1247,13 +1263,23 @@
                             </p>
                         </div>
                         
-                        <div class="bg-yellow-900/20 border border-yellow-500/30 rounded-lg px-4 py-3 mb-6">
+                        <div class="bg-yellow-900/20 border border-yellow-500/30 rounded-lg px-4 py-3 mb-4">
                             <p class="text-sm text-yellow-300">
                                 <svg class="w-5 h-5 inline mr-2" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"></path>
                                 </svg>
                                 <strong>Nota:</strong> Il Fantacalcio ha 36 giornate (Serie A giornate 3-38). 
                                 Giornata Fanta 1 = Serie A 3 | Giornata Fanta 36 = Serie A 38
+                            </p>
+                        </div>
+                        
+                        <div class="bg-green-900/20 border border-green-500/30 rounded-lg px-4 py-3 mb-6">
+                            <p class="text-sm text-green-300">
+                                <svg class="w-5 h-5 inline mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 3.062v6.757a1 1 0 01-.966 1.009 7 7 0 10-13.999 0 1 1 0 01-.966-1.009v-6.757a3.066 3.066 0 012.812-3.062zM9 12a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd"></path>
+                                </svg>
+                                <strong>Giornata Attiva:</strong> Seleziona la giornata su cui gli utenti possono richiedere i bonus. 
+                                Una sola giornata può essere attiva per volta. Quando completata, passa alla prossima.
                             </p>
                         </div>
 
@@ -1281,6 +1307,7 @@
                                         <th class="px-3 py-2 text-left">Data</th>
                                         <th class="px-3 py-2 text-left">Ora Inizio</th>
                                         <th class="px-3 py-2 text-center">Confermato</th>
+                                        <th class="px-3 py-2 text-center">🎯 Attiva</th>
                                         <th class="px-3 py-2 text-left">Note</th>
                                         <th class="px-3 py-2 text-center">Countdown</th>
                                     </tr>
@@ -1664,6 +1691,7 @@
         let localCsvContent = null;
         let parsedCsvData = [];
         let currentView = 'home';
+        let currentActiveBonusGiornata = null; // Traccia la giornata attiva per i bonus
 
         window.showAdminTab = async (tabName) => {
             // Hide all tab content
@@ -1704,7 +1732,7 @@
             }
         };
 
-        window.setAppView = (view) => {
+        window.setAppView = async (view) => {
             console.log('setAppView chiamato con view:', view);
             
             // Ferma il timer del countdown se stiamo uscendo dalla sezione betting
@@ -1753,13 +1781,20 @@
                     // Se stiamo passando alla sezione scommesse, forziamo il refresh
                     if (view === 'betting') {
                         console.log('Passaggio a sezione scommesse, aggiorno lista partite...');
-                        // Forza il refresh delle partite
+                        // Forza il refresh delle partite con la giornata attiva
                         if (allMatches && allMatches.length > 0) {
                             console.log('Partite disponibili:', allMatches.length);
-                            const lastCompletedGiornata = determineLastCompletedGiornata();
-                            const newNextGiornata = lastCompletedGiornata + 1;
-                            console.log('Rendering partite per giornata (setAppView):', newNextGiornata);
-                            renderOpenMatches(allMatches, newNextGiornata);
+                            const activeGiornata = await loadActiveGiornata();
+                            if (activeGiornata) {
+                                console.log('Rendering partite per giornata attiva (setAppView):', activeGiornata);
+                                renderOpenMatches(allMatches, activeGiornata);
+                            } else {
+                                console.log('Nessuna giornata attiva disponibile');
+                                const noMatchesMessage = document.getElementById('no-open-matches');
+                                if (noMatchesMessage) {
+                                    noMatchesMessage.classList.remove('hidden');
+                                }
+                            }
                         } else {
                             console.log('Nessuna partita disponibile in allMatches');
                         }
@@ -2671,7 +2706,7 @@
                 // Aggiorna le viste
                 allResults = []; // Svuota array locale
                 if (currentAppView === 'betting') {
-                    renderOpenMatches(); // Aggiorna sezione scommesse
+                    await updateOpenMatchesWithActiveGiornata(); // Aggiorna sezione scommesse
                 }
             } catch (error) {
                 console.error("Errore cancellazione risultati storici:", error);
@@ -2712,7 +2747,7 @@
                 openMatches = [];
                 currentPredictions = {};
                 if (currentAppView === 'betting') {
-                    renderOpenMatches(); // Aggiorna sezione scommesse
+                    await updateOpenMatchesWithActiveGiornata(); // Aggiorna sezione scommesse
                 }
             } catch (error) {
                 console.error("Errore cancellazione partite aperte:", error);
@@ -2819,6 +2854,79 @@
                 console.error("Errore cancellazione squadre:", error);
                 hideProgressBar();
                 messageBox(`Errore durante la cancellazione: ${error.message}`);
+            }
+        };
+
+        // --- Simulazione Sorteggio Coppa Italia (Admin) ---
+        // Simula la creazione di 2 gruppi da 5 squadre usando le 10 squadre caricate in `allTeams`.
+        window.simulateCoppaDraw = () => {
+            if (!isUserAdmin) {
+                messageBox('Permesso negato. Solo gli admin possono eseguire questa operazione.');
+                return;
+            }
+
+            const teamsList = Array.isArray(allTeams) ? allTeams.slice() : [];
+            if (teamsList.length !== 10) {
+                messageBox(`Per la Coppa Italia servono esattamente 10 squadre. Trovate: ${teamsList.length}`);
+                return;
+            }
+
+            // Fisher-Yates shuffle
+            for (let i = teamsList.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [teamsList[i], teamsList[j]] = [teamsList[j], teamsList[i]];
+            }
+
+            const groupA = teamsList.slice(0, 5);
+            const groupB = teamsList.slice(5, 10);
+
+            // Salva l'ultimo risultato accessibile globalmente
+            window.lastCoppaDraw = {
+                timestamp: Date.now(),
+                groups: {
+                    A: groupA,
+                    B: groupB
+                }
+            };
+
+            // Render semplice nel container
+            const container = document.getElementById('coppa-draw-result');
+            if (container) {
+                container.innerHTML = `
+                    <div class="bg-emerald-900/10 rounded-lg p-4">
+                        <h4 class="font-bold text-lg text-emerald-300 mb-2">Gruppo A</h4>
+                        <ol class="list-decimal list-inside text-white">${groupA.map(t => `<li>${t}</li>`).join('')}</ol>
+                    </div>
+                    <div class="bg-sky-900/10 rounded-lg p-4">
+                        <h4 class="font-bold text-lg text-sky-300 mb-2">Gruppo B</h4>
+                        <ol class="list-decimal list-inside text-white">${groupB.map(t => `<li>${t}</li>`).join('')}</ol>
+                    </div>
+                `;
+            }
+        };
+
+        window.copyLastDraw = () => {
+            if (!window.lastCoppaDraw) {
+                messageBox('Nessun sorteggio disponibile da copiare.');
+                return;
+            }
+            const json = JSON.stringify(window.lastCoppaDraw, null, 2);
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(json).then(() => messageBox('JSON del sorteggio copiato negli appunti.'))
+                    .catch(err => messageBox('Impossibile copiare negli appunti: ' + err.message));
+            } else {
+                // Fallback: crea textarea temporanea
+                const ta = document.createElement('textarea');
+                ta.value = json;
+                document.body.appendChild(ta);
+                ta.select();
+                try {
+                    document.execCommand('copy');
+                    messageBox('JSON del sorteggio copiato negli appunti.');
+                } catch (err) {
+                    messageBox('Copia non supportata dal browser.');
+                }
+                document.body.removeChild(ta);
             }
         };
 
@@ -2984,6 +3092,36 @@
         
         // Cache per gli orari delle giornate (evita troppe letture da Firestore)
         let scheduleCache = null;
+        let activeGiornataCache = null;
+        
+        // Carica la giornata attiva
+        const loadActiveGiornata = async (skipCache = false) => {
+            if (activeGiornataCache && !skipCache) return activeGiornataCache;
+            
+            try {
+                const snapshot = await getDocs(getScheduleCollectionRef());
+                for (const doc of snapshot.docs) {
+                    const data = doc.data();
+                    if (data.isActive === true) {
+                        activeGiornataCache = parseInt(data.giornata, 10);
+                        console.log('Giornata attiva caricata:', activeGiornataCache);
+                        return activeGiornataCache;
+                    }
+                }
+                // Se non trova nessuna giornata attiva, restituisci null
+                activeGiornataCache = null;
+                return null;
+            } catch (error) {
+                console.error('Errore caricamento giornata attiva:', error);
+                return null;
+            }
+        };
+        
+        // Verifica se una giornata è la giornata attiva
+        const isActiveGiornata = async (giornata) => {
+            const activeGiornata = await loadActiveGiornata();
+            return activeGiornata === parseInt(giornata, 10);
+        };
         
         // Carica tutti gli orari delle giornate (con cache)
         const loadAllSchedules = async () => {
@@ -3326,6 +3464,74 @@
 
             updateProgress(100, 'Completato!');
             
+            // Analizza le giornate con risultati e trova la prima senza risultati
+            const giornateWithResults = new Set();
+            resultsBatch.forEach(res => {
+                const giornataNum = res.giornata.toString().match(/\d+/)?.[0];
+                if (giornataNum) {
+                    giornateWithResults.add(parseInt(giornataNum));
+                }
+            });
+            
+            console.log('Giornate con risultati:', Array.from(giornateWithResults).sort((a, b) => a - b));
+            
+            // Trova la prima giornata senza risultati (massimo 36 per fantacalcio)
+            let firstMissingGiornata = null;
+            let missingGiornate = [];
+            
+            for (let i = 1; i <= 36; i++) {
+                if (!giornateWithResults.has(i)) {
+                    if (!firstMissingGiornata) {
+                        firstMissingGiornata = i;
+                    }
+                    missingGiornate.push(i);
+                }
+            }
+            
+            // Se ci sono buchi nei risultati, imposta la giornata attiva
+            let autoSetMessage = '';
+            if (missingGiornate.length > 0 && firstMissingGiornata) {
+                try {
+                    // Imposta la giornata attiva come la prima senza risultati
+                    const activeGiornataDocRef = doc(getScheduleCollectionRef(), `giornata_${firstMissingGiornata}`);
+                    const activeGiornataDoc = await getDoc(activeGiornataDocRef);
+                    
+                    if (activeGiornataDoc.exists()) {
+                        // Aggiorna il documento esistente
+                        await updateDoc(activeGiornataDocRef, { isActive: true });
+                    } else {
+                        // Crea un nuovo documento con isActive = true
+                        await setDoc(activeGiornataDocRef, {
+                            giornata: firstMissingGiornata.toString(),
+                            date: '',
+                            time: '20:45',
+                            confirmed: false,
+                            isActive: true,
+                            notes: 'Giornata attiva - impostata automaticamente dal caricamento CSV'
+                        });
+                    }
+                    
+                    // Resetta la cache
+                    activeGiornataCache = null;
+                    
+                    // Crea il messaggio di avviso
+                    if (missingGiornate.length === 1) {
+                        autoSetMessage = `\n\n⚠️ AVVISO: È stata rilevata la mancanza di risultati per la Giornata ${missingGiornate[0]}.\nLa Giornata Attiva è stata impostata a ${firstMissingGiornata}.\nSe desideri modificare la giornata attiva, fallo dalla console Admin.`;
+                    } else {
+                        // Se ci sono più buchi, mostra i primi e ultimi
+                        const displayMissing = missingGiornate.length > 5 
+                            ? `${missingGiornate.slice(0, 3).join(', ')}...${missingGiornate.slice(-2).join(', ')}`
+                            : missingGiornate.join(', ');
+                        autoSetMessage = `\n\n⚠️ AVVISO: È stata rilevata la mancanza di risultati per le Giornate: ${displayMissing} (totale: ${missingGiornate.length}).\nLa Giornata Attiva è stata impostata a ${firstMissingGiornata}.\nSe desideri modificare la giornata attiva, fallo dalla console Admin.`;
+                    }
+                    
+                    console.log(`Giornata attiva impostata a: ${firstMissingGiornata}`);
+                } catch (error) {
+                    console.error('Errore nell\'impostazione della giornata attiva:', error);
+                    autoSetMessage = `\n\n⚠️ Avviso: Giornate mancanti rilevate (${missingGiornate.length}), ma c'è stato un errore nell'impostare la giornata attiva.`;
+                }
+            }
+            
             let message = `Importazione completata: salvate ${teamNames.size} squadre uniche. Risultati storici: ${savedResultsCount}. Partite future aperte: ${savedMatchesCount}.`;
             
             if (totalSettled > 0) {
@@ -3333,6 +3539,8 @@
             } else if (resultsByGiornata.size > 0) {
                 message += `\n\nNessuna scommessa da liquidare trovata per queste giornate.`;
             }
+            
+            message += autoSetMessage;
             
             console.log('Processo completato!');
             
@@ -3693,7 +3901,35 @@
                 if (snapshot.empty) {
                     // Simula il caricamento del file pre-caricato
                     await processUploadedData('Calendario_Campionato.csv');
-                    messageBox("Caricamento automatico dei risultati storici e del calendario completato.");
+                    
+                    // Imposta la giornata 1 come attiva per il primo caricamento
+                    try {
+                        const giornata1DocRef = doc(getScheduleCollectionRef(), 'giornata_1');
+                        const giornata1Doc = await getDoc(giornata1DocRef);
+                        
+                        if (giornata1Doc.exists()) {
+                            // Aggiorna il documento esistente
+                            await updateDoc(giornata1DocRef, { isActive: true });
+                        } else {
+                            // Crea un nuovo documento con isActive = true
+                            await setDoc(giornata1DocRef, {
+                                giornata: '1',
+                                date: '',
+                                time: '20:45',
+                                confirmed: false,
+                                isActive: true,
+                                notes: 'Giornata attiva - impostata automaticamente al caricamento iniziale'
+                            });
+                        }
+                        
+                        // Resetta la cache
+                        activeGiornataCache = null;
+                        
+                        messageBox("Caricamento automatico del calendario completato. Giornata 1 impostata come attiva.");
+                    } catch (error) {
+                        console.error('Errore nell\'impostazione della giornata 1 come attiva:', error);
+                        messageBox("Caricamento automatico del calendario completato, ma c'è stato un errore nell'impostazione della giornata attiva.");
+                    }
                 }
             } catch (error) {
                 console.error("Errore nel caricamento iniziale dei dati:", error);
@@ -5014,24 +5250,23 @@
             return options;
         };
         
-        // Genera le opzioni per le giornate - versione USER (solo prossima giornata)
-        const generateGiornataOptions = (selected) => {
-            const lastCompletedGiornata = determineLastCompletedGiornata();
-            const nextGiornata = lastCompletedGiornata + 1;
+        // Genera le opzioni per le giornate - versione USER (solo giornata attiva)
+        const generateGiornataOptions = async (selected) => {
+            const activeGiornata = await loadActiveGiornata();
             
             let options = '';
             for (let i = 1; i <= 36; i++) {
                 const isSelected = selected === i;
-                // Permetti solo la selezione della prossima giornata (o quella già selezionata)
-                const isNextGiornata = i === nextGiornata;
-                const disabled = !isNextGiornata && !isSelected ? 'disabled' : '';
-                const style = !isNextGiornata && !isSelected ? 'style="color: #6b7280;"' : '';
+                // Permetti solo la selezione della giornata attiva (o quella già selezionata)
+                const isActiveGiornata = i === activeGiornata;
+                const disabled = !isActiveGiornata && !isSelected ? 'disabled' : '';
+                const style = !isActiveGiornata && !isSelected ? 'style="color: #6b7280;"' : '';
                 
                 let label = `G.${i}`;
-                if (i < nextGiornata) {
+                if (i < activeGiornata) {
                     label += ' (passata)';
-                } else if (i === nextGiornata) {
-                    label += ' ⭐';
+                } else if (i === activeGiornata) {
+                    label += ' 🎯 ATTIVA';
                 } else {
                     label += ' (futura)';
                 }
@@ -5216,17 +5451,33 @@
                 }
                 
                 currentUserBonusData = userBonusDoc;
-                renderUserBonusCard();
                 
-                // Renderizza il countdown della deadline
-                const lastCompletedGiornata = determineLastCompletedGiornata();
-                const nextGiornata = lastCompletedGiornata + 1;
-                renderBonusDeadlineCountdown(nextGiornata);
+                // Carica la giornata ATTIVA dal database
+                const activeGiornata = await loadActiveGiornata();
+                
+                if (!activeGiornata) {
+                    container.innerHTML = `
+                        <div class="text-center py-8">
+                            <svg class="w-16 h-16 mx-auto text-gray-500 mb-4" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                            </svg>
+                            <p class="text-gray-400">Nessuna giornata attiva al momento.</p>
+                            <p class="text-gray-500 text-sm mt-2">Contatta l'admin per attivare una giornata.</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                currentActiveBonusGiornata = activeGiornata;
+                await renderUserBonusCard();
+                
+                // Renderizza il countdown della deadline della giornata attiva
+                renderBonusDeadlineCountdown(activeGiornata);
                 
                 // Avvia timer per aggiornare il countdown ogni secondo
                 if (bonusCountdownInterval) clearInterval(bonusCountdownInterval);
                 bonusCountdownInterval = setInterval(() => {
-                    renderBonusDeadlineCountdown(nextGiornata);
+                    renderBonusDeadlineCountdown(activeGiornata);
                 }, 1000);
                 
             } catch (error) {
@@ -5240,13 +5491,12 @@
         };
         
         // Renderizza la card dei bonus per l'utente
-        const renderUserBonusCard = () => {
+        const renderUserBonusCard = async () => {
             const container = document.getElementById('user-bonus-content');
             if (!container || !currentUserBonusData) return;
             
             const team = currentUserBonusData;
-            const lastCompletedGiornata = determineLastCompletedGiornata();
-            const nextGiornata = lastCompletedGiornata + 1;
+            const nextGiornata = currentActiveBonusGiornata;
             
             // Trova la partita della prossima giornata per questa squadra
             const userSquad = currentUserProfile.fantaSquad;
@@ -5469,7 +5719,7 @@
                         <svg class="w-5 h-5 mr-2 text-blue-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                             <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
                         </svg>
-                        <span>Richiedi i <span class="font-bold text-yellow-400">bonus</span> che vuoi utilizzare per la Giornata ${nextGiornata}. Ogni giornata può essere usato <span class="font-bold">solo un bonus.</span></span>
+                        <span>Richiedi i <span class="font-bold text-yellow-400">bonus</span> che vuoi utilizzare per la Giornata <span class="font-bold text-green-400">${nextGiornata}</span>. Ogni giornata può essere usato <span class="font-bold">solo un bonus.</span></span>
                     </p>
                 </div>
                 
@@ -5625,6 +5875,18 @@
                 console.error('Errore controllo deadline:', error);
             }
             
+            // Verifica che la giornata sia la giornata attiva
+            try {
+                const isActive = await isActiveGiornata(giornata);
+                if (!isActive) {
+                    checkbox.checked = !checkbox.checked; // Ripristina lo stato precedente
+                    messageBox('❌ Puoi richiedere bonus solo per la giornata attiva!');
+                    return;
+                }
+            } catch (error) {
+                console.error('Errore controllo giornata attiva:', error);
+            }
+            
             // Se l'utente sta selezionando un bonus
             if (checkbox.checked) {
                 // Verifica se c'è già un altro bonus richiesto per questa giornata
@@ -5674,7 +5936,7 @@
             }
             
             // Aggiorna la visualizzazione
-            renderUserBonusCard();
+            await renderUserBonusCard();
         };
         
         // Salva i bonus dell'utente
@@ -5702,6 +5964,23 @@
                 }
             } catch (error) {
                 console.error('Errore controllo deadline:', error);
+            }
+            
+            // Verifica che nessun bonus sia richiesto per giornate sospese
+            try {
+                const bonusTypes = ['RG', 'twoG', 'SC'];
+                for (const bonusType of bonusTypes) {
+                    const usedArray = currentUserBonusData[bonusType].usedInGiornata || [];
+                    for (const giornata of usedArray) {
+                        const isSuspended = await isGiornataSuspended(giornata);
+                        if (isSuspended) {
+                            messageBox(`⏸️ Non puoi richiedere bonus per la Giornata ${giornata} perché è stata sospesa!`);
+                            return;
+                        }
+                    }
+                }
+            } catch (error) {
+                console.error('Errore controllo giornate sospese:', error);
             }
             
             if (!confirm('Salvare le modifiche ai tuoi bonus?')) {
@@ -7732,6 +8011,14 @@ window.toggleAdditionalStats = () => {
             }
         };
 
+        // Aggiorna le partite aperte con la giornata attiva
+        window.updateOpenMatchesWithActiveGiornata = async () => {
+            const activeGiornata = await loadActiveGiornata();
+            if (activeGiornata && allMatches && allMatches.length > 0) {
+                console.log('Aggiornamento partite con giornata attiva:', activeGiornata);
+                renderOpenMatches(allMatches, activeGiornata);
+            }
+        };
 
         const renderOpenMatches = (matches, nextGiornata) => {
             console.log('renderOpenMatches chiamato con:', { 
@@ -8226,7 +8513,9 @@ window.toggleAdditionalStats = () => {
             try {
                 // Ricarica la cache
                 scheduleCache = null;
+                activeGiornataCache = null;
                 await loadAllSchedules();
+                const activeGiornata = await loadActiveGiornata(true);
                 
                 const tbody = document.getElementById('schedules-table-body');
                 tbody.innerHTML = '';
@@ -8234,13 +8523,14 @@ window.toggleAdditionalStats = () => {
                 // Genera righe per tutte le 36 giornate del fantacalcio (Serie A giornate 3-38)
                 for (let g = 1; g <= 36; g++) {
                     const schedule = await getGiornataSchedule(g);
+                    const isActive = schedule.isActive === true;
                     const deadline = new Date(`${schedule.date}T${schedule.time}:00`);
                     const now = new Date();
                     const isPast = now >= deadline;
                     const isUpcoming = !isPast && (deadline - now) < 7 * 24 * 60 * 60 * 1000; // Prossimi 7 giorni
                     
                     const row = document.createElement('tr');
-                    row.className = isPast ? 'bg-gray-800/50 opacity-60' : isUpcoming ? 'bg-yellow-900/20' : '';
+                    row.className = isPast ? 'bg-gray-800/50 opacity-60' : isUpcoming ? 'bg-yellow-900/20' : isActive ? 'bg-green-900/30' : '';
                     
                     // Calcola la giornata Serie A corrispondente
                     const serieAGiornata = g + 2;
@@ -8262,7 +8552,7 @@ window.toggleAdditionalStats = () => {
                     }
                     
                     row.innerHTML = `
-                        <td class="px-3 py-2 font-bold ${isUpcoming ? 'text-yellow-400' : ''}">${g}</td>
+                        <td class="px-3 py-2 font-bold ${isUpcoming ? 'text-yellow-400' : isActive ? 'text-green-400' : ''}">${g}</td>
                         <td class="px-3 py-2 text-gray-400 text-xs">${serieAGiornata}</td>
                         <td class="px-3 py-2">
                             <input type="date" 
@@ -8285,6 +8575,15 @@ window.toggleAdditionalStats = () => {
                                    class="w-4 h-4"
                                    ${isPast ? 'disabled' : ''}>
                         </td>
+                        <td class="px-3 py-2 text-center">
+                            <input type="radio" 
+                                   name="active-giornata" 
+                                   id="schedule-active-${g}" 
+                                   value="${g}"
+                                   ${isActive ? 'checked' : ''}
+                                   class="w-4 h-4 cursor-pointer"
+                                   ${isPast ? 'disabled' : ''}>
+                        </td>
                         <td class="px-3 py-2">
                             <input type="text" 
                                    id="schedule-notes-${g}" 
@@ -8301,6 +8600,24 @@ window.toggleAdditionalStats = () => {
                     tbody.appendChild(row);
                 }
                 
+                // Aggiungi event listener ai radio button per aggiornare lo stile della riga
+                document.querySelectorAll('input[name="active-giornata"]').forEach(radio => {
+                    radio.addEventListener('change', (e) => {
+                        // Rimuovi la classe green-900/30 da tutte le righe
+                        document.querySelectorAll('#schedules-table-body tr').forEach(tr => {
+                            tr.classList.remove('bg-green-900/30');
+                        });
+                        
+                        // Aggiungi la classe green-900/30 alla riga selezionata
+                        if (e.target.checked) {
+                            const row = e.target.closest('tr');
+                            if (row) {
+                                row.classList.add('bg-green-900/30');
+                            }
+                        }
+                    });
+                });
+                
                 messageBox("Orari caricati correttamente.");
             } catch (error) {
                 console.error('Errore caricamento schedules:', error);
@@ -8308,7 +8625,7 @@ window.toggleAdditionalStats = () => {
             }
         };
         
-        // Salva tutti gli orari modificati
+        // Salva tutti gli orari modificati e la giornata attiva
         window.saveAllSchedules = async () => {
             if (!isUserAdmin) return;
             
@@ -8318,6 +8635,10 @@ window.toggleAdditionalStats = () => {
             
             try {
                 const batch = writeBatch(db);
+                
+                // Ottieni quale giornata è selezionata come attiva (radio button)
+                const activeRadio = document.querySelector('input[name="active-giornata"]:checked');
+                const selectedActiveGiornata = activeRadio ? parseInt(activeRadio.value) : null;
                 
                 // Salva solo le 36 giornate del fantacalcio (Serie A giornate 3-38)
                 for (let g = 1; g <= 36; g++) {
@@ -8329,11 +8650,15 @@ window.toggleAdditionalStats = () => {
                     if (!dateInput || !timeInput || !confirmedInput || !notesInput) continue;
                     if (dateInput.disabled) continue; // Salta le giornate passate
                     
+                    // Determina se questa giornata è la giornata attiva
+                    const isActive = (selectedActiveGiornata === g);
+                    
                     const scheduleData = {
                         giornata: g.toString(),
                         date: dateInput.value,
                         time: timeInput.value,
                         confirmed: confirmedInput.checked,
+                        isActive: isActive,
                         notes: notesInput.value.trim()
                     };
                     
@@ -8345,9 +8670,11 @@ window.toggleAdditionalStats = () => {
                 
                 // Ricarica la cache
                 scheduleCache = null;
+                activeGiornataCache = null;
                 await loadAllSchedules();
+                await loadActiveGiornata(true);
                 
-                messageBox("✅ Tutti gli orari sono stati salvati con successo!");
+                messageBox("✅ Tutti gli orari e la giornata attiva sono stati salvati con successo!");
                 
                 // Ricarica la vista
                 await loadSchedulesForAdmin();
@@ -8680,12 +9007,15 @@ window.toggleAdditionalStats = () => {
                     renderStandings(); // Aggiorna la classifica quando cambiano i risultati
                     renderStatistics(); // Aggiorna le statistiche quando cambiano i risultati
                     renderStandingsTrend(); // Aggiorna l'andamento della classifica
-                    // Se la vista scommesse è aperta, ricalcola la prossima giornata in base ai risultati
+                    // Se la vista scommesse è aperta, ricalcola la giornata attiva in base ai risultati
                     if (currentView === 'betting' && allMatches && allMatches.length > 0) {
-                        const lastCompleted = determineLastCompletedGiornata();
-                        const nextG = lastCompleted + 1;
-                        console.log('onSnapshot(Results): re-render betting con giornata', nextG);
-                        renderOpenMatches(allMatches, nextG);
+                        (async () => {
+                            const activeGiornata = await loadActiveGiornata();
+                            if (activeGiornata) {
+                                console.log('onSnapshot(Results): re-render betting con giornata attiva', activeGiornata);
+                                renderOpenMatches(allMatches, activeGiornata);
+                            }
+                        })();
                     }
                 }, (error) => console.error("Errore onSnapshot Results:", error))
             );
@@ -9037,8 +9367,8 @@ window.toggleAdditionalStats = () => {
         <div class="container mx-auto px-4 text-center">
             <p class="text-xs text-gray-500">
                 <span class="font-semibold text-gray-400">FANTABet</span> • 
-                Versione 2.2 • 
-                Ultimo aggiornamento: <span class="text-gray-400">08 Novembre 2025</span>
+                Versione 2.3 • 
+                Ultimo aggiornamento: <span class="text-gray-400">24 Dicembre 2025</span>
             </p>
             <p class="text-xs text-gray-600 mt-1">
                 © 2025 - Gestionale Fantacalcio con Sistema Scommesse
