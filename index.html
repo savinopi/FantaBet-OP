@@ -28,6 +28,32 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
+        /* ===================================
+           OTTIMIZZAZIONE SAFE AREA SMARTPHONE
+           Gestione notch, Dynamic Island e barra di stato
+           per iPhone e altri smartphone moderni
+           =================================== */
+        
+        /* Safe area support per smartphone con notch/barra di stato */
+        :root {
+            --safe-area-inset-top: env(safe-area-inset-top, 0px);
+            --safe-area-inset-right: env(safe-area-inset-right, 0px);
+            --safe-area-inset-bottom: env(safe-area-inset-bottom, 0px);
+            --safe-area-inset-left: env(safe-area-inset-left, 0px);
+        }
+        
+        /* Previene lo zoom su iOS quando si tappa su input */
+        * {
+            -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+            -webkit-touch-callout: none;
+        }
+        
+        /* Migliora lo scrolling su iOS */
+        body, html {
+            -webkit-overflow-scrolling: touch;
+            overscroll-behavior-y: none;
+        }
+        
         body { 
             font-family: 'Inter', sans-serif; 
             background-color: #0a1628; 
@@ -37,6 +63,11 @@
             background-position: center;
             background-attachment: fixed;
             background-repeat: no-repeat;
+            /* Padding per safe area */
+            padding-top: max(0.75rem, var(--safe-area-inset-top));
+            padding-right: max(0.75rem, var(--safe-area-inset-right));
+            padding-bottom: max(0.75rem, var(--safe-area-inset-bottom));
+            padding-left: max(0.75rem, var(--safe-area-inset-left));
         }
         
         /* Overlay blu per migliorare la leggibilità */
@@ -243,6 +274,10 @@
             overflow-y: auto;
             background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
             z-index: 50;
+            padding-top: var(--safe-area-inset-top);
+            padding-right: var(--safe-area-inset-right);
+            padding-bottom: var(--safe-area-inset-bottom);
+            padding-left: var(--safe-area-inset-left);
         }
         
         /* Effetti luminosi per i gruppi */
@@ -633,19 +668,19 @@
     </script>
 
 </head>
-<body class="min-h-screen p-3 sm:p-6 md:p-8">
+<body class="min-h-screen">
 
     <!-- Menu utente compatto -->
-    <div class="fixed top-2 right-2 z-50">
+    <div class="fixed z-50" style="top: max(0.5rem, var(--safe-area-inset-top)); right: max(0.5rem, var(--safe-area-inset-right));">
         <!-- Pulsante menu hamburger -->
-        <button id="user-menu-toggle" onclick="toggleUserMenu()" class="bg-gray-900/90 backdrop-blur-sm border border-blue-500/50 rounded-lg p-2 sm:p-3 shadow-lg hover:bg-gray-800 transition-all">
+        <button id="user-menu-toggle" onclick="toggleUserMenu()" class="bg-gray-900/90 backdrop-blur-sm border border-blue-500/50 rounded-lg p-3 shadow-lg hover:bg-gray-800 transition-all min-w-[44px] min-h-[44px] flex items-center justify-center">
             <svg class="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
             </svg>
         </button>
         
         <!-- Dropdown menu -->
-        <div id="user-menu-dropdown" class="absolute top-14 right-0 bg-gray-900/95 backdrop-blur-sm border border-blue-500/50 rounded-lg shadow-xl overflow-hidden min-w-[250px]">
+        <div id="user-menu-dropdown" class="absolute bg-gray-900/95 backdrop-blur-sm border border-blue-500/50 rounded-lg shadow-xl overflow-hidden min-w-[250px]" style="top: calc(44px + 0.5rem); right: 0;">
             <div class="p-4 space-y-3">
                 <div id="auth-status" class="text-xs text-green-400 text-center pb-2 border-b border-gray-700">Caricamento...</div>
                 
@@ -671,9 +706,23 @@
         </div>
     </div>
     
-    <div class="w-full">
+    <!-- Overlay di Loading -->
+    <div id="loading-overlay" class="fixed inset-0 bg-gray-900 z-[100] flex items-center justify-center hidden" style="background-color: rgba(17, 24, 39, 0.98);">
+        <div class="text-center">
+            <div class="inline-block animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-yellow-500 mb-4"></div>
+            <p class="text-white text-xl font-semibold">Caricamento...</p>
+            <p class="text-gray-400 text-sm mt-2">Preparazione della tua esperienza</p>
+        </div>
+    </div>
+
+    <!-- UEFA Draw Theme Audio -->
+    <audio id="draw-theme-audio" loop preload="auto">
+        <source src="https://raw.githubusercontent.com/savinopi/FantaBet-OP/main/UEFADrawTheme.mp3" type="audio/mpeg">
+    </audio>
+    
+    <div class="w-full px-3 sm:px-6 md:px-8" style="padding-top: max(1rem, calc(var(--safe-area-inset-top) + 0.5rem));">
         <!-- Sezione Login (mostrata se non autenticato) -->
-        <div id="login-container" class="max-w-md mx-auto card p-6 sm:p-8 hidden">
+        <div id="login-container" class="max-w-md mx-auto card p-6 sm:p-8 hidden" style="margin-top: max(1rem, calc(var(--safe-area-inset-top) + 0.5rem));">
             <h2 id="auth-title" class="text-xl sm:text-2xl font-semibold mb-4 sm:mb-6 text-center">Accedi a FantaBet</h2>
             <div class="space-y-4">
                 <div class="flex flex-col">
@@ -683,6 +732,12 @@
                 <div class="flex flex-col">
                     <label for="auth-password" class="text-sm sm:text-base text-gray-400 mb-1">Password</label>
                     <input type="password" id="auth-password" placeholder="Inserisci la tua password" required>
+                    <p class="text-xs text-gray-500 mt-1">
+                        <svg class="w-3 h-3 inline mr-1" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
+                        </svg>
+                        La password deve contenere almeno 6 caratteri
+                    </p>
                 </div>
             </div>
             <div class="mt-6 flex flex-col space-y-3">
@@ -734,7 +789,7 @@
             <div id="app-content-area">
                 
                 <!-- HOME DASHBOARD (Visibile dopo il login) -->
-                <div id="home-container" class="max-w-4xl mx-auto px-3 sm:px-6">
+                <div id="home-container" class="max-w-4xl mx-auto px-3 sm:px-6" style="padding-top: max(4rem, calc(var(--safe-area-inset-top) + 3rem));">
                     <!-- Logo e Titolo -->
                     <div class="text-center mb-6">
                         <div class="flex justify-center mb-4">
@@ -930,10 +985,10 @@
                     </div>
 
                     <!-- Modal Statistiche Squadra -->
-                    <div id="team-stats-modal" class="hidden fixed inset-0 bg-black/95 z-[60] overflow-auto">
+                    <div id="team-stats-modal" class="hidden fixed inset-0 bg-black/95 z-[60] overflow-auto" style="padding-top: var(--safe-area-inset-top);">
                         <div class="min-h-screen p-4">
                             <!-- Header -->
-                            <div class="flex items-center justify-between mb-6 sticky top-0 bg-black/90 backdrop-blur-sm py-3 px-2 rounded-lg">
+                            <div class="flex items-center justify-between mb-6 sticky bg-black/90 backdrop-blur-sm py-3 px-2 rounded-lg" style="top: var(--safe-area-inset-top);">
                                 <h3 class="text-2xl font-bold text-blue-400 flex items-center">
                                     <svg class="w-7 h-7 mr-2" fill="currentColor" viewBox="0 0 20 20">
                                         <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"></path>
@@ -956,7 +1011,7 @@
                 </div>
 
                 <!-- RISULTATI STORICI come SIBLING della HOME (prima era annidato dentro home --> 
-                <div id="historic-results-container" class="max-w-6xl mx-auto card p-4 sm:p-6 hidden">
+                <div id="historic-results-container" class="max-w-6xl mx-auto card p-4 sm:p-6 hidden" style="margin-top: max(4rem, calc(var(--safe-area-inset-top) + 3rem));">
                     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 space-y-3 sm:space-y-0">
                         <h2 class="text-xl sm:text-2xl font-semibold flex items-center">
                             <svg class="w-5 h-5 sm:w-6 sm:h-6 mr-2" fill="currentColor" viewBox="0 0 20 20">
@@ -1004,7 +1059,7 @@
                 </div>
 
                 <!-- SEZIONE ROSE - Visualizzazione rose delle squadre -->
-                <div id="squads-container" class="max-w-6xl mx-auto card p-4 sm:p-6 hidden">
+                <div id="squads-container" class="max-w-6xl mx-auto card p-4 sm:p-6 hidden" style="margin-top: max(4rem, calc(var(--safe-area-inset-top) + 3rem));">
                     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 space-y-3 sm:space-y-0">
                         <h2 class="text-xl sm:text-2xl font-semibold flex items-center">
                             <svg class="w-5 h-5 sm:w-6 sm:h-6 mr-2" fill="currentColor" viewBox="0 0 20 20">
@@ -1043,7 +1098,7 @@
                 </div>
 
                 <!-- SEZIONE STATISTICHE CALCIATORI - Visualizzazione statistiche -->
-                <div id="player-stats-container" class="max-w-7xl mx-auto card p-4 sm:p-6 hidden">
+                <div id="player-stats-container" class="max-w-7xl mx-auto card p-4 sm:p-6 hidden" style="margin-top: max(4rem, calc(var(--safe-area-inset-top) + 3rem));">
                     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 space-y-3 sm:space-y-0">
                         <h2 class="text-xl sm:text-2xl font-semibold flex items-center">
                             <svg class="w-5 h-5 sm:w-6 sm:h-6 mr-2" fill="currentColor" viewBox="0 0 20 20">
@@ -1124,7 +1179,7 @@
                 </div>
 
                 <!-- SEZIONE STATISTICHE LEGA -->
-                <div id="league-stats-container" class="max-w-6xl mx-auto card p-4 sm:p-6 hidden">
+                <div id="league-stats-container" class="max-w-6xl mx-auto card p-4 sm:p-6 hidden" style="margin-top: max(4rem, calc(var(--safe-area-inset-top) + 3rem));">
                     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 space-y-3 sm:space-y-0">
                         <h2 class="text-xl sm:text-2xl font-semibold flex items-center">
                             <svg class="w-5 h-5 sm:w-6 sm:h-6 mr-2" fill="currentColor" viewBox="0 0 20 20">
@@ -1161,7 +1216,7 @@
                 </div>
 
                 <!-- SEZIONE ANDAMENTO CLASSIFICA -->
-                <div id="standings-trend-container-full" class="max-w-6xl mx-auto card p-4 sm:p-6 hidden">
+                <div id="standings-trend-container-full" class="max-w-6xl mx-auto card p-4 sm:p-6 hidden" style="margin-top: max(4rem, calc(var(--safe-area-inset-top) + 3rem));">
                     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 space-y-3 sm:space-y-0">
                         <h2 class="text-xl sm:text-2xl font-semibold flex items-center">
                             <svg class="w-5 h-5 sm:w-6 sm:h-6 mr-2" fill="currentColor" viewBox="0 0 20 20">
@@ -1193,14 +1248,14 @@
                 <!-- SORTEGGIO COPPA ITALIA (Desktop Only - Compact Layout) -->
                 <div id="draw-container" class="hidden">
                     <div class="draw-desktop-layout">
-                        <div class="card p-6" style="max-width: 100%;">
+                        <div class="card p-3" style="max-width: 100%;">
                             <!-- Header compatto -->
-                            <div class="flex justify-between items-center mb-6 pb-4 border-b border-amber-800">
-                                <h2 class="text-3xl font-bold text-amber-400 flex items-center">
-                                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/Nuovo_logo_Coppa_Italia_Frecciarossa_%282024-2025%29.jpg/960px-Nuovo_logo_Coppa_Italia_Frecciarossa_%282024-2025%29.jpg" alt="Coppa Italia" class="w-10 h-10 mr-2 object-contain">
+                            <div class="flex justify-between items-center mb-2 pb-2 border-b border-amber-800">
+                                <h2 class="text-xl font-bold text-amber-400 flex items-center">
+                                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/Nuovo_logo_Coppa_Italia_Frecciarossa_%282024-2025%29.jpg/960px-Nuovo_logo_Coppa_Italia_Frecciarossa_%282024-2025%29.jpg" alt="Coppa Italia" class="w-7 h-7 mr-2 object-contain">
                                     Sorteggio Coppa Italia
                                 </h2>
-                                <button onclick="setAppView('home')" class="btn-secondary px-4 py-2">
+                                <button onclick="setAppView('home')" class="btn-secondary px-3 py-1 text-sm">
                                     <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
                                     </svg>
@@ -1209,12 +1264,12 @@
                             </div>
                             
                             <!-- Layout a 3 colonne: Gruppi | Centro Estrazione | Gruppi -->
-                            <div class="grid grid-cols-12 gap-4" style="min-height: 900px;">
+                            <div class="grid grid-cols-12 gap-3" style="min-height: 640px;">
                                 <!-- Colonna sinistra: Gruppo A -->
                                 <div class="col-span-4 flex flex-col">
-                                    <div class="bg-gradient-to-br from-emerald-900/40 to-emerald-800/20 border-2 border-emerald-500 rounded-xl p-6 h-full flex flex-col">
-                                        <h3 class="font-bold text-3xl text-emerald-300 mb-3 flex items-center justify-center">
-                                            <svg class="w-8 h-8 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                    <div class="bg-gradient-to-br from-emerald-900/40 to-emerald-800/20 border-2 border-emerald-500 rounded-xl p-3 h-full flex flex-col">
+                                        <h3 class="font-bold text-xl text-emerald-300 mb-2 flex items-center justify-center">
+                                            <svg class="w-6 h-6 mr-1" fill="currentColor" viewBox="0 0 20 20">
                                                 <path fill-rule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
                                             </svg>
                                             GRUPPO A
@@ -1226,43 +1281,43 @@
                                 </div>
                                 
                                 <!-- Colonna centrale: Stato sorteggio ed estrazione -->
-                                <div class="col-span-4 flex flex-col justify-start items-center py-4">
+                                <div class="col-span-4 flex flex-col justify-start items-center py-2">
                                     <div id="draw-status" class="w-full">
                                         <!-- Stato Iniziale -->
-                                        <div id="draw-initial" class="text-center space-y-4">
-                                            <p class="text-lg text-blue-300">Pronto per iniziare</p>
-                                            <button onclick="startDraw()" class="btn-primary text-lg px-8 py-3">
-                                                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/Nuovo_logo_Coppa_Italia_Frecciarossa_%282024-2025%29.jpg/960px-Nuovo_logo_Coppa_Italia_Frecciarossa_%282024-2025%29.jpg" alt="Coppa Italia" class="w-6 h-6 inline mr-2 object-contain">
+                                        <div id="draw-initial" class="text-center space-y-2">
+                                            <p class="text-base text-blue-300">Pronto per iniziare</p>
+                                            <button onclick="startDraw()" class="btn-primary text-base px-6 py-2">
+                                                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/Nuovo_logo_Coppa_Italia_Frecciarossa_%282024-2025%29.jpg/960px-Nuovo_logo_Coppa_Italia_Frecciarossa_%282024-2025%29.jpg" alt="Coppa Italia" class="w-5 h-5 inline mr-2 object-contain">
                                                 Inizia Sorteggio
                                             </button>
                                         </div>
                                         
                                         <!-- In Corso -->
-                                        <div id="draw-in-progress" class="hidden text-center space-y-3">
-                                            <div class="mb-2">
-                                                <p class="text-2xl font-bold text-yellow-400" id="current-group-label">GRUPPO A</p>
-                                                <p class="text-sm text-gray-400">Estrazione <span id="draw-count">1</span> di 10</p>
+                                        <div id="draw-in-progress" class="hidden text-center space-y-2">
+                                            <div class="mb-1">
+                                                <p class="text-lg font-bold text-yellow-400" id="current-group-label">GRUPPO A</p>
+                                                <p class="text-xs text-gray-400">Estrazione <span id="draw-count">1</span> di 10</p>
                                             </div>
                                             
                                             <!-- Urna compatta -->
-                                            <div id="draw-urn" class="my-6">
-                                                <div class="relative mx-auto w-48 h-48 flex items-center justify-center">
+                                            <div id="draw-urn" class="my-2">
+                                                <div class="relative mx-auto w-32 h-32 flex items-center justify-center">
                                                     <div class="absolute inset-0 bg-gradient-to-br from-yellow-600 to-orange-600 rounded-full opacity-20 animate-pulse"></div>
-                                                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/Nuovo_logo_Coppa_Italia_Frecciarossa_%282024-2025%29.jpg/960px-Nuovo_logo_Coppa_Italia_Frecciarossa_%282024-2025%29.jpg" alt="Coppa Italia" class="relative z-10 w-40 h-40 object-contain" id="draw-icon" style="filter: drop-shadow(0 0 10px rgba(251, 191, 36, 0.8));">
+                                                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/Nuovo_logo_Coppa_Italia_Frecciarossa_%282024-2025%29.jpg/960px-Nuovo_logo_Coppa_Italia_Frecciarossa_%282024-2025%29.jpg" alt="Coppa Italia" class="relative z-10 w-28 h-28 object-contain" id="draw-icon" style="filter: drop-shadow(0 0 10px rgba(251, 191, 36, 0.8));">
                                                 </div>
                                             </div>
                                             
                                             <!-- Squadra estratta compatta -->
                                             <div id="drawn-team" class="hidden animate-scale-in">
-                                                <div class="bg-gradient-to-br from-green-600/30 to-blue-600/30 border-2 border-green-500 rounded-xl p-8 shadow-2xl">
-                                                    <img id="drawn-team-logo" src="" alt="" class="w-48 h-48 mx-auto mb-4 object-contain">
-                                                    <p id="drawn-team-name" class="text-4xl font-bold text-white text-center mb-2"></p>
-                                                    <div id="drawn-team-stats" class="team-stats text-lg"></div>
+                                                <div class="bg-gradient-to-br from-green-600/30 to-blue-600/30 border-2 border-green-500 rounded-xl p-4 shadow-2xl">
+                                                    <img id="drawn-team-logo" src="" alt="" class="w-32 h-32 mx-auto mb-2 object-contain">
+                                                    <p id="drawn-team-name" class="text-2xl font-bold text-white text-center mb-1"></p>
+                                                    <div id="drawn-team-stats" class="team-stats text-sm"></div>
                                                 </div>
                                             </div>
                                             
-                                            <div class="mt-4">
-                                                <button onclick="drawNextTeam()" id="draw-next-btn" class="btn-primary px-8 py-3 relative z-10">
+                                            <div class="mt-2">
+                                                <button onclick="drawNextTeam()" id="draw-next-btn" class="btn-primary px-6 py-2 text-sm relative z-10">
                                                     <svg class="w-5 h-5 inline mr-2" fill="currentColor" viewBox="0 0 20 20">
                                                         <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v3.586L7.707 9.293a1 1 0 00-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 10.586V7z" clip-rule="evenodd"></path>
                                                     </svg>
@@ -1272,17 +1327,17 @@
                                         </div>
                                         
                                         <!-- Completato -->
-                                        <div id="draw-complete" class="hidden text-center space-y-4">
-                                            <p class="text-2xl font-bold text-green-400">🎉 Completato! 🎉</p>
+                                        <div id="draw-complete" class="hidden text-center space-y-2">
+                                            <p class="text-lg font-bold text-green-400">🎉 Completato! 🎉</p>
                                             <div class="flex flex-col space-y-2">
-                                                <button onclick="resetDraw()" class="btn-secondary px-6 py-2">
-                                                    <svg class="w-5 h-5 inline mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                                <button onclick="resetDraw()" class="btn-secondary px-4 py-1 text-sm">
+                                                    <svg class="w-4 h-4 inline mr-1" fill="currentColor" viewBox="0 0 20 20">
                                                         <path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd"></path>
                                                     </svg>
                                                     Nuovo Sorteggio
                                                 </button>
-                                                <button onclick="copyLastDraw()" class="btn-primary px-6 py-2">
-                                                    <svg class="w-5 h-5 inline mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                                <button onclick="copyLastDraw()" class="btn-primary px-4 py-1 text-sm">
+                                                    <svg class="w-4 h-4 inline mr-1" fill="currentColor" viewBox="0 0 20 20">
                                                         <path d="M8 3a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z"></path>
                                                         <path d="M6 3a2 2 0 00-2 2v11a2 2 0 002 2h8a2 2 0 002-2V5a2 2 0 00-2-2 3 3 0 01-3 3H9a3 3 0 01-3-3z"></path>
                                                     </svg>
@@ -1295,9 +1350,9 @@
                                 
                                 <!-- Colonna destra: Gruppo B -->
                                 <div class="col-span-4 flex flex-col">
-                                    <div class="bg-gradient-to-br from-sky-900/40 to-sky-800/20 border-2 border-sky-500 rounded-xl p-4 h-full flex flex-col">
-                                        <h3 class="font-bold text-3xl text-sky-300 mb-3 flex items-center justify-center">
-                                            <svg class="w-8 h-8 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                    <div class="bg-gradient-to-br from-sky-900/40 to-sky-800/20 border-2 border-sky-500 rounded-xl p-3 h-full flex flex-col">
+                                        <h3 class="font-bold text-xl text-sky-300 mb-2 flex items-center justify-center">
+                                            <svg class="w-6 h-6 mr-1" fill="currentColor" viewBox="0 0 20 20">
                                                 <path fill-rule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
                                             </svg>
                                             GRUPPO B
@@ -1313,7 +1368,7 @@
                 </div>
 
                 <!-- Placeholder per le aree usate dallo script (invisibili finché non richieste) -->
-                <div id="betting-area" class="hidden max-w-4xl mx-auto card p-6">
+                <div id="betting-area" class="hidden max-w-4xl mx-auto card p-6" style="margin-top: max(4rem, calc(var(--safe-area-inset-top) + 3rem));">
                     <!-- Header con pulsante Home -->
                     <div class="flex justify-between items-center mb-4 pb-4 border-b border-blue-800">
                         <h2 class="text-2xl font-bold text-blue-400 flex items-center">
@@ -1379,11 +1434,11 @@
                     </div>
                 </div>
 
-                <div id="placed-bets-area" class="hidden max-w-4xl mx-auto card p-6">
+                <div id="placed-bets-area" class="hidden max-w-4xl mx-auto card p-6" style="margin-top: max(4rem, calc(var(--safe-area-inset-top) + 3rem));">
                     <div id="user-placed-bets-list"></div>
                 </div>
 
-                <div id="admin-panel-main" class="hidden max-w-4xl mx-auto">
+                <div id="admin-panel-main" class="hidden max-w-4xl mx-auto" style="margin-top: max(4rem, calc(var(--safe-area-inset-top) + 3rem));">
                     <div class="flex justify-between items-center mb-4">
                         <h2 class="text-2xl font-bold text-blue-400">Pannello Admin</h2>
                         <button onclick="setAppView('home')" class="btn-secondary whitespace-nowrap">
@@ -1902,7 +1957,7 @@
                 </div>
 
                 <!-- User Bonus Management Area -->
-                <div id="user-bonus-area" class="hidden max-w-4xl mx-auto">
+                <div id="user-bonus-area" class="hidden max-w-4xl mx-auto" style="margin-top: max(4rem, calc(var(--safe-area-inset-top) + 3rem));">
                     <div class="card p-4 sm:p-6">
                         <!-- Header con pulsanti -->
                         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 space-y-3 sm:space-y-0">
@@ -1912,20 +1967,12 @@
                                 </svg>
                                 I Miei Bonus
                             </h2>
-                            <div class="flex space-x-2 w-full sm:w-auto">
-                                <button onclick="setAppView('home')" class="btn-secondary flex-1 sm:flex-none px-3 py-2">
-                                    <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
-                                    </svg>
-                                    Home
-                                </button>
-                                <button onclick="saveUserBonusData()" class="btn-primary flex-1 sm:flex-none px-3 py-2">
-                                    <svg class="w-4 h-4 inline mr-1" fill="currentColor" viewBox="0 0 20 20">
-                                        <path d="M7.707 10.293a1 1 0 10-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 11.586V6h5a2 2 0 012 2v7a2 2 0 01-2 2H4a2 2 0 01-2-2V8a2 2 0 012-2h5v5.586l-1.293-1.293zM9 4a1 1 0 012 0v2H9V4z"></path>
-                                    </svg>
-                                    Salva
-                                </button>
-                            </div>
+                            <button onclick="setAppView('home')" class="btn-secondary px-3 py-2">
+                                <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+                                </svg>
+                                Home
+                            </button>
                         </div>
 
                         <div id="user-bonus-squad-name" class="text-center text-xl font-semibold text-yellow-500 mb-4"></div>
@@ -1937,6 +1984,16 @@
                         
                         <div id="user-bonus-content" class="space-y-4">
                             <!-- User bonus management will be rendered here -->
+                        </div>
+                        
+                        <!-- Pulsante Salva in fondo -->
+                        <div class="mt-6 flex justify-center">
+                            <button onclick="saveUserBonusData()" class="btn-primary px-8 py-3 text-lg">
+                                <svg class="w-5 h-5 inline mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M7.707 10.293a1 1 0 10-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 11.586V6h5a2 2 0 012 2v7a2 2 0 01-2 2H4a2 2 0 01-2-2V8a2 2 0 012-2h5v5.586l-1.293-1.293zM9 4a1 1 0 012 0v2H9V4z"></path>
+                                </svg>
+                                Invia Richiesta Bonus
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -2107,6 +2164,16 @@
                 bonusCountdownInterval = null;
             }
             
+            // Gestione audio tema sorteggi
+            const drawAudio = document.getElementById('draw-theme-audio');
+            if (drawAudio) {
+                // Ferma l'audio se stiamo uscendo dalla sezione sorteggi
+                if (currentView === 'draw' && view !== 'draw') {
+                    drawAudio.pause();
+                    drawAudio.currentTime = 0;
+                }
+            }
+            
             currentView = view;
             const containers = {
                 home: 'home-container',
@@ -2189,8 +2256,16 @@
                         loadStandingsTrendChart();
                     }
                     // Se stiamo passando alla sezione sorteggi, assicurati che i dati delle rose siano caricati
-                    if (view === 'draw' && !window.currentSquadsData) {
-                        loadSquadsData();
+                    if (view === 'draw') {
+                        if (!window.currentSquadsData) {
+                            loadSquadsData();
+                        }
+                        // Avvia la musica del tema UEFA
+                        const drawAudio = document.getElementById('draw-theme-audio');
+                        if (drawAudio) {
+                            drawAudio.currentTime = 0;
+                            drawAudio.play().catch(err => console.log('Autoplay bloccato dal browser:', err));
+                        }
                     }
                 }
             }
@@ -3048,6 +3123,14 @@
                 messageBox("Inserisci email e password.");
                 return;
             }
+            
+            // Validazione client-side per registrazione
+            if (!isLogin) {
+                if (password.length < 6) {
+                    messageBox("❌ Password troppo corta!\n\nLa password deve contenere almeno 6 caratteri.\n\nRiprova con una password più lunga.");
+                    return;
+                }
+            }
 
             try {
                 let userCredential;
@@ -3167,16 +3250,18 @@
                 const mainAppContainer = document.getElementById('main-app-container');
                 const logoutButton = document.getElementById('logout-button');
                 const authStatus = document.getElementById('auth-status');
+                const loadingOverlay = document.getElementById('loading-overlay');
 
                 if (user) {
+                    // Mostra loading overlay
+                    if (loadingOverlay) loadingOverlay.classList.remove('hidden');
+                    
                     userId = user.uid;
                     authStatus.textContent = 'Autenticato';
                     authStatus.classList.add('hidden'); // Nascondi dopo l'autenticazione
 
                     loginContainer.classList.add('hidden');
-                    mainAppContainer.classList.remove('hidden');
-                    logoutButton.classList.remove('hidden');
-
+                    
                     checkAdminStatus(); 
                     updateUserInfoDisplay();
                     setupUserProfileListener(userId); // Imposta il listener per il profilo utente
@@ -3194,11 +3279,17 @@
                     if (hr) hr.classList.add('hidden');
                     const homeEl = document.getElementById('home-container');
                     if (homeEl) homeEl.classList.remove('hidden');
+                    
+                    // Mostra l'app e nascondi il loading dopo un breve delay per assicurare il rendering
+                    setTimeout(() => {
+                        mainAppContainer.classList.remove('hidden');
+                        logoutButton.classList.remove('hidden');
+                        if (loadingOverlay) loadingOverlay.classList.add('hidden');
+                    }, 500);
 
                     const today = new Date().toISOString().split('T')[0];
                     if (document.getElementById('historic-date')) document.getElementById('historic-date').value = today;
                     if (document.getElementById('new-match-date')) document.getElementById('new-match-date').value = today;
-
                 } else {
                     userId = null;
                     authStatus.textContent = 'Non autenticato';
@@ -3935,11 +4026,14 @@
                     const scorerName = stats.topScorer.Name || stats.topScorer.playerName || 'Sconosciuto';
                     const goalsScored = stats.topScorer.gf || stats.topScorer.Gf || 0;
                     statsHtml += `
-                        <div class="flex items-center justify-center space-x-3 text-base bg-green-900/20 px-4 py-2.5 rounded-lg">
-                            <span class="text-2xl">⚽</span>
-                            <div class="text-left">
-                                <div class="font-semibold text-white text-lg">${scorerName}</div>
-                                <div class="text-sm text-gray-300">${goalsScored} gol</div>
+                        <div class="space-y-1">
+                            <div class="text-xs font-semibold text-green-400 text-center tracking-wide">MIGLIOR TOPSCORER</div>
+                            <div class="flex items-center justify-center space-x-3 text-base bg-green-900/20 px-4 py-2.5 rounded-lg">
+                                <span class="text-2xl">⚽</span>
+                                <div class="text-left">
+                                    <div class="font-semibold text-white text-lg">${scorerName}</div>
+                                    <div class="text-sm text-gray-300">${goalsScored} gol</div>
+                                </div>
                             </div>
                         </div>
                     `;
@@ -3951,11 +4045,14 @@
                     const bestName = stats.bestPlayer.Name || stats.bestPlayer.playerName || 'Sconosciuto';
                     const fantaMedia = stats.bestPlayer.fm || stats.bestPlayer.Fm || 0;
                     statsHtml += `
-                        <div class="flex items-center justify-center space-x-3 text-base bg-blue-900/20 px-4 py-2.5 rounded-lg">
-                            <span class="text-2xl">⭐</span>
-                            <div class="text-left">
-                                <div class="font-semibold text-white text-lg">${bestName}</div>
-                                <div class="text-sm text-gray-300">FM ${fantaMedia.toFixed(2)}</div>
+                        <div class="space-y-1">
+                            <div class="text-xs font-semibold text-blue-400 text-center tracking-wide">MIGLIOR CALCIATORE FMV</div>
+                            <div class="flex items-center justify-center space-x-3 text-base bg-blue-900/20 px-4 py-2.5 rounded-lg">
+                                <span class="text-2xl">⭐</span>
+                                <div class="text-left">
+                                    <div class="font-semibold text-white text-lg">${bestName}</div>
+                                    <div class="text-sm text-gray-300">FM ${fantaMedia.toFixed(2)}</div>
+                                </div>
                             </div>
                         </div>
                     `;
@@ -6905,73 +7002,145 @@
                 
                 // Layout con home a sinistra e away a destra
                 opponentInfo = `
-                    <div class="bg-gradient-to-br from-yellow-900/30 to-yellow-800/20 border-2 border-yellow-600 rounded-xl p-4 sm:p-6 mb-6 shadow-2xl">
-                        <div class="flex items-center justify-center mb-4">
-                            <svg class="w-6 h-6 text-yellow-400 mr-2 animate-pulse" fill="currentColor" viewBox="0 0 20 20">
+                    <div class="bg-gradient-to-br from-yellow-900/30 to-yellow-800/20 border-2 border-yellow-600 rounded-xl p-3 sm:p-6 mb-4 sm:mb-6 shadow-2xl">
+                        <div class="flex items-center justify-center mb-3 sm:mb-4">
+                            <svg class="w-5 h-5 sm:w-6 sm:h-6 text-yellow-400 mr-2 animate-pulse" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"></path>
                             </svg>
-                            <h3 class="text-xl sm:text-2xl font-bold text-yellow-400">Giornata ${nextGiornata}</h3>
+                            <h3 class="text-lg sm:text-2xl font-bold text-yellow-400">Giornata ${nextGiornata}</h3>
                         </div>
                         
-                        <!-- Match Preview - CASA vs TRASFERTA -->
-                        <div class="flex items-center justify-between gap-3 sm:gap-6">
-                            <!-- Squadra di CASA (sempre a sinistra) -->
-                            <div class="flex flex-col items-center flex-1 ${isUserHome ? 'transform scale-110 sm:scale-125' : 'opacity-75'}">
-                                <div class="relative mb-3">
+                        <!-- Match Preview - Desktop: orizzontale | Mobile: verticale con VS centrato -->
+                        <div class="hidden md:flex md:items-center md:justify-between gap-4">
+                            <!-- Desktop layout - CASA a sinistra -->
+                            <div class="flex items-center gap-3 flex-1">
+                                <div class="relative flex-shrink-0">
                                     ${userLogo && isUserHome ? `
-                                        <div class="absolute -inset-2 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full blur-lg opacity-75 animate-pulse"></div>
-                                        <img src="${userLogo}" alt="${homeTeam}" class="relative w-20 h-20 sm:w-28 sm:h-28 object-contain drop-shadow-2xl" onerror="this.style.display='none'">
+                                        <img src="${userLogo}" alt="${homeTeam}" class="w-20 h-20 object-contain" onerror="this.style.display='none'">
                                     ` : opponentLogo && !isUserHome ? `
-                                        <img src="${opponentLogo}" alt="${homeTeam}" class="w-16 h-16 sm:w-20 sm:h-20 object-contain opacity-90" onerror="this.style.display='none'">
+                                        <img src="${opponentLogo}" alt="${homeTeam}" class="w-20 h-20 object-contain" onerror="this.style.display='none'">
                                     ` : `
-                                        <div class="w-16 h-16 sm:w-20 sm:h-20 bg-gray-700 rounded-full flex items-center justify-center">
+                                        <div class="w-20 h-20 bg-gray-700 rounded-full flex items-center justify-center">
                                             <span class="text-2xl">🏠</span>
                                         </div>
                                     `}
                                 </div>
-                                <p class="text-center font-bold ${isUserHome ? 'text-white text-lg sm:text-xl' : 'text-gray-300 text-sm sm:text-base'} mb-1">
-                                    ${homeTeam}
-                                </p>
-                                <div class="flex items-center gap-2 mb-2">
-                                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-bold bg-blue-900 text-blue-300">
-                                        🏠 CASA
-                                    </span>
-                                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-bold bg-gray-700 text-yellow-400">
-                                        #${isUserHome ? userPosition : opponentPosition}
-                                    </span>
+                                <div class="flex-1 min-w-0">
+                                    <p class="font-bold text-gray-300 text-base mb-1 leading-tight truncate">
+                                        ${homeTeam}
+                                    </p>
+                                    <div class="flex items-center gap-1.5 flex-wrap">
+                                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-bold bg-blue-900 text-blue-300 whitespace-nowrap">
+                                            🏠 CASA
+                                        </span>
+                                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-bold bg-gray-700 text-yellow-400">
+                                            #${isUserHome ? userPosition : opponentPosition}
+                                        </span>
+                                    </div>
                                 </div>
                             </div>
                             
-                            <!-- VS Centrale -->
-                            <div class="flex flex-col items-center px-2 sm:px-4">
-                                <div class="bg-gradient-to-br from-yellow-500 to-orange-500 text-gray-900 font-black text-2xl sm:text-4xl px-3 sm:px-6 py-2 sm:py-3 rounded-lg shadow-xl transform rotate-[-5deg]">
+                            <!-- VS Desktop -->
+                            <div class="flex items-center justify-center px-4">
+                                <div class="bg-gradient-to-br from-yellow-500 to-orange-500 text-gray-900 font-black text-3xl px-6 py-3 rounded-lg shadow-xl">
                                     VS
                                 </div>
                             </div>
                             
-                            <!-- Squadra in TRASFERTA (sempre a destra) -->
-                            <div class="flex flex-col items-center flex-1 ${!isUserHome ? 'transform scale-110 sm:scale-125' : 'opacity-75'}">
-                                <div class="relative mb-3">
+                            <!-- Desktop layout - TRASFERTA a destra -->
+                            <div class="flex items-center gap-3 flex-1">
+                                <div class="relative flex-shrink-0">
                                     ${userLogo && !isUserHome ? `
-                                        <div class="absolute -inset-2 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full blur-lg opacity-75 animate-pulse"></div>
-                                        <img src="${userLogo}" alt="${awayTeam}" class="relative w-20 h-20 sm:w-28 sm:h-28 object-contain drop-shadow-2xl" onerror="this.style.display='none'">
+                                        <img src="${userLogo}" alt="${awayTeam}" class="w-20 h-20 object-contain" onerror="this.style.display='none'">
                                     ` : opponentLogo && isUserHome ? `
-                                        <img src="${opponentLogo}" alt="${awayTeam}" class="w-16 h-16 sm:w-20 sm:h-20 object-contain opacity-90" onerror="this.style.display='none'">
+                                        <img src="${opponentLogo}" alt="${awayTeam}" class="w-20 h-20 object-contain" onerror="this.style.display='none'">
                                     ` : `
-                                        <div class="w-16 h-16 sm:w-20 sm:h-20 bg-gray-700 rounded-full flex items-center justify-center">
+                                        <div class="w-20 h-20 bg-gray-700 rounded-full flex items-center justify-center">
                                             <span class="text-2xl">✈️</span>
                                         </div>
                                     `}
                                 </div>
-                                <p class="text-center font-bold ${!isUserHome ? 'text-white text-lg sm:text-xl' : 'text-gray-300 text-sm sm:text-base'} mb-1">
-                                    ${awayTeam}
+                                <div class="flex-1 min-w-0">
+                                    <p class="font-bold text-gray-300 text-base mb-1 leading-tight truncate">
+                                        ${awayTeam}
+                                    </p>
+                                    <div class="flex items-center gap-1.5 flex-wrap">
+                                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-bold bg-orange-900 text-orange-300 whitespace-nowrap">
+                                            ✈️ TRASF.
+                                        </span>
+                                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-bold bg-gray-700 text-yellow-400">
+                                            #${!isUserHome ? userPosition : opponentPosition}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Mobile layout - Orizzontale compatto con VS centrato -->
+                        <div class="md:hidden flex items-stretch gap-2">
+                            <!-- Prima squadra (quella dell'utente) -->
+                            <div class="flex-1 flex flex-col items-center justify-center bg-gradient-to-br from-gray-800/40 to-gray-700/20 border border-gray-600/50 rounded-lg p-2">
+                                <div class="relative mb-2">
+                                    ${isUserHome ? (userLogo ? `
+                                        <img src="${userLogo}" alt="${homeTeam}" class="w-12 h-12 object-contain" onerror="this.style.display='none'">
+                                    ` : `
+                                        <div class="w-12 h-12 bg-gray-700 rounded-full flex items-center justify-center">
+                                            <span class="text-lg">🏠</span>
+                                        </div>
+                                    `) : (opponentLogo ? `
+                                        <img src="${opponentLogo}" alt="${awayTeam}" class="w-12 h-12 object-contain" onerror="this.style.display='none'">
+                                    ` : `
+                                        <div class="w-12 h-12 bg-gray-700 rounded-full flex items-center justify-center">
+                                            <span class="text-lg">✈️</span>
+                                        </div>
+                                    `)}
+                                </div>
+                                <p class="font-bold text-gray-200 text-xs text-center mb-1.5 leading-tight line-clamp-2 px-1">
+                                    ${isUserHome ? homeTeam : awayTeam}
                                 </p>
-                                <div class="flex items-center gap-2 mb-2">
-                                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-bold bg-orange-900 text-orange-300">
-                                        ✈️ TRASFERTA
+                                <div class="flex flex-col gap-1 w-full items-center">
+                                    <span class="inline-flex items-center justify-center px-2 py-0.5 rounded-full text-xs font-semibold ${isUserHome ? 'bg-blue-600/70 text-white' : 'bg-orange-600/70 text-white'} w-full max-w-[90%]">
+                                        ${isUserHome ? '🏠' : '✈️'}
                                     </span>
-                                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-bold bg-gray-700 text-yellow-400">
-                                        #${!isUserHome ? userPosition : opponentPosition}
+                                    <span class="inline-flex items-center justify-center px-2 py-0.5 rounded-full text-xs font-bold bg-gray-600 text-yellow-400">
+                                        #${userPosition}
+                                    </span>
+                                </div>
+                            </div>
+                            
+                            <!-- VS Mobile Centrato -->
+                            <div class="flex items-center justify-center px-1">
+                                <div class="bg-gradient-to-br from-yellow-400 to-orange-500 text-gray-900 font-black text-lg px-3 py-2 rounded-lg shadow-lg">
+                                    VS
+                                </div>
+                            </div>
+                            
+                            <!-- Seconda squadra (avversario) -->
+                            <div class="flex-1 flex flex-col items-center justify-center bg-gradient-to-br from-gray-800/40 to-gray-700/20 border border-gray-600/50 rounded-lg p-2">
+                                <div class="relative mb-2">
+                                    ${!isUserHome ? (userLogo ? `
+                                        <img src="${userLogo}" alt="${homeTeam}" class="w-12 h-12 object-contain" onerror="this.style.display='none'">
+                                    ` : `
+                                        <div class="w-12 h-12 bg-gray-700 rounded-full flex items-center justify-center">
+                                            <span class="text-lg">🏠</span>
+                                        </div>
+                                    `) : (opponentLogo ? `
+                                        <img src="${opponentLogo}" alt="${awayTeam}" class="w-12 h-12 object-contain" onerror="this.style.display='none'">
+                                    ` : `
+                                        <div class="w-12 h-12 bg-gray-700 rounded-full flex items-center justify-center">
+                                            <span class="text-lg">✈️</span>
+                                        </div>
+                                    `)}
+                                </div>
+                                <p class="font-bold text-gray-200 text-xs text-center mb-1.5 leading-tight line-clamp-2 px-1">
+                                    ${!isUserHome ? homeTeam : awayTeam}
+                                </p>
+                                <div class="flex flex-col gap-1 w-full items-center">
+                                    <span class="inline-flex items-center justify-center px-2 py-0.5 rounded-full text-xs font-semibold ${!isUserHome ? 'bg-blue-600/70 text-white' : 'bg-orange-600/70 text-white'} w-full max-w-[90%]">
+                                        ${!isUserHome ? '🏠' : '✈️'}
+                                    </span>
+                                    <span class="inline-flex items-center justify-center px-2 py-0.5 rounded-full text-xs font-bold bg-gray-600 text-yellow-400">
+                                        #${opponentPosition}
                                     </span>
                                 </div>
                             </div>
@@ -7009,25 +7178,25 @@
                 
                 if (homeStats && awayStats) {
                     miniStandings = `
-                        <div class="bg-gray-900/50 border border-gray-700 rounded-lg p-4 mb-6">
-                            <h4 class="text-center text-lg font-bold text-yellow-500 mb-3 flex items-center justify-center">
-                                <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                        <div class="bg-gray-900/50 border border-gray-700 rounded-lg p-3 sm:p-4 mb-4 sm:mb-6">
+                            <h4 class="text-center text-sm sm:text-lg font-bold text-yellow-500 mb-2 sm:mb-3 flex items-center justify-center">
+                                <svg class="w-4 h-4 sm:w-5 sm:h-5 mr-1 sm:mr-2" fill="currentColor" viewBox="0 0 20 20">
                                     <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"></path>
                                     <path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" clip-rule="evenodd"></path>
                                 </svg>
                                 Classifica
                             </h4>
-                            <div class="overflow-x-auto">
-                                <table class="w-full text-xs sm:text-sm">
+                            <div class="overflow-x-auto -mx-1">
+                                <table class="w-full text-xs">
                                     <thead>
                                         <tr class="text-gray-400 border-b border-gray-700">
-                                            <th class="text-left py-2 px-2">#</th>
-                                            <th class="text-left py-2 px-2">Squadra</th>
+                                            <th class="text-left py-2 px-1">#</th>
+                                            <th class="text-left py-2 px-1">Squadra</th>
                                             <th class="text-center py-2 px-1">Pt</th>
                                             <th class="text-center py-2 px-1 hidden sm:table-cell">G</th>
-                                            <th class="text-center py-2 px-1 hidden sm:table-cell">V</th>
-                                            <th class="text-center py-2 px-1 hidden sm:table-cell">N</th>
-                                            <th class="text-center py-2 px-1 hidden sm:table-cell">P</th>
+                                            <th class="text-center py-2 px-1 hidden md:table-cell">V</th>
+                                            <th class="text-center py-2 px-1 hidden md:table-cell">N</th>
+                                            <th class="text-center py-2 px-1 hidden md:table-cell">P</th>
                                             <th class="text-center py-2 px-1">GF</th>
                                             <th class="text-center py-2 px-1">GS</th>
                                             <th class="text-center py-2 px-1">DR</th>
@@ -7036,28 +7205,28 @@
                                     <tbody>
                                         ${teams.map((team, idx) => `
                                             <tr class="${idx === 0 ? 'border-b border-gray-800' : ''} ${team.name === userSquad ? 'bg-blue-900/30' : ''}">
-                                                <td class="py-3 px-2 font-bold text-yellow-500">${team.position}</td>
-                                                <td class="py-3 px-2">
-                                                    <div class="flex items-center gap-2">
-                                                        ${getTeamLogo(team.name) ? `<img src="${getTeamLogo(team.name)}" alt="${team.name}" class="w-6 h-6 object-contain" onerror="this.style.display='none'">` : ''}
-                                                        <span class="font-semibold ${team.name === userSquad ? 'text-blue-400' : 'text-white'}">${team.name}</span>
+                                                <td class="py-2 px-1 font-bold text-yellow-500">${team.position}</td>
+                                                <td class="py-2 px-1">
+                                                    <div class="flex items-center gap-1.5">
+                                                        ${getTeamLogo(team.name) ? `<img src="${getTeamLogo(team.name)}" alt="${team.name}" class="w-5 h-5 sm:w-6 sm:h-6 object-contain flex-shrink-0" onerror="this.style.display='none'">` : ''}
+                                                        <span class="font-semibold ${team.name === userSquad ? 'text-blue-400' : 'text-white'} leading-tight line-clamp-2">${team.name}</span>
                                                     </div>
                                                 </td>
-                                                <td class="text-center py-3 px-1 font-bold text-green-400">${team.stats.points}</td>
-                                                <td class="text-center py-3 px-1 text-gray-300 hidden sm:table-cell">${team.stats.played}</td>
-                                                <td class="text-center py-3 px-1 text-gray-300 hidden sm:table-cell">${team.stats.wins}</td>
-                                                <td class="text-center py-3 px-1 text-gray-300 hidden sm:table-cell">${team.stats.draws}</td>
-                                                <td class="text-center py-3 px-1 text-gray-300 hidden sm:table-cell">${team.stats.losses}</td>
-                                                <td class="text-center py-3 px-1 text-gray-300">${team.stats.goalsFor}</td>
-                                                <td class="text-center py-3 px-1 text-gray-300">${team.stats.goalsAgainst}</td>
-                                                <td class="text-center py-3 px-1 font-semibold ${team.stats.goalDifference > 0 ? 'text-green-400' : team.stats.goalDifference < 0 ? 'text-red-400' : 'text-gray-400'}">${team.stats.goalDifference > 0 ? '+' : ''}${team.stats.goalDifference}</td>
+                                                <td class="text-center py-2 px-1 font-bold text-green-400">${team.stats.points}</td>
+                                                <td class="text-center py-2 px-1 text-gray-300 hidden sm:table-cell">${team.stats.played}</td>
+                                                <td class="text-center py-2 px-1 text-gray-300 hidden md:table-cell">${team.stats.wins}</td>
+                                                <td class="text-center py-2 px-1 text-gray-300 hidden md:table-cell">${team.stats.draws}</td>
+                                                <td class="text-center py-2 px-1 text-gray-300 hidden md:table-cell">${team.stats.losses}</td>
+                                                <td class="text-center py-2 px-1 text-gray-300">${team.stats.goalsFor}</td>
+                                                <td class="text-center py-2 px-1 text-gray-300">${team.stats.goalsAgainst}</td>
+                                                <td class="text-center py-2 px-1 font-semibold ${team.stats.goalDifference > 0 ? 'text-green-400' : team.stats.goalDifference < 0 ? 'text-red-400' : 'text-gray-400'}">${team.stats.goalDifference > 0 ? '+' : ''}${team.stats.goalDifference}</td>
                                             </tr>
                                         `).join('')}
                                     </tbody>
                                 </table>
                             </div>
-                            <div class="text-center mt-3 text-xs text-gray-500">
-                                <span class="hidden sm:inline">Pt=Punti | G=Giocate | V=Vittorie | N=Pareggi | P=Perse | </span>GF=Gol Fatti | GS=Gol Subiti | DR=Diff. Reti
+                            <div class="text-center mt-2 text-xs text-gray-500">
+                                <span class="hidden sm:inline">Pt=Punti | G=Giocate | </span><span class="hidden md:inline">V=Vittorie | N=Pareggi | P=Perse | </span>GF=Gol Fatti | GS=Gol Subiti | DR=Diff. Reti
                             </div>
                         </div>
                     `;
@@ -7084,41 +7253,41 @@
                 ${miniStandings}
                 
                 <!-- Info header -->
-                <div class="bg-gradient-to-r from-blue-900/30 to-purple-900/30 border border-blue-700 rounded-lg p-4 mb-6">
-                    <p class="text-sm sm:text-base text-gray-200 flex items-center">
-                        <svg class="w-5 h-5 mr-2 text-blue-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                <div class="bg-gradient-to-r from-blue-900/30 to-purple-900/30 border border-blue-700 rounded-lg p-3 sm:p-4 mb-4 sm:mb-6">
+                    <p class="text-xs sm:text-base text-gray-200 flex items-start sm:items-center">
+                        <svg class="w-5 h-5 mr-2 text-blue-400 flex-shrink-0 mt-0.5 sm:mt-0" fill="currentColor" viewBox="0 0 20 20">
                             <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
                         </svg>
-                        <span>Richiedi i <span class="font-bold text-yellow-400">bonus</span> che vuoi utilizzare per la Giornata <span class="font-bold text-green-400">${nextGiornata}</span>. Ogni giornata può essere usato <span class="font-bold">solo un bonus.</span></span>
+                        <span class="leading-tight">Richiedi i <span class="font-bold text-yellow-400">bonus</span> che vuoi utilizzare per la Giornata <span class="font-bold text-green-400">${nextGiornata}</span>. <span class="hidden sm:inline">Ogni giornata può essere usato <span class="font-bold">solo un bonus.</span></span></span>
                     </p>
                 </div>
                 
                 <!-- Grid colonne per i bonus con icone accattivanti -->
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
                     <!-- Colonna RG (Raddoppio Goal) -->
-                    <div class="bg-gradient-to-br from-red-900/20 to-red-800/10 border-2 border-red-700/50 rounded-xl p-4 sm:p-6 hover:border-red-500 transition-all duration-300 hover:shadow-lg hover:shadow-red-500/30">
-                        <div class="flex items-center justify-center mb-4">
+                    <div class="bg-gradient-to-br from-red-900/20 to-red-800/10 border-2 border-red-700/50 rounded-xl p-3 sm:p-6 hover:border-red-500 transition-all duration-300 hover:shadow-lg hover:shadow-red-500/30">
+                        <div class="flex items-center justify-center mb-3 sm:mb-4">
                             <div class="relative">
-                                <div class="absolute inset-0 bg-red-500 rounded-full blur-xl opacity-50 animate-pulse"></div>
-                                <div class="relative w-20 h-20 sm:w-24 sm:h-24 bg-gradient-to-br from-red-600 to-red-800 rounded-full flex items-center justify-center shadow-2xl border-4 border-red-400">
-                                    <svg class="w-12 h-12 sm:w-14 sm:h-14 text-red-100" fill="currentColor" viewBox="0 0 20 20">
+                                <div class="absolute inset-0 bg-red-500 rounded-full blur-lg sm:blur-xl opacity-50 animate-pulse"></div>
+                                <div class="relative w-16 h-16 sm:w-24 sm:h-24 bg-gradient-to-br from-red-600 to-red-800 rounded-full flex items-center justify-center shadow-2xl border-2 sm:border-4 border-red-400">
+                                    <svg class="w-9 h-9 sm:w-14 sm:h-14 text-red-100" fill="currentColor" viewBox="0 0 20 20">
                                         <path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z"></path>
                                     </svg>
-                                    <span class="absolute -top-1 -right-1 flex h-6 w-6">
+                                    <span class="absolute -top-1 -right-1 flex h-5 w-5 sm:h-6 sm:w-6">
                                         <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-                                        <span class="relative inline-flex rounded-full h-6 w-6 bg-red-500 items-center justify-center text-white text-xs font-bold">×2</span>
+                                        <span class="relative inline-flex rounded-full h-5 w-5 sm:h-6 sm:w-6 bg-red-500 items-center justify-center text-white text-xs font-bold">×2</span>
                                     </span>
                                 </div>
                             </div>
                         </div>
                         
-                        <h3 class="text-center text-lg sm:text-xl font-black text-red-400 mb-2 tracking-wide">RADDOPPIO GOAL</h3>
-                        <p class="text-center text-xs sm:text-sm text-gray-400 mb-4 italic">Raddoppia i gol effettuati della tua squadra</p>
+                        <h3 class="text-center text-base sm:text-xl font-black text-red-400 mb-1 sm:mb-2 tracking-wide leading-tight">RADDOPPIO GOAL</h3>
+                        <p class="text-center text-xs text-gray-400 mb-3 sm:mb-4 italic leading-tight">Raddoppia i gol effettuati</p>
                         
-                        <div class="text-center mb-4 bg-gray-900/50 rounded-lg py-2 px-3">
-                            <span class="text-xs sm:text-sm text-gray-400">Disponibili: </span>
-                            <span class="text-2xl sm:text-3xl font-black ${rgAvailable > 0 ? 'text-green-400' : 'text-gray-500'}">${rgAvailable}</span>
-                            <span class="text-gray-500"> / ${team.RG.total || 1}</span>
+                        <div class="text-center mb-3 sm:mb-4 bg-gray-900/50 rounded-lg py-1.5 sm:py-2 px-2 sm:px-3">
+                            <span class="text-xs text-gray-400">Disponibili: </span>
+                            <span class="text-xl sm:text-3xl font-black ${rgAvailable > 0 ? 'text-green-400' : 'text-gray-500'}">${rgAvailable}</span>
+                            <span class="text-xs sm:text-base text-gray-500"> / ${team.RG.total || 1}</span>
                         </div>
                         
                         <div class="flex items-center justify-center">
@@ -7129,38 +7298,38 @@
                                     ${rgRequestedForNext ? 'checked' : ''}
                                     ${rgAvailable === 0 && !rgRequestedForNext ? 'disabled' : ''}
                                     onchange="toggleBonusRequest(this, ${nextGiornata})"
-                                    class="w-6 h-6 text-red-600 bg-gray-700 border-2 border-gray-600 rounded focus:ring-2 focus:ring-red-500 cursor-pointer">
-                                <span class="ml-3 text-white font-bold group-hover:text-red-400 transition-colors">
-                                    ${rgRequestedForNext ? '✓ Richiesto' : 'Richiedi bonus'}
+                                    class="w-5 h-5 sm:w-6 sm:h-6 text-red-600 bg-gray-700 border-2 border-gray-600 rounded focus:ring-2 focus:ring-red-500 cursor-pointer">
+                                <span class="ml-2 sm:ml-3 text-sm sm:text-base text-white font-bold group-hover:text-red-400 transition-colors">
+                                    ${rgRequestedForNext ? '✓ Richiesto' : 'Richiedi'}
                                 </span>
                             </label>
                         </div>
                     </div>
                     
                     <!-- Colonna 2G (Assegna 2 Goal) -->
-                    <div class="bg-gradient-to-br from-green-900/20 to-green-800/10 border-2 border-green-700/50 rounded-xl p-4 sm:p-6 hover:border-green-500 transition-all duration-300 hover:shadow-lg hover:shadow-green-500/30">
-                        <div class="flex items-center justify-center mb-4">
+                    <div class="bg-gradient-to-br from-green-900/20 to-green-800/10 border-2 border-green-700/50 rounded-xl p-3 sm:p-6 hover:border-green-500 transition-all duration-300 hover:shadow-lg hover:shadow-green-500/30">
+                        <div class="flex items-center justify-center mb-3 sm:mb-4">
                             <div class="relative">
-                                <div class="absolute inset-0 bg-green-500 rounded-full blur-xl opacity-50 animate-pulse"></div>
-                                <div class="relative w-20 h-20 sm:w-24 sm:h-24 bg-gradient-to-br from-green-600 to-green-800 rounded-full flex items-center justify-center shadow-2xl border-4 border-green-400">
-                                    <svg class="w-12 h-12 sm:w-14 sm:h-14 text-green-100" fill="currentColor" viewBox="0 0 512 512">
+                                <div class="absolute inset-0 bg-green-500 rounded-full blur-lg sm:blur-xl opacity-50 animate-pulse"></div>
+                                <div class="relative w-16 h-16 sm:w-24 sm:h-24 bg-gradient-to-br from-green-600 to-green-800 rounded-full flex items-center justify-center shadow-2xl border-2 sm:border-4 border-green-400">
+                                    <svg class="w-9 h-9 sm:w-14 sm:h-14 text-green-100" fill="currentColor" viewBox="0 0 512 512">
                                         <path d="M177.1 228.6L207.9 320h96.5l29.62-91.38L256 172.1L177.1 228.6zM255.1 0C114.6 0 .0001 114.6 .0001 256S114.6 512 256 512s255.1-114.6 255.1-255.1S397.4 0 255.1 0zM416.6 246.8L381.9 214l-22.44 62.32l-22.62 7.816l22.38-61.97l-34.71-32.81l34.71-32.81l-22.38-61.97l22.62 7.816L381.9 166.7l34.71-32.81c-34.46-37.46-81.03-63.03-134.5-69.58l-8.066 75.92l-22.44 7.891L260.1 90.16L273.7 13.36C268.5 13.12 263.3 12.1 258.1 12.1c-6.047 0-11.1 .4766-17.83 .8906l12.36 76.83l8.531 58.02L238.7 139.8l-7.844-75.15C176.4 71.23 129.8 96.8 95.35 134.2l34.71 32.81l-22.38 61.97l22.62-7.816L152.7 166.7l34.71 32.81l-34.71 32.81l22.38 61.97l-22.62-7.816L130.1 214L95.35 246.8C108.7 283.9 134.2 314.3 168.8 334.7l7.775-75.43l22.38-7.922l-8.119 58.18l-12.49 76.62c5.453 .2969 10.86 .875 16.51 .875c6.203 0 12.31-.5781 18.43-1.016l-12.76-77.83l-8.205-58.29l22.46 8.012l7.559 75.75c54.25-6.549 101.6-32.45 136.1-69.91L324.2 231.8l22.38-61.97L323.9 177.7L301.5 214L266.8 246.8l34.71 32.81l22.38 61.97l-22.62-7.816l-7.504-75.11l-22.5-8.066l8.131 58.44l12.69 77.74c54.84-6.699 102.4-32.87 137.1-70.55L416.6 246.8z"/>
                                     </svg>
-                                    <span class="absolute -top-1 -right-1 flex h-6 w-6">
+                                    <span class="absolute -top-1 -right-1 flex h-5 w-5 sm:h-6 sm:w-6">
                                         <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                                        <span class="relative inline-flex rounded-full h-6 w-6 bg-green-500 items-center justify-center text-white text-xs font-bold">+2</span>
+                                        <span class="relative inline-flex rounded-full h-5 w-5 sm:h-6 sm:w-6 bg-green-500 items-center justify-center text-white text-xs font-bold">+2</span>
                                     </span>
                                 </div>
                             </div>
                         </div>
                         
-                        <h3 class="text-center text-lg sm:text-xl font-black text-green-400 mb-2 tracking-wide">ASSEGNA 2 GOAL</h3>
-                        <p class="text-center text-xs sm:text-sm text-gray-400 mb-4 italic">Aggiungi 2 gol extra alla tua squadra</p>
+                        <h3 class="text-center text-base sm:text-xl font-black text-green-400 mb-1 sm:mb-2 tracking-wide leading-tight">ASSEGNA 2 GOAL</h3>
+                        <p class="text-center text-xs text-gray-400 mb-3 sm:mb-4 italic leading-tight">Aggiungi 2 gol extra</p>
                         
-                        <div class="text-center mb-4 bg-gray-900/50 rounded-lg py-2 px-3">
-                            <span class="text-xs sm:text-sm text-gray-400">Disponibili: </span>
-                            <span class="text-2xl sm:text-3xl font-black ${twoGAvailable > 0 ? 'text-green-400' : 'text-gray-500'}">${twoGAvailable}</span>
-                            <span class="text-gray-500"> / ${team.twoG.total || 1}</span>
+                        <div class="text-center mb-3 sm:mb-4 bg-gray-900/50 rounded-lg py-1.5 sm:py-2 px-2 sm:px-3">
+                            <span class="text-xs text-gray-400">Disponibili: </span>
+                            <span class="text-xl sm:text-3xl font-black ${twoGAvailable > 0 ? 'text-green-400' : 'text-gray-500'}">${twoGAvailable}</span>
+                            <span class="text-xs sm:text-base text-gray-500"> / ${team.twoG.total || 1}</span>
                         </div>
                         
                         <div class="flex items-center justify-center">
@@ -7171,38 +7340,38 @@
                                     ${twoGRequestedForNext ? 'checked' : ''}
                                     ${twoGAvailable === 0 && !twoGRequestedForNext ? 'disabled' : ''}
                                     onchange="toggleBonusRequest(this, ${nextGiornata})"
-                                    class="w-6 h-6 text-green-600 bg-gray-700 border-2 border-gray-600 rounded focus:ring-2 focus:ring-green-500 cursor-pointer">
-                                <span class="ml-3 text-white font-bold group-hover:text-green-400 transition-colors">
-                                    ${twoGRequestedForNext ? '✓ Richiesto' : 'Richiedi bonus'}
+                                    class="w-5 h-5 sm:w-6 sm:h-6 text-green-600 bg-gray-700 border-2 border-gray-600 rounded focus:ring-2 focus:ring-green-500 cursor-pointer">
+                                <span class="ml-2 sm:ml-3 text-sm sm:text-base text-white font-bold group-hover:text-green-400 transition-colors">
+                                    ${twoGRequestedForNext ? '✓ Richiesto' : 'Richiedi'}
                                 </span>
                             </label>
                         </div>
                     </div>
                     
                     <!-- Colonna SC (Scudo) -->
-                    <div class="bg-gradient-to-br from-blue-900/20 to-blue-800/10 border-2 border-blue-700/50 rounded-xl p-4 sm:p-6 hover:border-blue-500 transition-all duration-300 hover:shadow-lg hover:shadow-blue-500/30">
-                        <div class="flex items-center justify-center mb-4">
+                    <div class="bg-gradient-to-br from-blue-900/20 to-blue-800/10 border-2 border-blue-700/50 rounded-xl p-3 sm:p-6 hover:border-blue-500 transition-all duration-300 hover:shadow-lg hover:shadow-blue-500/30">
+                        <div class="flex items-center justify-center mb-3 sm:mb-4">
                             <div class="relative">
-                                <div class="absolute inset-0 bg-blue-500 rounded-full blur-xl opacity-50 animate-pulse"></div>
-                                <div class="relative w-20 h-20 sm:w-24 sm:h-24 bg-gradient-to-br from-blue-600 to-blue-800 rounded-full flex items-center justify-center shadow-2xl border-4 border-blue-400">
-                                    <svg class="w-12 h-12 sm:w-14 sm:h-14 text-blue-100" fill="currentColor" viewBox="0 0 20 20">
+                                <div class="absolute inset-0 bg-blue-500 rounded-full blur-lg sm:blur-xl opacity-50 animate-pulse"></div>
+                                <div class="relative w-16 h-16 sm:w-24 sm:h-24 bg-gradient-to-br from-blue-600 to-blue-800 rounded-full flex items-center justify-center shadow-2xl border-2 sm:border-4 border-blue-400">
+                                    <svg class="w-9 h-9 sm:w-14 sm:h-14 text-blue-100" fill="currentColor" viewBox="0 0 20 20">
                                         <path fill-rule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
                                     </svg>
-                                    <span class="absolute -top-1 -right-1 flex h-6 w-6">
+                                    <span class="absolute -top-1 -right-1 flex h-5 w-5 sm:h-6 sm:w-6">
                                         <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
-                                        <span class="relative inline-flex rounded-full h-6 w-6 bg-blue-500 items-center justify-center text-white text-xs font-bold">🛡️</span>
+                                        <span class="relative inline-flex rounded-full h-5 w-5 sm:h-6 sm:w-6 bg-blue-500 items-center justify-center text-xs">🛡️</span>
                                     </span>
                                 </div>
                             </div>
                         </div>
                         
-                        <h3 class="text-center text-lg sm:text-xl font-black text-blue-400 mb-2 tracking-wide">SCUDO</h3>
-                        <p class="text-center text-xs sm:text-sm text-gray-400 mb-4 italic">Registra un clean-sheet per questa giornata</p>
+                        <h3 class="text-center text-base sm:text-xl font-black text-blue-400 mb-1 sm:mb-2 tracking-wide leading-tight">SCUDO</h3>
+                        <p class="text-center text-xs text-gray-400 mb-3 sm:mb-4 italic leading-tight">Clean-sheet garantito</p>
                         
-                        <div class="text-center mb-4 bg-gray-900/50 rounded-lg py-2 px-3">
-                            <span class="text-xs sm:text-sm text-gray-400">Disponibili: </span>
-                            <span class="text-2xl sm:text-3xl font-black ${scAvailable > 0 ? 'text-green-400' : 'text-gray-500'}">${scAvailable}</span>
-                            <span class="text-gray-500"> / ${team.SC.total || 1}</span>
+                        <div class="text-center mb-3 sm:mb-4 bg-gray-900/50 rounded-lg py-1.5 sm:py-2 px-2 sm:px-3">
+                            <span class="text-xs text-gray-400">Disponibili: </span>
+                            <span class="text-xl sm:text-3xl font-black ${scAvailable > 0 ? 'text-green-400' : 'text-gray-500'}">${scAvailable}</span>
+                            <span class="text-xs sm:text-base text-gray-500"> / ${team.SC.total || 1}</span>
                         </div>
                         
                         <div class="flex items-center justify-center">
@@ -7213,32 +7382,30 @@
                                     ${scRequestedForNext ? 'checked' : ''}
                                     ${scAvailable === 0 && !scRequestedForNext ? 'disabled' : ''}
                                     onchange="toggleBonusRequest(this, ${nextGiornata})"
-                                    class="w-6 h-6 text-blue-600 bg-gray-700 border-2 border-gray-600 rounded focus:ring-2 focus:ring-blue-500 cursor-pointer">
-                                <span class="ml-3 text-white font-bold group-hover:text-blue-400 transition-colors">
-                                    ${scRequestedForNext ? '✓ Richiesto' : 'Richiedi bonus'}
+                                    class="w-5 h-5 sm:w-6 sm:h-6 text-blue-600 bg-gray-700 border-2 border-gray-600 rounded focus:ring-2 focus:ring-blue-500 cursor-pointer">
+                                <span class="ml-2 sm:ml-3 text-sm sm:text-base text-white font-bold group-hover:text-blue-400 transition-colors">
+                                    ${scRequestedForNext ? '✓ Richiesto' : 'Richiedi'}
                                 </span>
                             </label>
                         </div>
                     </div>
                     
                     <!-- Colonna POTM (EA FC Player of the Month) - Solo visualizzazione -->
-                    <div class="bg-gradient-to-br from-purple-900/20 to-purple-800/10 border-2 border-purple-700/50 rounded-xl p-4 sm:p-6 ${team.POTM ? 'border-purple-500 shadow-lg shadow-purple-500/20' : 'opacity-60'}">
-                        <div class="flex items-center justify-center mb-4">
+                    <div class="bg-gradient-to-br from-purple-900/20 to-purple-800/10 border-2 border-purple-700/50 rounded-xl p-3 sm:p-6 ${team.POTM ? 'border-purple-500 shadow-lg shadow-purple-500/20' : 'opacity-60'}">
+                        <div class="flex items-center justify-center mb-3 sm:mb-4">
                             <div class="relative">
-                                <div class="absolute inset-0 bg-purple-500 rounded-full blur-xl opacity-50 ${team.POTM && !team.POTM.used ? 'animate-pulse' : ''}"></div>
-                                <div class="relative w-20 h-20 sm:w-24 sm:h-24 bg-gradient-to-br from-purple-600 to-purple-800 rounded-full flex items-center justify-center shadow-2xl border-4 border-purple-400">
-                                    <svg class="w-12 h-12 sm:w-14 sm:h-14 text-purple-100" fill="currentColor" viewBox="0 0 20 20">
-                                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
-                                    </svg>
-                                    <span class="absolute -top-1 -right-1 flex h-6 w-6">
+                                <div class="absolute inset-0 bg-purple-500 rounded-full blur-lg sm:blur-xl opacity-50 ${team.POTM && !team.POTM.used ? 'animate-pulse' : ''}"></div>
+                                <div class="relative w-16 h-16 sm:w-24 sm:h-24 bg-gradient-to-br from-purple-600 to-purple-800 rounded-full flex items-center justify-center shadow-2xl border-2 sm:border-4 border-purple-400 p-2 sm:p-3">
+                                    <img src="https://raw.githubusercontent.com/savinopi/FantaBet-OP/main/ea-sports_fc_logo-freelogovectors.net_.png" alt="EA Sports FC" class="w-full h-full object-contain" style="filter: brightness(0) invert(1);" onerror="this.style.display='none'">
+                                    <span class="absolute -top-1 -right-1 flex h-5 w-5 sm:h-6 sm:w-6">
                                         <span class="${team.POTM && !team.POTM.used ? 'animate-ping' : ''} absolute inline-flex h-full w-full rounded-full bg-purple-400 opacity-75"></span>
-                                        <span class="relative inline-flex rounded-full h-6 w-6 bg-purple-500 items-center justify-center text-white text-xs font-bold">⭐</span>
+                                        <span class="relative inline-flex rounded-full h-5 w-5 sm:h-6 sm:w-6 bg-purple-500 items-center justify-center text-xs">⭐</span>
                                     </span>
                                 </div>
                             </div>
                         </div>
                         
-                        <h3 class="text-center text-lg sm:text-xl font-black text-purple-400 mb-2 tracking-wide">EA FC POTM</h3>
+                        <h3 class="text-center text-base sm:text-xl font-black text-purple-400 mb-1 sm:mb-2 tracking-wide leading-tight">EA FC POTM</h3>
                         <p class="text-center text-xs sm:text-sm text-gray-400 mb-4 italic">Bonus speciale mensile - Assegnato dall'Admin</p>
                         
                         <div class="text-center mb-4 bg-gray-900/50 rounded-lg py-2 px-3">
@@ -9246,7 +9413,6 @@ window.toggleAdditionalStats = () => {
                                         ${deadline.toLocaleDateString('it-IT', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })} 
                                         alle ${deadline.toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' })}
                                     </p>
-                                    ${notes ? `<p class="text-gray-400 text-xs mt-1 italic">${notes}</p>` : ''}
                                 </div>
                             </div>
                             <div class="text-right">
@@ -9296,14 +9462,20 @@ window.toggleAdditionalStats = () => {
                 
                 if (isPast) {
                     countdownEl.innerHTML = `
-                        <div class="bg-red-900/30 border-l-4 border-red-500 p-4 rounded-lg">
-                            <div class="flex items-center">
-                                <svg class="w-6 h-6 text-red-400 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                        <div class="bg-red-900/30 border-l-4 border-red-500 p-3 sm:p-4 rounded-lg">
+                            <div class="flex items-start">
+                                <svg class="w-5 h-5 sm:w-6 sm:h-6 text-red-400 mr-2 sm:mr-3 flex-shrink-0 mt-1" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path>
                                 </svg>
-                                <div>
-                                    <p class="text-red-300 font-bold text-lg">⏰ BONUS CHIUSI</p>
-                                    <p class="text-red-200 text-sm">La deadline per richiedere i bonus della Giornata ${giornata} è scaduta il ${deadline.toLocaleString('it-IT')}</p>
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-red-300 font-bold text-sm sm:text-lg">⏰ BONUS CHIUSI</p>
+                                    <p class="text-red-200 text-xs sm:text-sm mt-1">
+                                        <span class="hidden sm:inline">La deadline per richiedere i bonus della Giornata ${giornata} è scaduta il</span>
+                                        <span class="sm:hidden">Scadenza G${giornata}:</span>
+                                        ${deadline.toLocaleDateString('it-IT', { day: 'numeric', month: 'short' })}
+                                        <span class="mx-1">•</span>
+                                        ${deadline.toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' })}
+                                    </p>
                                 </div>
                             </div>
                         </div>
@@ -9375,44 +9547,45 @@ window.toggleAdditionalStats = () => {
                 const urgentClass = (days === 0 && hours < 1) ? 'countdown-urgent' : '';
                 
                 countdownEl.innerHTML = `
-                    <div class="${bgColor} border-l-4 ${borderColor} p-4 rounded-lg ${urgentClass}">
-                        <div class="flex items-center justify-between">
-                            <div class="flex items-center">
-                                <svg class="w-6 h-6 ${iconColor} mr-3" fill="currentColor" viewBox="0 0 20 20">
+                    <div class="${bgColor} border-l-4 ${borderColor} p-3 sm:p-4 rounded-lg ${urgentClass}">
+                        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                            <div class="flex items-start">
+                                <svg class="w-5 h-5 sm:w-6 sm:h-6 ${iconColor} mr-2 sm:mr-3 flex-shrink-0 mt-1" fill="currentColor" viewBox="0 0 20 20">
                                     ${statusIcon}
                                 </svg>
-                                <div>
-                                    <p class="${textColor} font-bold text-lg">
-                                        Scadenza richiesta bonus Giornata ${giornata}
+                                <div class="flex-1 min-w-0">
+                                    <p class="${textColor} font-bold text-sm sm:text-lg leading-tight">
+                                        Scadenza bonus G${giornata}
                                         ${confirmedBadge}
                                     </p>
-                                    <p class="text-gray-300 text-sm mt-1">
-                                        ${deadline.toLocaleDateString('it-IT', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })} 
-                                        alle ${deadline.toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' })}
+                                    <p class="text-gray-300 text-xs sm:text-sm mt-1">
+                                        <span class="hidden sm:inline">${deadline.toLocaleDateString('it-IT', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</span>
+                                        <span class="sm:hidden">${deadline.toLocaleDateString('it-IT', { day: 'numeric', month: 'short' })}</span>
+                                        <span class="mx-1">•</span>
+                                        ${deadline.toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' })}
                                     </p>
-                                    ${notes ? `<p class="text-gray-400 text-xs mt-1 italic">${notes}</p>` : ''}
                                 </div>
                             </div>
-                            <div class="text-right">
+                            <div class="text-left sm:text-right flex-shrink-0">
                                 <p class="text-gray-400 text-xs mb-1">Tempo rimanente:</p>
-                                <div class="flex space-x-2 text-center">
+                                <div class="flex space-x-1 sm:space-x-2 text-center">
                                     ${days > 0 ? `
-                                        <div class="bg-gray-800 px-3 py-2 rounded">
-                                            <p class="${textColor} text-2xl font-bold">${days}</p>
-                                            <p class="text-gray-400 text-xs">giorni</p>
+                                        <div class="bg-gray-800 px-2 sm:px-3 py-1 sm:py-2 rounded">
+                                            <p class="${textColor} text-lg sm:text-2xl font-bold leading-tight">${days}</p>
+                                            <p class="text-gray-400 text-xs">gg</p>
                                         </div>
                                     ` : ''}
-                                    <div class="bg-gray-800 px-3 py-2 rounded">
-                                        <p class="${textColor} text-2xl font-bold">${hours}</p>
+                                    <div class="bg-gray-800 px-2 sm:px-3 py-1 sm:py-2 rounded">
+                                        <p class="${textColor} text-lg sm:text-2xl font-bold leading-tight">${hours}</p>
                                         <p class="text-gray-400 text-xs">ore</p>
                                     </div>
-                                    <div class="bg-gray-800 px-3 py-2 rounded">
-                                        <p class="${textColor} text-2xl font-bold">${minutes}</p>
+                                    <div class="bg-gray-800 px-2 sm:px-3 py-1 sm:py-2 rounded">
+                                        <p class="${textColor} text-lg sm:text-2xl font-bold leading-tight">${minutes}</p>
                                         <p class="text-gray-400 text-xs">min</p>
                                     </div>
                                     ${days === 0 && hours < 1 ? `
-                                        <div class="bg-gray-800 px-3 py-2 rounded">
-                                            <p class="${textColor} text-2xl font-bold">${seconds}</p>
+                                        <div class="bg-gray-800 px-2 sm:px-3 py-1 sm:py-2 rounded">
+                                            <p class="${textColor} text-lg sm:text-2xl font-bold leading-tight">${seconds}</p>
                                             <p class="text-gray-400 text-xs">sec</p>
                                         </div>
                                     ` : ''}
@@ -10618,8 +10791,8 @@ window.toggleAdditionalStats = () => {
         <div class="container mx-auto px-4 text-center">
             <p class="text-xs text-gray-500">
                 <span class="font-semibold text-gray-400">FANTABet</span> • 
-                Versione 2.4 • 
-                Ultimo aggiornamento: <span class="text-gray-400">24 Dicembre 2025</span>
+                Versione 2.5 • 
+                Ultimo aggiornamento: <span class="text-gray-400">25 Dicembre 2025</span>
             </p>
             <p class="text-xs text-gray-600 mt-1">
                 © 2025 - Gestionale Fantacalcio con Sistema Scommesse
