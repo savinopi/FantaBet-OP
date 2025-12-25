@@ -2,7 +2,7 @@
 <html lang="it">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover">
     <title>Fantabet Amici - Sistema Scommesse Fantacalcio</title>
     
     <!-- Icone per iOS -->
@@ -178,6 +178,160 @@
             animation: pulse-countdown 2s ease-in-out infinite;
         }
         
+        /* Animazioni per il sorteggio */
+        @keyframes scale-in {
+            0% {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+        
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg) scale(1);
+            }
+            50% {
+                transform: rotate(180deg) scale(1.2);
+            }
+            100% {
+                transform: rotate(360deg) scale(1);
+            }
+        }
+        
+        @keyframes glow {
+            0%, 100% {
+                box-shadow: 0 0 5px rgba(251, 191, 36, 0.5), 0 0 10px rgba(251, 191, 36, 0.3);
+            }
+            50% {
+                box-shadow: 0 0 20px rgba(251, 191, 36, 0.8), 0 0 30px rgba(251, 191, 36, 0.4);
+            }
+        }
+        
+        @keyframes shimmer {
+            0% {
+                background-position: -1000px 0;
+            }
+            100% {
+                background-position: 1000px 0;
+            }
+        }
+        
+        .animate-scale-in {
+            animation: scale-in 0.5s ease-out forwards;
+        }
+        
+        /* Layout Desktop-Only per Sorteggi - NO MOBILE OPTIMIZATION */
+        .draw-desktop-layout {
+            min-width: 1024px;
+            max-width: 100%;
+            width: 100%;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+        }
+        
+        #draw-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            overflow-x: auto;
+            overflow-y: auto;
+            background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
+            z-index: 50;
+        }
+        
+        /* Effetti luminosi per i gruppi */
+        #draw-container .col-span-4:first-child > div {
+            box-shadow: 0 0 30px rgba(16, 185, 129, 0.3);
+            transition: all 0.3s ease;
+        }
+        
+        #draw-container .col-span-4:last-child > div {
+            box-shadow: 0 0 30px rgba(14, 165, 233, 0.3);
+            transition: all 0.3s ease;
+        }
+        
+        /* Animazione per il team estratto */
+        #drawn-team > div {
+            animation: glow 2s ease-in-out infinite;
+        }
+        
+        /* Animazione suspense per l'estrazione */
+        @keyframes suspense-reveal {
+            0% {
+                filter: brightness(0) blur(20px);
+                transform: scale(0.5);
+                opacity: 0;
+            }
+            50% {
+                filter: brightness(0) blur(10px);
+                transform: scale(0.8);
+                opacity: 0.5;
+            }
+            100% {
+                filter: brightness(1) blur(0);
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+        
+        .suspense-animation {
+            animation: suspense-reveal 3s ease-out forwards;
+        }
+        
+        /* Effetto shimmer per i bottoni */
+        .btn-primary {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+        
+        .btn-primary:hover::before {
+            left: 100%;
+        }
+        
+        /* Scrollbar personalizzata per i gruppi */
+        #group-a-teams::-webkit-scrollbar,
+        #group-b-teams::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        #group-a-teams::-webkit-scrollbar-track,
+        #group-b-teams::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+        }
+        
+        #group-a-teams::-webkit-scrollbar-thumb {
+            background: rgba(16, 185, 129, 0.5);
+            border-radius: 10px;
+        }
+        
+        #group-b-teams::-webkit-scrollbar-thumb {
+            background: rgba(14, 165, 233, 0.5);
+            border-radius: 10px;
+        }
+        
+        #group-a-teams::-webkit-scrollbar-thumb:hover,
+        #group-b-teams::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.5);
+        }
+        
         /* Animazione fade-out per notifiche */
         @keyframes fade-out {
             from { opacity: 1; transform: translateX(0); }
@@ -338,107 +492,113 @@
             visibility: visible;
         }
         
-        /* === EFFETTI HALLOWEEN === */
-        #halloween-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 9999;
-            opacity: 0;
-            transition: opacity 1s ease-out;
+        /* === OTTIMIZZAZIONI MOBILE PER IMMAGINI === */
+        
+        /* Forza tutte le immagini a rimanere nei loro contenitori */
+        img {
+            max-width: 100%;
+            height: auto;
+            display: block;
         }
         
-        #halloween-overlay.active {
-            opacity: 1;
+        /* Contenitori di immagini - previeni overflow */
+        .card, [class*="col-"], [class*="flex"], [class*="grid"] {
+            overflow: hidden;
         }
         
-        .spider {
-            position: absolute;
-            font-size: 24px;
-            animation: spider-walk 8s linear;
+        /* Fix specifico per container con immagini */
+        .card img, 
+        td img, 
+        th img,
+        div[class*="flex"] img,
+        div[class*="grid"] img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            flex-shrink: 0;
         }
         
-        @keyframes spider-walk {
-            0% {
-                top: -50px;
-                transform: rotate(0deg);
+        /* Ottimizzazioni per schermi molto piccoli (iPhone 12 mini: 375x812) */
+        @media (max-width: 390px) {
+            /* Riduci padding generale */
+            body {
+                padding: 8px !important;
             }
-            50% {
-                transform: rotate(180deg);
+            
+            /* Card più compatte */
+            .card {
+                padding: 12px !important;
+                margin-bottom: 12px;
             }
-            100% {
-                top: 100vh;
-                transform: rotate(360deg);
+            
+            /* Tabelle responsive */
+            table {
+                font-size: 0.75rem !important;
             }
+            
+            table th, table td {
+                padding: 6px 4px !important;
+            }
+            
+            /* Immagini più piccole nelle tabelle */
+            td img, th img {
+                max-width: 24px !important;
+                max-height: 24px !important;
+            }
+            
+            /* Logo header più piccolo */
+            header img {
+                max-width: 60px !important;
+                max-height: 60px !important;
+            }
+            
+            /* Pulsanti più compatti */
+            button, .btn-primary, .btn-secondary, .btn-danger, .btn-success {
+                padding: 10px 12px !important;
+                font-size: 14px !important;
+                min-height: 40px !important;
+            }
+            
+            /* Grid responsive - forza 1 colonna su mobile */
+            .grid {
+                grid-template-columns: 1fr !important;
+                gap: 8px !important;
+            }
+            
+            /* Flex containers - previeni overflow */
+            .flex {
+                flex-wrap: wrap !important;
+            }
+            
+            /* Text più piccolo dove necessario */
+            h1 { font-size: 1.5rem !important; }
+            h2 { font-size: 1.25rem !important; }
+            h3 { font-size: 1.125rem !important; }
+            h4 { font-size: 1rem !important; }
         }
         
-        .bat {
-            position: absolute;
-            font-size: 28px;
-            animation: bat-fly 6s ease-in-out;
+        /* Fix per container specifici che contengono loghi squadre */
+        .team-logo-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            max-width: 100%;
         }
         
-        @keyframes bat-fly {
-            0% {
-                left: -50px;
-                top: 20%;
-                transform: scale(1) rotate(0deg);
-            }
-            25% {
-                top: 40%;
-                transform: scale(1.2) rotate(10deg);
-            }
-            50% {
-                top: 30%;
-                transform: scale(1) rotate(-10deg);
-            }
-            75% {
-                top: 50%;
-                transform: scale(1.2) rotate(5deg);
-            }
-            100% {
-                left: 110%;
-                top: 35%;
-                transform: scale(1) rotate(0deg);
-            }
+        /* Previeni text overflow */
+        .text-ellipsis {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
         
-        .web {
-            position: absolute;
-            width: 150px;
-            height: 150px;
-            opacity: 0.6;
+        /* Container generale - previeni overflow orizzontale */
+        .container, main, section {
+            max-width: 100%;
+            overflow-x: hidden;
         }
-        
-        .web-corner {
-            position: absolute;
-            width: 0;
-            height: 0;
-            border-style: solid;
-        }
-        
-        .web-corner.top-left {
-            top: 0;
-            left: 0;
-            border-width: 100px 100px 0 0;
-            border-color: rgba(200, 200, 200, 0.3) transparent transparent transparent;
-        }
-        
-        .web-corner.top-right {
-            top: 0;
-            right: 0;
-            border-width: 0 100px 100px 0;
-            border-color: transparent rgba(200, 200, 200, 0.3) transparent transparent;
-        }
-        
-        @keyframes fade-out {
-            0% { opacity: 1; }
-            80% { opacity: 1; }
-            100% { opacity: 0; }
-        }
+
     </style>
     
     <script>
@@ -474,9 +634,6 @@
 
 </head>
 <body class="min-h-screen p-3 sm:p-6 md:p-8">
-
-    <!-- Effetto Halloween (30 ott - 2 nov 2025) -->
-    <div id="halloween-overlay"></div>
 
     <!-- Menu utente compatto -->
     <div class="fixed top-2 right-2 z-50">
@@ -514,7 +671,7 @@
         </div>
     </div>
     
-    <div class="max-w-6xl mx-auto">
+    <div class="w-full">
         <!-- Sezione Login (mostrata se non autenticato) -->
         <div id="login-container" class="max-w-md mx-auto card p-6 sm:p-8 hidden">
             <h2 id="auth-title" class="text-xl sm:text-2xl font-semibold mb-4 sm:mb-6 text-center">Accedi a FantaBet</h2>
@@ -632,6 +789,13 @@
                                 <path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd"></path>
                             </svg>
                             <span class="relative text-white font-bold text-base sm:text-lg tracking-wide">Area Admin</span>
+                        </button>
+                        
+                        <!-- Sorteggio Coppa Italia (desktop only, larga 2 colonne) -->
+                        <button onclick="setAppView('draw')" class="col-span-2 group relative bg-gradient-to-br from-slate-800/90 to-slate-950 hover:from-amber-900/40 hover:to-slate-950 rounded-2xl p-5 sm:p-6 shadow-xl hover:shadow-amber-500/20 transform hover:scale-[1.03] transition-all duration-300 flex flex-col items-center justify-center min-h-[100px] border-2 border-slate-700/50 hover:border-amber-500/60 backdrop-blur-sm overflow-hidden">
+                            <div class="absolute inset-0 bg-gradient-to-br from-amber-500/0 to-amber-500/0 group-hover:from-amber-500/5 group-hover:to-amber-500/10 transition-all duration-300"></div>
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/Nuovo_logo_Coppa_Italia_Frecciarossa_%282024-2025%29.jpg/960px-Nuovo_logo_Coppa_Italia_Frecciarossa_%282024-2025%29.jpg" alt="Coppa Italia" class="relative w-12 h-12 sm:w-14 sm:h-14 mb-3 object-contain drop-shadow-lg">
+                            <span class="relative text-white font-bold text-base sm:text-lg tracking-wide">Sorteggio Coppa Italia</span>
                         </button>
                     </div>
 
@@ -760,6 +924,31 @@
                             </div>
                             <!-- Contenuto classifica espansa -->
                             <div id="standings-fullscreen-content" class="bg-gray-900 rounded-lg p-4">
+                                <!-- Verrà popolato dinamicamente -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Modal Statistiche Squadra -->
+                    <div id="team-stats-modal" class="hidden fixed inset-0 bg-black/95 z-[60] overflow-auto">
+                        <div class="min-h-screen p-4">
+                            <!-- Header -->
+                            <div class="flex items-center justify-between mb-6 sticky top-0 bg-black/90 backdrop-blur-sm py-3 px-2 rounded-lg">
+                                <h3 class="text-2xl font-bold text-blue-400 flex items-center">
+                                    <svg class="w-7 h-7 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                        <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"></path>
+                                    </svg>
+                                    Statistiche Squadra
+                                </h3>
+                                <button onclick="closeTeamStatsModal()" class="text-white bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg font-bold transition-colors flex items-center gap-2">
+                                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                                    </svg>
+                                    Chiudi
+                                </button>
+                            </div>
+                            <!-- Contenuto statistiche squadra -->
+                            <div id="team-stats-content" class="space-y-6">
                                 <!-- Verrà popolato dinamicamente -->
                             </div>
                         </div>
@@ -1001,6 +1190,128 @@
                     </div>
                 </div>
 
+                <!-- SORTEGGIO COPPA ITALIA (Desktop Only - Compact Layout) -->
+                <div id="draw-container" class="hidden">
+                    <div class="draw-desktop-layout">
+                        <div class="card p-6" style="max-width: 100%;">
+                            <!-- Header compatto -->
+                            <div class="flex justify-between items-center mb-6 pb-4 border-b border-amber-800">
+                                <h2 class="text-3xl font-bold text-amber-400 flex items-center">
+                                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/Nuovo_logo_Coppa_Italia_Frecciarossa_%282024-2025%29.jpg/960px-Nuovo_logo_Coppa_Italia_Frecciarossa_%282024-2025%29.jpg" alt="Coppa Italia" class="w-10 h-10 mr-2 object-contain">
+                                    Sorteggio Coppa Italia
+                                </h2>
+                                <button onclick="setAppView('home')" class="btn-secondary px-4 py-2">
+                                    <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+                                    </svg>
+                                    Home
+                                </button>
+                            </div>
+                            
+                            <!-- Layout a 3 colonne: Gruppi | Centro Estrazione | Gruppi -->
+                            <div class="grid grid-cols-12 gap-4" style="min-height: 900px;">
+                                <!-- Colonna sinistra: Gruppo A -->
+                                <div class="col-span-4 flex flex-col">
+                                    <div class="bg-gradient-to-br from-emerald-900/40 to-emerald-800/20 border-2 border-emerald-500 rounded-xl p-6 h-full flex flex-col">
+                                        <h3 class="font-bold text-3xl text-emerald-300 mb-3 flex items-center justify-center">
+                                            <svg class="w-8 h-8 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                                            </svg>
+                                            GRUPPO A
+                                        </h3>
+                                        <div id="group-a-teams" class="space-y-2 flex-1 overflow-y-auto">
+                                            <p class="text-gray-500 text-center text-sm py-4">In attesa...</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Colonna centrale: Stato sorteggio ed estrazione -->
+                                <div class="col-span-4 flex flex-col justify-start items-center py-4">
+                                    <div id="draw-status" class="w-full">
+                                        <!-- Stato Iniziale -->
+                                        <div id="draw-initial" class="text-center space-y-4">
+                                            <p class="text-lg text-blue-300">Pronto per iniziare</p>
+                                            <button onclick="startDraw()" class="btn-primary text-lg px-8 py-3">
+                                                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/Nuovo_logo_Coppa_Italia_Frecciarossa_%282024-2025%29.jpg/960px-Nuovo_logo_Coppa_Italia_Frecciarossa_%282024-2025%29.jpg" alt="Coppa Italia" class="w-6 h-6 inline mr-2 object-contain">
+                                                Inizia Sorteggio
+                                            </button>
+                                        </div>
+                                        
+                                        <!-- In Corso -->
+                                        <div id="draw-in-progress" class="hidden text-center space-y-3">
+                                            <div class="mb-2">
+                                                <p class="text-2xl font-bold text-yellow-400" id="current-group-label">GRUPPO A</p>
+                                                <p class="text-sm text-gray-400">Estrazione <span id="draw-count">1</span> di 10</p>
+                                            </div>
+                                            
+                                            <!-- Urna compatta -->
+                                            <div id="draw-urn" class="my-6">
+                                                <div class="relative mx-auto w-48 h-48 flex items-center justify-center">
+                                                    <div class="absolute inset-0 bg-gradient-to-br from-yellow-600 to-orange-600 rounded-full opacity-20 animate-pulse"></div>
+                                                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/Nuovo_logo_Coppa_Italia_Frecciarossa_%282024-2025%29.jpg/960px-Nuovo_logo_Coppa_Italia_Frecciarossa_%282024-2025%29.jpg" alt="Coppa Italia" class="relative z-10 w-40 h-40 object-contain" id="draw-icon" style="filter: drop-shadow(0 0 10px rgba(251, 191, 36, 0.8));">
+                                                </div>
+                                            </div>
+                                            
+                                            <!-- Squadra estratta compatta -->
+                                            <div id="drawn-team" class="hidden animate-scale-in">
+                                                <div class="bg-gradient-to-br from-green-600/30 to-blue-600/30 border-2 border-green-500 rounded-xl p-8 shadow-2xl">
+                                                    <img id="drawn-team-logo" src="" alt="" class="w-48 h-48 mx-auto mb-4 object-contain">
+                                                    <p id="drawn-team-name" class="text-4xl font-bold text-white text-center mb-2"></p>
+                                                    <div id="drawn-team-stats" class="team-stats text-lg"></div>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="mt-4">
+                                                <button onclick="drawNextTeam()" id="draw-next-btn" class="btn-primary px-8 py-3 relative z-10">
+                                                    <svg class="w-5 h-5 inline mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v3.586L7.707 9.293a1 1 0 00-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 10.586V7z" clip-rule="evenodd"></path>
+                                                    </svg>
+                                                    Estrai Prossima
+                                                </button>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Completato -->
+                                        <div id="draw-complete" class="hidden text-center space-y-4">
+                                            <p class="text-2xl font-bold text-green-400">🎉 Completato! 🎉</p>
+                                            <div class="flex flex-col space-y-2">
+                                                <button onclick="resetDraw()" class="btn-secondary px-6 py-2">
+                                                    <svg class="w-5 h-5 inline mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                                        <path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd"></path>
+                                                    </svg>
+                                                    Nuovo Sorteggio
+                                                </button>
+                                                <button onclick="copyLastDraw()" class="btn-primary px-6 py-2">
+                                                    <svg class="w-5 h-5 inline mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                                        <path d="M8 3a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z"></path>
+                                                        <path d="M6 3a2 2 0 00-2 2v11a2 2 0 002 2h8a2 2 0 002-2V5a2 2 0 00-2-2 3 3 0 01-3 3H9a3 3 0 01-3-3z"></path>
+                                                    </svg>
+                                                    Copia JSON
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Colonna destra: Gruppo B -->
+                                <div class="col-span-4 flex flex-col">
+                                    <div class="bg-gradient-to-br from-sky-900/40 to-sky-800/20 border-2 border-sky-500 rounded-xl p-4 h-full flex flex-col">
+                                        <h3 class="font-bold text-3xl text-sky-300 mb-3 flex items-center justify-center">
+                                            <svg class="w-8 h-8 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                                            </svg>
+                                            GRUPPO B
+                                        </h3>
+                                        <div id="group-b-teams" class="space-y-2 flex-1 overflow-y-auto">
+                                            <p class="text-gray-500 text-center text-sm py-4">In attesa...</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Placeholder per le aree usate dallo script (invisibili finché non richieste) -->
                 <div id="betting-area" class="hidden max-w-4xl mx-auto card p-6">
                     <!-- Header con pulsante Home -->
@@ -1102,12 +1413,6 @@
                                 </svg>
                                 Orari Giornate
                             </button>
-                            <button onclick="showAdminTab('simulate_draw')" class="admin-tab-button px-4 py-2 text-lg font-semibold border-b-2 border-transparent hover:border-amber-400 hover:text-amber-400 focus:outline-none whitespace-nowrap">
-                                <svg class="w-4 h-4 inline mr-1" fill="currentColor" viewBox="0 0 20 20">
-                                    <path d="M10 2a1 1 0 00-.894.553L7.382 6H4a1 1 0 000 2h3l1.724 3.447A1 1 0 0010 12a1 1 0 00.276-.035L13 10h3a1 1 0 100-2h-3l-1.724-3.447A1 1 0 0010 2z"></path>
-                                </svg>
-                                Simula Sorteggio
-                            </button>
                             <button onclick="showAdminTab('bets')" class="admin-tab-button px-4 py-2 text-lg font-semibold border-b-2 border-transparent hover:border-blue-400 hover:text-blue-400 focus:outline-none whitespace-nowrap">
                                 <svg class="w-4 h-4 inline mr-1" fill="currentColor" viewBox="0 0 512 512">
                                     <path d="M177.1 228.6L207.9 320h96.5l29.62-91.38L256 172.1L177.1 228.6zM255.1 0C114.6 0 .0001 114.6 .0001 256S114.6 512 256 512s255.1-114.6 255.1-255.1S397.4 0 255.1 0z"/>
@@ -1127,16 +1432,6 @@
                                 Reset Dati
                             </button>
                         </div>
-                    </div>
-
-                    <div id="admin-tab-simulate_draw" class="admin-tab-content hidden card p-6 mt-4">
-                        <h3 class="text-xl font-bold mb-4 text-amber-400">Simula Sorteggio — Coppa Italia</h3>
-                        <p class="text-sm text-gray-300 mb-4">Simula il sorteggio delle 10 squadre della lega per creare 2 gruppi da 5 squadre.</p>
-                        <div class="flex items-center space-x-3 mb-4">
-                            <button onclick="simulateCoppaDraw()" class="btn-primary">Simula Sorteggio</button>
-                            <button onclick="copyLastDraw()" class="btn-secondary">Copia JSON</button>
-                        </div>
-                        <div id="coppa-draw-result" class="grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
                     </div>
 
                     <div id="admin-tab-csv" class="admin-tab-content card p-6 mt-4">
@@ -1383,6 +1678,71 @@
                         <!-- Container per cards mobile-friendly -->
                         <div id="bonus-cards-container" class="space-y-3">
                             <!-- Cards renderizzate da JS -->
+                        </div>
+                        
+                        <!-- Sezione EA FC POTM -->
+                        <div class="mt-8 border-t-2 border-purple-500 pt-6">
+                            <h3 class="text-xl font-bold mb-4 text-purple-400 flex items-center">
+                                <svg class="w-6 h-6 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+                                </svg>
+                                Bonus EA FC POTM
+                            </h3>
+                            
+                            <div class="bg-purple-900/20 border border-purple-500/30 rounded-lg px-4 py-3 mb-4">
+                                <p class="text-sm text-purple-300">
+                                    <svg class="w-5 h-5 inline mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
+                                    </svg>
+                                    <strong>Bonus Mensile Speciale:</strong> Assegna il bonus EA FC POTM a una squadra. La squadra potrà utilizzarlo una sola volta nel mese corrente.
+                                </p>
+                            </div>
+                            
+                            <div class="bg-gray-800 border border-gray-700 rounded-lg p-4">
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                                    <div>
+                                        <label class="block text-sm font-semibold text-gray-400 mb-2">Squadra Assegnata</label>
+                                        <select id="potm-team-select" class="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white">
+                                            <option value="">-- Nessuna Squadra --</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-semibold text-gray-400 mb-2">Mese/Anno</label>
+                                        <input id="potm-month-input" type="month" class="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-semibold text-gray-400 mb-2">Giornata Utilizzo (opzionale)</label>
+                                        <select id="potm-giornata-select" class="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white">
+                                            <option value="">-- Non ancora usato --</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                
+                                <div id="potm-status" class="mb-4 p-3 rounded-lg bg-gray-700/50">
+                                    <p class="text-sm text-gray-400">Carica i dati per vedere lo stato del POTM</p>
+                                </div>
+                                
+                                <div class="flex flex-col sm:flex-row gap-2">
+                                    <button onclick="loadPOTMData()" class="btn-primary flex-1">
+                                        <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                                        </svg>
+                                        Carica POTM
+                                    </button>
+                                    <button onclick="savePOTMData()" class="btn-success flex-1">
+                                        <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                        </svg>
+                                        Assegna POTM
+                                    </button>
+                                    <button onclick="resetPOTMData()" class="btn-danger flex-1">
+                                        <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                        </svg>
+                                        Reset POTM
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
@@ -1759,7 +2119,8 @@
                 squads: 'squads-container',
                 player_stats: 'player-stats-container',
                 league_stats: 'league-stats-container',
-                standings_trend: 'standings-trend-container-full'
+                standings_trend: 'standings-trend-container-full',
+                draw: 'draw-container'
             };
 
             console.log('Container disponibili:', containers);
@@ -1826,6 +2187,10 @@
                     // Se stiamo passando alla sezione andamento classifica, carica i dati
                     if (view === 'standings_trend') {
                         loadStandingsTrendChart();
+                    }
+                    // Se stiamo passando alla sezione sorteggi, assicurati che i dati delle rose siano caricati
+                    if (view === 'draw' && !window.currentSquadsData) {
+                        loadSquadsData();
                     }
                 }
             }
@@ -2177,7 +2542,9 @@
                                 <td class="px-1 py-2 text-center">
                                     <img src="${getTeamLogo(team.team)}" alt="${team.team}" class="w-6 h-6 object-contain mx-auto" onerror="this.style.display='none'">
                                 </td>
-                                <td class="px-2 py-2 text-left font-semibold">${team.team}</td>
+                                <td class="px-2 py-2 text-left font-semibold cursor-pointer hover:text-blue-400 transition-colors" onclick="showTeamStats('${team.team.replace(/'/g, "\\'")}')">
+                                    ${team.team}
+                                </td>
                                 <td class="px-2 py-2 text-center font-bold text-green-400">${team.points}</td>
                                 <td class="px-2 py-2 text-center font-bold text-blue-400">${team.fantasyPoints ? team.fantasyPoints.toFixed(1) : '0.0'}</td>
                                 <td class="px-2 py-2 text-center">${team.played}</td>
@@ -2203,6 +2570,471 @@
 
         window.closeStandings = () => {
             document.getElementById('standings-fullscreen-modal').classList.add('hidden');
+            document.body.style.overflow = '';
+        };
+
+        // --- Gestione Modal Statistiche Squadra ---
+        
+        window.showTeamStats = async (teamName) => {
+            const modal = document.getElementById('team-stats-modal');
+            const content = document.getElementById('team-stats-content');
+            
+            // Mostra loading
+            content.innerHTML = '<div class="text-center py-8"><div class="animate-spin inline-block w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full"></div><p class="text-gray-400 mt-4">Caricamento statistiche...</p></div>';
+            modal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+            
+            try {
+                // Carica i dati dei giocatori dal database
+                const playersCollection = getPlayersCollectionRef();
+                const playersSnapshot = await getDocs(playersCollection);
+                
+                if (playersSnapshot.empty) {
+                    content.innerHTML = '<p class="text-red-400 text-center py-4">Carica prima i dati delle rose per visualizzare le statistiche</p>';
+                    return;
+                }
+                
+                // Raggruppa giocatori per squadra
+                const teamPlayers = [];
+                playersSnapshot.forEach(doc => {
+                    const player = doc.data();
+                    if (player.squadName === teamName) {
+                        teamPlayers.push(player);
+                    }
+                });
+                
+                if (teamPlayers.length === 0) {
+                    content.innerHTML = `<p class="text-red-400 text-center py-4">Nessun giocatore trovato per ${teamName}</p>`;
+                    return;
+                }
+                
+                // Carica le statistiche dei giocatori
+                const statsCollection = getPlayerStatsCollectionRef();
+                const statsSnapshot = await getDocs(statsCollection);
+                
+                // Funzione per normalizzare i nomi
+                const normalizeName = (name) => {
+                    return name.trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+                };
+                
+                // Crea mappa statistiche per nome giocatore normalizzato
+                const statsMap = new Map();
+                statsSnapshot.forEach(doc => {
+                    const stat = doc.data();
+                    if (stat.fantaSquad === teamName) {
+                        const normalizedName = normalizeName(stat.playerName || stat.Name || '');
+                        statsMap.set(normalizedName, stat);
+                    }
+                });
+                
+                // Arricchisci i giocatori con le loro statistiche
+                const playersWithStats = teamPlayers.map(player => {
+                    const normalizedPlayerName = normalizeName(player.playerName);
+                    const stats = statsMap.get(normalizedPlayerName);
+                    
+                    // Determina il ruolo - il campo nel DB è 'role'
+                    let ruolo = player.role || player.ruolo || player.R || (stats ? (stats.role || stats.ruolo || stats.R) : null);
+                    
+                    return {
+                        Name: player.playerName,
+                        R: ruolo,
+                        Fm: stats ? (parseFloat(stats.fm) || 0) : 0,
+                        Pv: stats ? (parseInt(stats.pv) || 0) : 0,
+                        Gf: stats ? (parseInt(stats.gf) || 0) : 0,
+                        Gs: stats ? (parseInt(stats.gs) || 0) : 0,
+                        Rp: stats ? (parseInt(stats.rp) || 0) : 0,
+                        Ass: stats ? (parseInt(stats.ass) || 0) : 0
+                    };
+                });
+                
+                // Calcola posizione in classifica
+                const standings = calculateStandings();
+                const position = standings.findIndex(t => t.team === teamName) + 1;
+                
+                // Filtra giocatori con almeno 5 presenze per le statistiche
+                const playersWithEnoughGames = playersWithStats.filter(p => p.Pv >= 5);
+                
+                // Trova migliori giocatori per ruolo
+                const ruoli = {
+                    'P': { nome: 'Portiere', emoji: '🧤', color: 'yellow' },
+                    'D': { nome: 'Difensore', emoji: '🛡️', color: 'blue' },
+                    'C': { nome: 'Centrocampista', emoji: '⚙️', color: 'green' },
+                    'A': { nome: 'Attaccante', emoji: '⚽', color: 'red' }
+                };
+                
+                const bestByRole = {};
+                Object.keys(ruoli).forEach(ruolo => {
+                    const playersInRole = playersWithEnoughGames.filter(p => p.R === ruolo);
+                    if (playersInRole.length > 0) {
+                        bestByRole[ruolo] = playersInRole.reduce((best, player) => 
+                            (player.Fm || 0) > (best.Fm || 0) ? player : best
+                        );
+                    }
+                });
+                
+                // Miglior giocatore assoluto
+                const bestPlayer = playersWithEnoughGames.length > 0 
+                    ? playersWithEnoughGames.reduce((best, player) => (player.Fm || 0) > (best.Fm || 0) ? player : best)
+                    : null;
+                
+                // Top scorer - considera tutti i giocatori con gol > 0
+                const scorers = playersWithStats.filter(p => (p.Gf || 0) > 0);
+                const topScorer = scorers.length > 0 
+                    ? scorers.reduce((best, player) => (player.Gf || 0) > (best.Gf || 0) ? player : best)
+                    : playersWithStats[0];
+                
+                // Top assistman - considera tutti i giocatori con assist > 0
+                const assistmen = playersWithStats.filter(p => (p.Ass || 0) > 0);
+                const topAssistman = assistmen.length > 0
+                    ? assistmen.reduce((best, player) => (player.Ass || 0) > (best.Ass || 0) ? player : best)
+                    : playersWithStats[0];
+                
+                // Genera HTML
+                let html = `
+                    <!-- Header Squadra Professionale -->
+                    <div class="relative overflow-hidden">
+                        <div class="absolute inset-0 bg-gradient-to-br from-blue-600/20 via-purple-600/20 to-pink-600/20 animate-pulse"></div>
+                        <div class="card relative bg-gradient-to-br from-slate-900 via-blue-900/50 to-slate-900 border-2 border-blue-400 shadow-2xl shadow-blue-500/50">
+                            <div class="flex flex-col md:flex-row items-center justify-between p-8 gap-6">
+                                <div class="flex items-center gap-6">
+                                    <div class="relative">
+                                        <div class="absolute inset-0 bg-blue-500 blur-xl opacity-50 animate-pulse"></div>
+                                        <img src="${getTeamLogo(teamName)}" alt="${teamName}" class="relative w-24 h-24 object-contain drop-shadow-2xl" onerror="this.style.display='none'">
+                                    </div>
+                                    <div>
+                                        <h2 class="text-5xl font-black text-white mb-2 tracking-tight">${teamName}</h2>
+                                        <div class="flex items-center gap-3">
+                                            <span class="px-4 py-1 bg-gradient-to-r from-yellow-400 to-yellow-600 text-black font-bold rounded-full text-sm">
+                                                #${position} in classifica
+                                            </span>
+                                            <span class="text-gray-400 text-sm">${playersWithStats.length} giocatori</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="text-center">
+                                    <p class="text-gray-400 text-sm mb-1">Stagione 2024/25</p>
+                                    <div class="text-3xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+                                        STATS HUB
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Migliori per Ruolo - Design Opta Style -->
+                    <div class="card bg-gradient-to-br from-slate-900 to-slate-800 border border-slate-700 shadow-xl">
+                        <div class="bg-gradient-to-r from-blue-600 to-purple-600 p-4 rounded-t-xl">
+                            <h3 class="text-2xl font-black text-white flex items-center">
+                                <svg class="w-8 h-8 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"></path>
+                                </svg>
+                                TOP PLAYERS BY POSITION
+                            </h3>
+                        </div>
+                        <div class="p-6">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                `;
+                
+                Object.keys(ruoli).forEach(ruolo => {
+                    const player = bestByRole[ruolo];
+                    const ruoloInfo = ruoli[ruolo];
+                    if (player) {
+                        // Per il portiere
+                        if (ruolo === 'P') {
+                            const gsPercent = player.Pv > 0 ? ((player.Gs / player.Pv) * 100).toFixed(1) : 0;
+                            html += `
+                                <div class="relative group">
+                                    <div class="absolute inset-0 bg-gradient-to-br from-${ruoloInfo.color}-500/20 to-${ruoloInfo.color}-700/20 rounded-2xl blur group-hover:blur-md transition-all"></div>
+                                    <div class="relative bg-gradient-to-br from-slate-800 to-slate-900 border-2 border-${ruoloInfo.color}-500 rounded-2xl p-5 transform group-hover:scale-105 transition-all duration-300">
+                                        <div class="flex items-start justify-between mb-3">
+                                            <div>
+                                                <span class="inline-block px-3 py-1 bg-${ruoloInfo.color}-500/20 border border-${ruoloInfo.color}-500 rounded-full text-${ruoloInfo.color}-400 text-xs font-bold mb-2">
+                                                    ${ruoloInfo.emoji} ${ruoloInfo.nome.toUpperCase()}
+                                                </span>
+                                                <h4 class="text-2xl font-bold text-white">${player.Name}</h4>
+                                            </div>
+                                            <div class="text-right">
+                                                <div class="text-3xl font-black text-${ruoloInfo.color}-400">${player.Fm?.toFixed(1) || '0.0'}</div>
+                                                <div class="text-xs text-gray-400">RATING</div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="grid grid-cols-3 gap-2 mt-4">
+                                            <div class="bg-slate-950/50 rounded-lg p-2 text-center">
+                                                <div class="text-sm text-gray-400">Presenze</div>
+                                                <div class="text-xl font-bold text-blue-400">${player.Pv || 0}</div>
+                                            </div>
+                                            <div class="bg-red-950/30 rounded-lg p-2 text-center border border-red-500/30">
+                                                <div class="text-sm text-gray-400">Gol Sub.</div>
+                                                <div class="text-xl font-bold text-red-400">${player.Gs || 0}</div>
+                                            </div>
+                                            <div class="bg-green-950/30 rounded-lg p-2 text-center border border-green-500/30">
+                                                <div class="text-sm text-gray-400">Rig. Par.</div>
+                                                <div class="text-xl font-bold text-green-400">${player.Rp || 0}</div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="mt-3 flex items-center justify-between text-xs text-gray-500">
+                                            <span>Media gol/partita: ${gsPercent}%</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+                        } else {
+                            // Per gli altri ruoli
+                            const gfPercent = player.Pv > 0 ? ((player.Gf / player.Pv) * 100).toFixed(1) : 0;
+                            const assPercent = player.Pv > 0 ? ((player.Ass / player.Pv) * 100).toFixed(1) : 0;
+                            html += `
+                                <div class="relative group">
+                                    <div class="absolute inset-0 bg-gradient-to-br from-${ruoloInfo.color}-500/20 to-${ruoloInfo.color}-700/20 rounded-2xl blur group-hover:blur-md transition-all"></div>
+                                    <div class="relative bg-gradient-to-br from-slate-800 to-slate-900 border-2 border-${ruoloInfo.color}-500 rounded-2xl p-5 transform group-hover:scale-105 transition-all duration-300">
+                                        <div class="flex items-start justify-between mb-3">
+                                            <div>
+                                                <span class="inline-block px-3 py-1 bg-${ruoloInfo.color}-500/20 border border-${ruoloInfo.color}-500 rounded-full text-${ruoloInfo.color}-400 text-xs font-bold mb-2">
+                                                    ${ruoloInfo.emoji} ${ruoloInfo.nome.toUpperCase()}
+                                                </span>
+                                                <h4 class="text-2xl font-bold text-white">${player.Name}</h4>
+                                            </div>
+                                            <div class="text-right">
+                                                <div class="text-3xl font-black text-${ruoloInfo.color}-400">${player.Fm?.toFixed(1) || '0.0'}</div>
+                                                <div class="text-xs text-gray-400">RATING</div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="grid grid-cols-3 gap-2 mt-4">
+                                            <div class="bg-slate-950/50 rounded-lg p-2 text-center">
+                                                <div class="text-sm text-gray-400">Presenze</div>
+                                                <div class="text-xl font-bold text-blue-400">${player.Pv || 0}</div>
+                                            </div>
+                                            <div class="bg-green-950/30 rounded-lg p-2 text-center border border-green-500/30">
+                                                <div class="text-sm text-gray-400">Gol</div>
+                                                <div class="text-xl font-bold text-green-400">${player.Gf || 0}</div>
+                                            </div>
+                                            <div class="bg-purple-950/30 rounded-lg p-2 text-center border border-purple-500/30">
+                                                <div class="text-sm text-gray-400">Assist</div>
+                                                <div class="text-xl font-bold text-purple-400">${player.Ass || 0}</div>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Barre di performance -->
+                                        <div class="mt-3 space-y-1">
+                                            <div class="flex items-center gap-2">
+                                                <span class="text-xs text-gray-400 w-12">Gol</span>
+                                                <div class="flex-1 bg-slate-950 rounded-full h-2 overflow-hidden">
+                                                    <div class="bg-gradient-to-r from-green-500 to-green-600 h-full transition-all duration-1000" style="width: ${Math.min(gfPercent * 10, 100)}%"></div>
+                                                </div>
+                                                <span class="text-xs text-gray-400 w-12 text-right">${player.Gf || 0}</span>
+                                            </div>
+                                            <div class="flex items-center gap-2">
+                                                <span class="text-xs text-gray-400 w-12">Assist</span>
+                                                <div class="flex-1 bg-slate-950 rounded-full h-2 overflow-hidden">
+                                                    <div class="bg-gradient-to-r from-purple-500 to-purple-600 h-full transition-all duration-1000" style="width: ${Math.min(assPercent * 10, 100)}%"></div>
+                                                </div>
+                                                <span class="text-xs text-gray-400 w-12 text-right">${player.Ass || 0}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+                        }
+                    } else {
+                        html += `
+                            <div class="bg-slate-800/50 border-2 border-dashed border-slate-700 rounded-2xl p-5">
+                                <span class="inline-block px-3 py-1 bg-gray-700/30 rounded-full text-gray-500 text-xs font-bold mb-2">
+                                    ${ruoloInfo.emoji} ${ruoloInfo.nome.toUpperCase()}
+                                </span>
+                                <p class="text-gray-500 italic text-sm">Nessun giocatore con 5+ presenze</p>
+                            </div>
+                        `;
+                    }
+                });
+                
+                html += `
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Miglior Giocatore Assoluto - MVP Style -->
+                    <div class="relative overflow-hidden">
+                        <div class="absolute inset-0 bg-gradient-to-br from-purple-600/10 via-pink-600/10 to-red-600/10"></div>
+                        <div class="card relative bg-gradient-to-br from-purple-950/50 via-slate-900 to-slate-900 border-2 border-purple-500 shadow-2xl shadow-purple-500/30">
+                            <div class="bg-gradient-to-r from-purple-600 via-pink-600 to-purple-600 p-4 rounded-t-xl">
+                                <h3 class="text-2xl font-black text-white flex items-center justify-center">
+                                    <svg class="w-8 h-8 mr-3 animate-pulse" fill="currentColor" viewBox="0 0 20 20">
+                                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+                                    </svg>
+                                    MVP - BEST PLAYER
+                                </h3>
+                            </div>
+                            <div class="p-8">
+                `;
+                
+                if (bestPlayer) {
+                    const ruoloNome = bestPlayer.R && ruoli[bestPlayer.R] ? ruoli[bestPlayer.R].nome : 'Ruolo non specificato';
+                    const gfPerMatch = bestPlayer.Pv > 0 ? (bestPlayer.Gf / bestPlayer.Pv).toFixed(2) : 0;
+                    const assPerMatch = bestPlayer.Pv > 0 ? (bestPlayer.Ass / bestPlayer.Pv).toFixed(2) : 0;
+                    
+                    html += `
+                        <div class="text-center mb-6">
+                            <div class="inline-block relative">
+                                <div class="absolute inset-0 bg-purple-500 blur-2xl opacity-50 animate-pulse"></div>
+                                <h4 class="relative text-5xl font-black text-white mb-2 drop-shadow-2xl">${bestPlayer.Name}</h4>
+                            </div>
+                            <p class="text-xl text-purple-300 font-semibold">${ruoloNome}</p>
+                        </div>
+                        
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                            <div class="bg-gradient-to-br from-yellow-500/20 to-yellow-600/10 border-2 border-yellow-500 rounded-xl p-4 text-center transform hover:scale-105 transition-all">
+                                <div class="text-xs text-yellow-400 font-bold mb-1">FANTAMEDIA</div>
+                                <div class="text-4xl font-black text-yellow-400">${bestPlayer.Fm?.toFixed(2) || '0.00'}</div>
+                            </div>
+                            <div class="bg-gradient-to-br from-blue-500/20 to-blue-600/10 border-2 border-blue-500 rounded-xl p-4 text-center transform hover:scale-105 transition-all">
+                                <div class="text-xs text-blue-400 font-bold mb-1">PRESENZE</div>
+                                <div class="text-4xl font-black text-blue-400">${bestPlayer.Pv || 0}</div>
+                            </div>
+                            <div class="bg-gradient-to-br from-green-500/20 to-green-600/10 border-2 border-green-500 rounded-xl p-4 text-center transform hover:scale-105 transition-all">
+                                <div class="text-xs text-green-400 font-bold mb-1">GOL</div>
+                                <div class="text-4xl font-black text-green-400">${bestPlayer.Gf || 0}</div>
+                                <div class="text-xs text-gray-400 mt-1">${gfPerMatch}/partita</div>
+                            </div>
+                            <div class="bg-gradient-to-br from-purple-500/20 to-purple-600/10 border-2 border-purple-500 rounded-xl p-4 text-center transform hover:scale-105 transition-all">
+                                <div class="text-xs text-purple-400 font-bold mb-1">ASSIST</div>
+                                <div class="text-4xl font-black text-purple-400">${bestPlayer.Ass || 0}</div>
+                                <div class="text-xs text-gray-400 mt-1">${assPerMatch}/partita</div>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    html += `<p class="text-gray-400 text-center italic">Nessun giocatore con almeno 5 presenze</p>`;
+                }
+                
+                html += `
+                    </div>
+                </div>
+            </div>
+                    
+                    <!-- Top Scorer e Assistman - Sky Sport Style -->
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <!-- Top Scorer -->
+                        <div class="relative overflow-hidden group">
+                            <div class="absolute inset-0 bg-gradient-to-br from-green-500/20 to-emerald-600/20 animate-pulse"></div>
+                            <div class="card relative bg-gradient-to-br from-green-950/80 via-slate-900 to-slate-900 border-2 border-green-500 shadow-2xl shadow-green-500/30">
+                                <div class="bg-gradient-to-r from-green-600 to-emerald-600 p-4 rounded-t-xl">
+                                    <h3 class="text-xl font-black text-white flex items-center">
+                                        <span class="text-4xl mr-3">⚽</span>
+                                        TOP SCORER
+                                    </h3>
+                                </div>
+                                <div class="p-6">
+                                    <div class="text-center mb-4">
+                                        <div class="inline-block relative">
+                                            <div class="absolute inset-0 bg-green-500 blur-xl opacity-50"></div>
+                                            <h4 class="relative text-4xl font-black text-white mb-1">${topScorer.Name}</h4>
+                                        </div>
+                                        <p class="text-lg text-green-300">${topScorer.R && ruoli[topScorer.R] ? ruoli[topScorer.R].nome : 'N/A'}</p>
+                                    </div>
+                                    
+                                    <div class="bg-slate-950/50 rounded-2xl p-6 mb-4">
+                                        <div class="text-center">
+                                            <div class="text-7xl font-black bg-gradient-to-br from-green-400 to-emerald-500 bg-clip-text text-transparent mb-2">
+                                                ${topScorer.Gf || 0}
+                                            </div>
+                                            <div class="text-sm text-gray-400 uppercase tracking-wider">Gol Segnati</div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="grid grid-cols-2 gap-3">
+                                        <div class="bg-slate-800/50 rounded-lg p-3 text-center">
+                                            <div class="text-xs text-gray-400 mb-1">Presenze</div>
+                                            <div class="text-2xl font-bold text-blue-400">${topScorer.Pv || 0}</div>
+                                        </div>
+                                        <div class="bg-slate-800/50 rounded-lg p-3 text-center">
+                                            <div class="text-xs text-gray-400 mb-1">Media Gol</div>
+                                            <div class="text-2xl font-bold text-green-400">${topScorer.Pv > 0 ? (topScorer.Gf / topScorer.Pv).toFixed(2) : '0.00'}</div>
+                                        </div>
+                                    </div>
+                                    
+                                    ${topScorer.Gf > 0 ? `
+                                    <div class="mt-4">
+                                        <div class="flex items-center justify-between mb-2">
+                                            <span class="text-xs text-gray-400">Goal Contribution</span>
+                                            <span class="text-xs font-bold text-green-400">${topScorer.Gf + topScorer.Ass} (${topScorer.Gf}G + ${topScorer.Ass}A)</span>
+                                        </div>
+                                        <div class="h-3 bg-slate-950 rounded-full overflow-hidden">
+                                            <div class="h-full bg-gradient-to-r from-green-500 to-emerald-500" style="width: ${Math.min((topScorer.Gf / Math.max(topScorer.Pv, 1)) * 100, 100)}%"></div>
+                                        </div>
+                                    </div>
+                                    ` : ''}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Top Assistman -->
+                        <div class="relative overflow-hidden group">
+                            <div class="absolute inset-0 bg-gradient-to-br from-cyan-500/20 to-blue-600/20 animate-pulse"></div>
+                            <div class="card relative bg-gradient-to-br from-cyan-950/80 via-slate-900 to-slate-900 border-2 border-cyan-500 shadow-2xl shadow-cyan-500/30">
+                                <div class="bg-gradient-to-r from-cyan-600 to-blue-600 p-4 rounded-t-xl">
+                                    <h3 class="text-xl font-black text-white flex items-center">
+                                        <span class="text-4xl mr-3">🎯</span>
+                                        TOP ASSISTMAN
+                                    </h3>
+                                </div>
+                                <div class="p-6">
+                                    <div class="text-center mb-4">
+                                        <div class="inline-block relative">
+                                            <div class="absolute inset-0 bg-cyan-500 blur-xl opacity-50"></div>
+                                            <h4 class="relative text-4xl font-black text-white mb-1">${topAssistman.Name}</h4>
+                                        </div>
+                                        <p class="text-lg text-cyan-300">${topAssistman.R && ruoli[topAssistman.R] ? ruoli[topAssistman.R].nome : 'N/A'}</p>
+                                    </div>
+                                    
+                                    <div class="bg-slate-950/50 rounded-2xl p-6 mb-4">
+                                        <div class="text-center">
+                                            <div class="text-7xl font-black bg-gradient-to-br from-cyan-400 to-blue-500 bg-clip-text text-transparent mb-2">
+                                                ${topAssistman.Ass || 0}
+                                            </div>
+                                            <div class="text-sm text-gray-400 uppercase tracking-wider">Assist Forniti</div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="grid grid-cols-2 gap-3">
+                                        <div class="bg-slate-800/50 rounded-lg p-3 text-center">
+                                            <div class="text-xs text-gray-400 mb-1">Presenze</div>
+                                            <div class="text-2xl font-bold text-blue-400">${topAssistman.Pv || 0}</div>
+                                        </div>
+                                        <div class="bg-slate-800/50 rounded-lg p-3 text-center">
+                                            <div class="text-xs text-gray-400 mb-1">Media Assist</div>
+                                            <div class="text-2xl font-bold text-cyan-400">${topAssistman.Pv > 0 ? (topAssistman.Ass / topAssistman.Pv).toFixed(2) : '0.00'}</div>
+                                        </div>
+                                    </div>
+                                    
+                                    ${topAssistman.Ass > 0 ? `
+                                    <div class="mt-4">
+                                        <div class="flex items-center justify-between mb-2">
+                                            <span class="text-xs text-gray-400">Assist Contribution</span>
+                                            <span class="text-xs font-bold text-cyan-400">${topAssistman.Gf + topAssistman.Ass} (${topAssistman.Gf}G + ${topAssistman.Ass}A)</span>
+                                        </div>
+                                        <div class="h-3 bg-slate-950 rounded-full overflow-hidden">
+                                            <div class="h-full bg-gradient-to-r from-cyan-500 to-blue-500" style="width: ${Math.min((topAssistman.Ass / Math.max(topAssistman.Pv, 1)) * 100, 100)}%"></div>
+                                        </div>
+                                    </div>
+                                    ` : ''}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                content.innerHTML = html;
+                
+            } catch (error) {
+                console.error('Errore nel caricamento delle statistiche:', error);
+                content.innerHTML = '<p class="text-red-400 text-center py-4">Errore nel caricamento delle statistiche</p>';
+            }
+        };
+        
+        window.closeTeamStatsModal = () => {
+            document.getElementById('team-stats-modal').classList.add('hidden');
             document.body.style.overflow = '';
         };
 
@@ -2431,6 +3263,7 @@
         const getPlayersCollectionRef = () => collection(db, 'fantabet_players'); // Collection per i calciatori
         const getPlayerStatsCollectionRef = () => collection(db, 'fantabet_player_stats'); // Collection per le statistiche calciatori
         const getBonusCollectionRef = () => collection(db, 'fantabet_bonus'); // Collection per i bonus squadre
+        const getPOTMCollectionRef = () => collection(db, 'fantabet_potm'); // Collection per il bonus EA FC POTM
         
         // --- Gestione Teams e UI ---
 
@@ -2857,9 +3690,139 @@
             }
         };
 
-        // --- Simulazione Sorteggio Coppa Italia (Admin) ---
-        // Simula la creazione di 2 gruppi da 5 squadre usando le 10 squadre caricate in `allTeams`.
-        window.simulateCoppaDraw = () => {
+        // --- Simulazione Sorteggio Coppa Italia (Admin) con animazioni ---
+        let drawState = {
+            teams: [],
+            groupA: [],
+            groupB: [],
+            currentIndex: 0,
+            isDrawing: false
+        };
+        
+        // Funzioni helper per ottenere statistiche squadra
+        const getTeamStats = async (teamName) => {
+            try {
+                // Calcola posizione in classifica
+                const standings = calculateStandings();
+                const position = standings.findIndex(s => s.team === teamName) + 1;
+                
+                // Carica statistiche dalla collection fantabet_player_stats
+                let teamPlayers = [];
+                
+                // Se non abbiamo ancora caricato le statistiche, caricale ora
+                if (!window.playerStatsCache) {
+                    const statsSnapshot = await getDocs(getPlayerStatsCollectionRef());
+                    const statsMap = new Map();
+                    statsSnapshot.forEach(doc => {
+                        const player = doc.data();
+                        // Il campo si chiama fantaSquad nelle statistiche
+                        const squadra = player.fantaSquad || player.squadName;
+                        if (squadra) {
+                            if (!statsMap.has(squadra)) {
+                                statsMap.set(squadra, []);
+                            }
+                            statsMap.get(squadra).push(player);
+                        }
+                    });
+                    window.playerStatsCache = statsMap;
+                    console.log(`Cache statistiche caricata: ${statsMap.size} squadre, ${statsSnapshot.size} giocatori totali`);
+                }
+                
+                // Ottieni i giocatori della squadra dalla cache
+                if (window.playerStatsCache && window.playerStatsCache.has(teamName)) {
+                    teamPlayers = window.playerStatsCache.get(teamName);
+                }
+                
+                console.log(`Statistiche per ${teamName}:`, {
+                    totalPlayers: teamPlayers.length,
+                    usingCachedData: !!window.playerStatsCache,
+                    cacheSize: window.playerStatsCache?.size || 0,
+                    trovati: teamPlayers.slice(0, 3).map(p => ({ 
+                        name: p.Name || p.playerName, 
+                        squadra: p.fantaSquad || p.squadName, 
+                        gol: p.gf || p.Gf, 
+                        fm: p.fm || p.Fm, 
+                        pv: p.pv || p.Pv 
+                    }))
+                });
+                
+                if (teamPlayers.length === 0) {
+                    console.warn(`⚠️ Nessuna statistica trovata per ${teamName}. La collezione fantabet_player_stats potrebbe essere vuota.`);
+                    console.warn('Per caricare le statistiche, vai in Admin → Carica Statistiche CSV');
+                    return {
+                        position: position > 0 ? position : '-',
+                        topScorer: null,
+                        bestPlayer: null
+                    };
+                }
+                
+                // Trova miglior marcatore (più gol, anche se 0)
+                const topScorer = teamPlayers.reduce((best, player) => {
+                    const goals = player.gf || player.Gf || 0;
+                    if (!best || goals > (best.gf || best.Gf || 0)) {
+                        return player;
+                    }
+                    return best;
+                }, null);
+                
+                // Trova giocatore migliore (fantamedia più alta)
+                // Prima prova con minimo 5 presenze, poi con minimo 3, poi con minimo 1
+                let bestPlayer = teamPlayers
+                    .filter(p => (p.pv || p.Pv || 0) >= 5)
+                    .reduce((best, player) => {
+                        const fm = player.fm || player.Fm || 0;
+                        if (!best || fm > (best.fm || best.Fm || 0)) {
+                            return player;
+                        }
+                        return best;
+                    }, null);
+                
+                // Se non ci sono giocatori con almeno 5 presenze, prova con 3
+                if (!bestPlayer) {
+                    bestPlayer = teamPlayers
+                        .filter(p => (p.pv || p.Pv || 0) >= 3)
+                        .reduce((best, player) => {
+                            const fm = player.fm || player.Fm || 0;
+                            if (!best || fm > (best.fm || best.Fm || 0)) {
+                                return player;
+                            }
+                            return best;
+                        }, null);
+                }
+                
+                // Se ancora null, prova con almeno 1 presenza
+                if (!bestPlayer) {
+                    bestPlayer = teamPlayers
+                        .filter(p => (p.pv || p.Pv || 0) >= 1)
+                        .reduce((best, player) => {
+                            const fm = player.fm || player.Fm || 0;
+                            if (!best || fm > (best.fm || best.Fm || 0)) {
+                                return player;
+                            }
+                            return best;
+                        }, null);
+                }
+                
+                const result = {
+                    position: position > 0 ? position : '-',
+                    topScorer: topScorer, // Mostra sempre, anche con 0 gol
+                    bestPlayer: bestPlayer
+                };
+                
+                console.log(`Risultato statistiche per ${teamName}:`, result);
+                
+                return result;
+            } catch (error) {
+                console.error('Errore nel recupero statistiche squadra:', error);
+                return {
+                    position: '-',
+                    topScorer: null,
+                    bestPlayer: null
+                };
+            }
+        };
+        
+        window.startDraw = () => {
             if (!isUserAdmin) {
                 messageBox('Permesso negato. Solo gli admin possono eseguire questa operazione.');
                 return;
@@ -2877,32 +3840,239 @@
                 [teamsList[i], teamsList[j]] = [teamsList[j], teamsList[i]];
             }
 
-            const groupA = teamsList.slice(0, 5);
-            const groupB = teamsList.slice(5, 10);
-
-            // Salva l'ultimo risultato accessibile globalmente
-            window.lastCoppaDraw = {
-                timestamp: Date.now(),
-                groups: {
-                    A: groupA,
-                    B: groupB
-                }
+            // Inizializza lo stato
+            drawState = {
+                teams: teamsList,
+                groupA: [],
+                groupB: [],
+                currentIndex: 0,
+                isDrawing: true
             };
-
-            // Render semplice nel container
-            const container = document.getElementById('coppa-draw-result');
-            if (container) {
-                container.innerHTML = `
-                    <div class="bg-emerald-900/10 rounded-lg p-4">
-                        <h4 class="font-bold text-lg text-emerald-300 mb-2">Gruppo A</h4>
-                        <ol class="list-decimal list-inside text-white">${groupA.map(t => `<li>${t}</li>`).join('')}</ol>
-                    </div>
-                    <div class="bg-sky-900/10 rounded-lg p-4">
-                        <h4 class="font-bold text-lg text-sky-300 mb-2">Gruppo B</h4>
-                        <ol class="list-decimal list-inside text-white">${groupB.map(t => `<li>${t}</li>`).join('')}</ol>
-                    </div>
-                `;
+            
+            // Mostra interfaccia in progress
+            document.getElementById('draw-initial').classList.add('hidden');
+            document.getElementById('draw-in-progress').classList.remove('hidden');
+            document.getElementById('draw-complete').classList.add('hidden');
+            
+            // Reset gruppi
+            const groupAContainer = document.getElementById('group-a-teams');
+            const groupBContainer = document.getElementById('group-b-teams');
+            if (groupAContainer) groupAContainer.innerHTML = '<p class="text-gray-500 text-center text-sm py-4">In attesa...</p>';
+            if (groupBContainer) groupBContainer.innerHTML = '<p class="text-gray-500 text-center text-sm py-4">In attesa...</p>';
+            
+            // Estrai la prima squadra
+            drawNextTeam();
+        };
+        
+        window.drawNextTeam = async () => {
+            if (!drawState.isDrawing || drawState.currentIndex >= drawState.teams.length) {
+                return;
             }
+            
+            const teamName = drawState.teams[drawState.currentIndex];
+            const isGroupA = drawState.currentIndex % 2 === 0;
+            const currentGroup = isGroupA ? 'A' : 'B';
+            
+            // Aggiorna contatore
+            document.getElementById('draw-count').textContent = drawState.currentIndex + 1;
+            document.getElementById('current-group-label').textContent = `GRUPPO ${currentGroup}`;
+            document.getElementById('current-group-label').className = isGroupA 
+                ? 'text-2xl font-bold text-emerald-400 mb-2' 
+                : 'text-2xl font-bold text-sky-400 mb-2';
+            
+            // Nascondi squadra precedente
+            document.getElementById('drawn-team').classList.add('hidden');
+            
+            // Animazione urna
+            const urnIcon = document.getElementById('draw-icon');
+            urnIcon.style.animation = 'none';
+            setTimeout(() => {
+                urnIcon.style.animation = 'spin 0.5s ease-in-out';
+            }, 10);
+            
+            // Carica statistiche squadra
+            const stats = await getTeamStats(teamName);
+            
+            // Mostra subito il card con animazione suspense di 3 secondi
+            const drawnTeamCard = document.getElementById('drawn-team');
+            const teamLogo = document.getElementById('drawn-team-logo');
+            const teamNameEl = document.getElementById('drawn-team-name');
+            const statsContainer = document.getElementById('drawn-team-stats');
+            
+            // Imposta i dati prima dell'animazione
+            teamLogo.src = getTeamLogo(teamName);
+            teamNameEl.textContent = teamName;
+            
+            // Mostra il card con animazione suspense (senza statistiche)
+            drawnTeamCard.classList.remove('hidden');
+            teamLogo.classList.add('suspense-animation');
+            teamNameEl.classList.add('suspense-animation');
+            
+            // Nascondi temporaneamente le statistiche durante la suspense
+            if (statsContainer) {
+                statsContainer.style.opacity = '0';
+            }
+            
+            // Attendi mezzo secondo per mostrare le statistiche
+            setTimeout(() => {
+                // Rimuovi animazione
+                teamLogo.classList.remove('suspense-animation');
+                teamNameEl.classList.remove('suspense-animation');
+                
+                // Crea e mostra le statistiche dopo la suspense
+                let statsHtml = `
+                    <div class="mt-4 space-y-3">
+                        <div class="flex justify-center items-center">
+                            <span class="text-lg font-bold text-yellow-300 bg-yellow-900/30 px-4 py-2 rounded-full">📊 Posizione attuale in campionato: ${stats.position}°</span>
+                        </div>
+                `;
+                
+                console.log('DEBUG stats:', stats);
+                console.log('topScorer:', stats.topScorer);
+                console.log('bestPlayer:', stats.bestPlayer);
+                
+                if (stats.topScorer) {
+                    const scorerName = stats.topScorer.Name || stats.topScorer.playerName || 'Sconosciuto';
+                    const goalsScored = stats.topScorer.gf || stats.topScorer.Gf || 0;
+                    statsHtml += `
+                        <div class="flex items-center justify-center space-x-3 text-base bg-green-900/20 px-4 py-2.5 rounded-lg">
+                            <span class="text-2xl">⚽</span>
+                            <div class="text-left">
+                                <div class="font-semibold text-white text-lg">${scorerName}</div>
+                                <div class="text-sm text-gray-300">${goalsScored} gol</div>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    statsHtml += `<div class="text-sm text-red-400 text-center">⚽ Nessun marcatore disponibile</div>`;
+                }
+                
+                if (stats.bestPlayer) {
+                    const bestName = stats.bestPlayer.Name || stats.bestPlayer.playerName || 'Sconosciuto';
+                    const fantaMedia = stats.bestPlayer.fm || stats.bestPlayer.Fm || 0;
+                    statsHtml += `
+                        <div class="flex items-center justify-center space-x-3 text-base bg-blue-900/20 px-4 py-2.5 rounded-lg">
+                            <span class="text-2xl">⭐</span>
+                            <div class="text-left">
+                                <div class="font-semibold text-white text-lg">${bestName}</div>
+                                <div class="text-sm text-gray-300">FM ${fantaMedia.toFixed(2)}</div>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    statsHtml += `<div class="text-sm text-red-400 text-center">⭐ Nessun giocatore disponibile (min 5 presenze)</div>`;
+                }
+                
+                statsHtml += '</div>';
+                
+                // Mostra le statistiche immediatamente
+                if (statsContainer) {
+                    statsContainer.innerHTML = statsHtml;
+                    statsContainer.style.opacity = '1';
+                    statsContainer.style.transition = 'none';
+                }
+                
+                // Aggiungi al gruppo corretto (solo nome, senza statistiche)
+                if (isGroupA) {
+                    drawState.groupA.push(teamName);
+                } else {
+                    drawState.groupB.push(teamName);
+                }
+                
+                // Aggiorna visualizzazione gruppi
+                updateGroupsDisplay();
+                
+                drawState.currentIndex++;
+                
+                // Se finito, mostra completamento
+                if (drawState.currentIndex >= drawState.teams.length) {
+                    setTimeout(() => {
+                        completeDraw();
+                    }, 1500);
+                    document.getElementById('draw-next-btn').disabled = true;
+                    document.getElementById('draw-next-btn').classList.add('opacity-50', 'cursor-not-allowed');
+                }
+            }, 5000); // 5 secondi di suspense
+        };
+        
+        function updateGroupsDisplay() {
+            const groupAContainer = document.getElementById('group-a-teams');
+            const groupBContainer = document.getElementById('group-b-teams');
+            
+            if (drawState.groupA.length > 0) {
+                groupAContainer.innerHTML = drawState.groupA.map((teamName, index) => {
+                    return `
+                        <div class="bg-emerald-800/30 rounded-lg p-3 animate-scale-in">
+                            <div class="flex items-center space-x-3">
+                                <span class="text-2xl font-bold text-emerald-300 w-8">${index + 1}.</span>
+                                <img src="${getTeamLogo(teamName)}" alt="${teamName}" class="w-12 h-12 object-contain flex-shrink-0" onerror="this.style.display='none'">
+                                <span class="text-lg font-semibold text-white flex-1">${teamName}</span>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+            
+            if (drawState.groupB.length > 0) {
+                groupBContainer.innerHTML = drawState.groupB.map((teamName, index) => {
+                    return `
+                        <div class="bg-sky-800/30 rounded-lg p-3 animate-scale-in">
+                            <div class="flex items-center space-x-3">
+                                <span class="text-2xl font-bold text-sky-300 w-8">${index + 1}.</span>
+                                <img src="${getTeamLogo(teamName)}" alt="${teamName}" class="w-12 h-12 object-contain flex-shrink-0" onerror="this.style.display='none'">
+                                <span class="text-lg font-semibold text-white flex-1">${teamName}</span>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+        }
+        
+        function completeDraw() {
+            // Mostra completamento
+            document.getElementById('draw-in-progress').classList.add('hidden');
+            document.getElementById('draw-complete').classList.remove('hidden');
+            
+            drawState.isDrawing = false;
+            
+            // Chiedi conferma per salvare
+            setTimeout(() => {
+                if (confirm('Sorteggio completato! Vuoi salvare questo sorteggio?')) {
+                    // Salva risultato
+                    window.lastCoppaDraw = {
+                        timestamp: Date.now(),
+                        groups: {
+                            A: drawState.groupA,
+                            B: drawState.groupB
+                        }
+                    };
+                    messageBox('Sorteggio salvato con successo!');
+                } else {
+                    messageBox('Sorteggio non salvato.');
+                }
+            }, 500);
+        }
+        
+        window.resetDraw = () => {
+            drawState = {
+                teams: [],
+                groupA: [],
+                groupB: [],
+                currentIndex: 0,
+                isDrawing: false
+            };
+            
+            document.getElementById('draw-initial').classList.remove('hidden');
+            document.getElementById('draw-in-progress').classList.add('hidden');
+            document.getElementById('draw-complete').classList.add('hidden');
+            document.getElementById('draw-next-btn').disabled = false;
+            document.getElementById('draw-next-btn').classList.remove('opacity-50', 'cursor-not-allowed');
+            
+            // Reset gruppi
+            const groupAContainer = document.getElementById('group-a-teams');
+            const groupBContainer = document.getElementById('group-b-teams');
+            if (groupAContainer) groupAContainer.innerHTML = '<p class="text-gray-500 text-center text-sm py-4">In attesa...</p>';
+            if (groupBContainer) groupBContainer.innerHTML = '<p class="text-gray-500 text-center text-sm py-4">In attesa...</p>';
         };
 
         window.copyLastDraw = () => {
@@ -5399,6 +6569,187 @@
             }
         };
         
+        // === EA FC POTM MANAGEMENT ===
+        
+        let currentPOTMData = null;
+        
+        // Carica i dati del POTM corrente
+        window.loadPOTMData = async () => {
+            if (!isUserAdmin) {
+                messageBox('Solo gli admin possono gestire il POTM.');
+                return;
+            }
+            
+            try {
+                // Imposta il mese corrente come default
+                const now = new Date();
+                const currentMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+                document.getElementById('potm-month-input').value = currentMonth;
+                
+                // Carica le squadre
+                const teamsSnapshot = await getDocs(getTeamCollectionRef());
+                const teams = teamsSnapshot.docs.map(doc => doc.data().name).sort();
+                
+                const teamSelect = document.getElementById('potm-team-select');
+                teamSelect.innerHTML = '<option value="">-- Nessuna Squadra --</option>';
+                teams.forEach(team => {
+                    const option = document.createElement('option');
+                    option.value = team;
+                    option.textContent = team;
+                    teamSelect.appendChild(option);
+                });
+                
+                // Popola select giornate
+                const giornataSelect = document.getElementById('potm-giornata-select');
+                giornataSelect.innerHTML = '<option value="">-- Non ancora usato --</option>';
+                for (let i = 1; i <= 36; i++) {
+                    const option = document.createElement('option');
+                    option.value = i;
+                    option.textContent = `Giornata ${i}`;
+                    giornataSelect.appendChild(option);
+                }
+                
+                // Carica il POTM esistente per il mese corrente
+                const potmSnapshot = await getDocs(getPOTMCollectionRef());
+                currentPOTMData = null;
+                
+                potmSnapshot.docs.forEach(doc => {
+                    const data = doc.data();
+                    if (data.month === currentMonth) {
+                        currentPOTMData = { id: doc.id, ...data };
+                    }
+                });
+                
+                // Aggiorna l'interfaccia
+                if (currentPOTMData) {
+                    teamSelect.value = currentPOTMData.assignedTeam || '';
+                    document.getElementById('potm-month-input').value = currentPOTMData.month || currentMonth;
+                    document.getElementById('potm-giornata-select').value = currentPOTMData.usedInGiornata || '';
+                    
+                    const statusDiv = document.getElementById('potm-status');
+                    const usedStatus = currentPOTMData.used && currentPOTMData.usedInGiornata ? 
+                        `<span class="text-yellow-400">✓ Utilizzato (Giornata ${currentPOTMData.usedInGiornata})</span>` :
+                        '<span class="text-green-400">✓ Assegnato ma non ancora usato</span>';
+                    
+                    statusDiv.innerHTML = `
+                        <p class="text-sm">
+                            <strong class="text-purple-400">Stato Corrente:</strong><br>
+                            <span class="text-white">Squadra: ${currentPOTMData.assignedTeam || 'Nessuna'}</span><br>
+                            <span class="text-white">Mese: ${currentPOTMData.month}</span><br>
+                            ${usedStatus}
+                        </p>
+                    `;
+                } else {
+                    document.getElementById('potm-status').innerHTML = `
+                        <p class="text-sm text-yellow-400">
+                            <svg class="w-4 h-4 inline mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                            </svg>
+                            Nessun POTM assegnato per questo mese
+                        </p>
+                    `;
+                }
+                
+                messageBox('Dati POTM caricati!');
+                
+            } catch (error) {
+                console.error('Errore caricamento POTM:', error);
+                messageBox('Errore nel caricamento del POTM: ' + error.message);
+            }
+        };
+        
+        // Salva/Assegna il POTM
+        window.savePOTMData = async () => {
+            if (!isUserAdmin) {
+                messageBox('Solo gli admin possono assegnare il POTM.');
+                return;
+            }
+            
+            const teamSelect = document.getElementById('potm-team-select');
+            const monthInput = document.getElementById('potm-month-input');
+            const giornataSelect = document.getElementById('potm-giornata-select');
+            
+            const assignedTeam = teamSelect.value;
+            const month = monthInput.value;
+            const usedInGiornata = giornataSelect.value ? parseInt(giornataSelect.value) : null;
+            
+            if (!assignedTeam) {
+                messageBox('Seleziona una squadra per assegnare il POTM.');
+                return;
+            }
+            
+            if (!month) {
+                messageBox('Seleziona il mese per il POTM.');
+                return;
+            }
+            
+            const confirmMsg = usedInGiornata 
+                ? `Assegnare il Bonus EA FC POTM a "${assignedTeam}" per il mese ${month} e segnarlo come usato nella Giornata ${usedInGiornata}?`
+                : `Assegnare il Bonus EA FC POTM a "${assignedTeam}" per il mese ${month} (non ancora usato)?`;
+            
+            if (!confirm(confirmMsg)) {
+                return;
+            }
+            
+            try {
+                const potmData = {
+                    assignedTeam: assignedTeam,
+                    month: month,
+                    used: usedInGiornata !== null,
+                    usedInGiornata: usedInGiornata,
+                    assignedDate: new Date().toISOString()
+                };
+                
+                const potmCollection = getPOTMCollectionRef();
+                
+                if (currentPOTMData && currentPOTMData.id) {
+                    // Aggiorna documento esistente
+                    await updateDoc(doc(potmCollection, currentPOTMData.id), potmData);
+                } else {
+                    // Crea nuovo documento
+                    const docRef = await addDoc(potmCollection, potmData);
+                    currentPOTMData = { id: docRef.id, ...potmData };
+                }
+                
+                messageBox(`Bonus EA FC POTM ${usedInGiornata ? 'assegnato e marcato come usato' : 'assegnato'} per ${assignedTeam}!`);
+                await loadPOTMData(); // Ricarica per aggiornare lo stato
+                
+            } catch (error) {
+                console.error('Errore salvataggio POTM:', error);
+                messageBox('Errore nel salvataggio del POTM: ' + error.message);
+            }
+        };
+        
+        // Reset del POTM
+        window.resetPOTMData = async () => {
+            if (!isUserAdmin) {
+                messageBox('Solo gli admin possono resettare il POTM.');
+                return;
+            }
+            
+            if (!currentPOTMData || !currentPOTMData.id) {
+                messageBox('Nessun POTM da resettare per questo mese.');
+                return;
+            }
+            
+            if (!confirm('Sei sicuro di voler eliminare il POTM corrente? Questa azione non può essere annullata.')) {
+                return;
+            }
+            
+            try {
+                const potmCollection = getPOTMCollectionRef();
+                await deleteDoc(doc(potmCollection, currentPOTMData.id));
+                
+                currentPOTMData = null;
+                messageBox('Bonus EA FC POTM resettato con successo!');
+                await loadPOTMData(); // Ricarica per aggiornare lo stato
+                
+            } catch (error) {
+                console.error('Errore reset POTM:', error);
+                messageBox('Errore nel reset del POTM: ' + error.message);
+            }
+        };
+        
         // === USER BONUS MANAGEMENT ===
         
         let currentUserBonusData = null;
@@ -5451,6 +6802,25 @@
                 }
                 
                 currentUserBonusData = userBonusDoc;
+                
+                // Carica il POTM per il mese corrente
+                const now = new Date();
+                const currentMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+                const potmSnapshot = await getDocs(getPOTMCollectionRef());
+                let userPOTM = null;
+                
+                potmSnapshot.docs.forEach(doc => {
+                    const data = doc.data();
+                    // Verifica se il POTM è assegnato alla squadra dell'utente e per il mese corrente
+                    if (data.assignedTeam === userSquad && data.month === currentMonth) {
+                        userPOTM = { id: doc.id, ...data };
+                    }
+                });
+                
+                // Aggiungi il POTM ai dati bonus se esiste
+                if (userPOTM) {
+                    currentUserBonusData.POTM = userPOTM;
+                }
                 
                 // Carica la giornata ATTIVA dal database
                 const activeGiornata = await loadActiveGiornata();
@@ -5723,8 +7093,8 @@
                     </p>
                 </div>
                 
-                <!-- Grid 3 colonne per i bonus con icone accattivanti -->
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
+                <!-- Grid colonne per i bonus con icone accattivanti -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
                     <!-- Colonna RG (Raddoppio Goal) -->
                     <div class="bg-gradient-to-br from-red-900/20 to-red-800/10 border-2 border-red-700/50 rounded-xl p-4 sm:p-6 hover:border-red-500 transition-all duration-300 hover:shadow-lg hover:shadow-red-500/30">
                         <div class="flex items-center justify-center mb-4">
@@ -5848,6 +7218,50 @@
                                     ${scRequestedForNext ? '✓ Richiesto' : 'Richiedi bonus'}
                                 </span>
                             </label>
+                        </div>
+                    </div>
+                    
+                    <!-- Colonna POTM (EA FC Player of the Month) - Solo visualizzazione -->
+                    <div class="bg-gradient-to-br from-purple-900/20 to-purple-800/10 border-2 border-purple-700/50 rounded-xl p-4 sm:p-6 ${team.POTM ? 'border-purple-500 shadow-lg shadow-purple-500/20' : 'opacity-60'}">
+                        <div class="flex items-center justify-center mb-4">
+                            <div class="relative">
+                                <div class="absolute inset-0 bg-purple-500 rounded-full blur-xl opacity-50 ${team.POTM && !team.POTM.used ? 'animate-pulse' : ''}"></div>
+                                <div class="relative w-20 h-20 sm:w-24 sm:h-24 bg-gradient-to-br from-purple-600 to-purple-800 rounded-full flex items-center justify-center shadow-2xl border-4 border-purple-400">
+                                    <svg class="w-12 h-12 sm:w-14 sm:h-14 text-purple-100" fill="currentColor" viewBox="0 0 20 20">
+                                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+                                    </svg>
+                                    <span class="absolute -top-1 -right-1 flex h-6 w-6">
+                                        <span class="${team.POTM && !team.POTM.used ? 'animate-ping' : ''} absolute inline-flex h-full w-full rounded-full bg-purple-400 opacity-75"></span>
+                                        <span class="relative inline-flex rounded-full h-6 w-6 bg-purple-500 items-center justify-center text-white text-xs font-bold">⭐</span>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <h3 class="text-center text-lg sm:text-xl font-black text-purple-400 mb-2 tracking-wide">EA FC POTM</h3>
+                        <p class="text-center text-xs sm:text-sm text-gray-400 mb-4 italic">Bonus speciale mensile - Assegnato dall'Admin</p>
+                        
+                        <div class="text-center mb-4 bg-gray-900/50 rounded-lg py-2 px-3">
+                            ${team.POTM ? `
+                                <span class="text-xs sm:text-sm text-gray-400">Stato: </span>
+                                <span class="text-lg sm:text-xl font-black ${!team.POTM.used ? 'text-green-400' : 'text-yellow-400'}">
+                                    ${!team.POTM.used ? '✓ Assegnato' : `Usato G.${team.POTM.usedInGiornata}`}
+                                </span>
+                            ` : `
+                                <span class="text-xs sm:text-sm text-gray-400">Stato: </span>
+                                <span class="text-lg sm:text-xl font-black text-gray-500">
+                                    ✗ Non Assegnato
+                                </span>
+                            `}
+                        </div>
+                        
+                        <div class="flex items-center justify-center">
+                            <div class="flex items-center text-xs text-gray-500 italic">
+                                <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"></path>
+                                </svg>
+                                Gestito dall'Admin
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -6400,42 +7814,42 @@ window.renderStandings = (sortColumn = null) => {
     };
     
     const table = document.createElement('table');
-    table.className = 'min-w-full bg-gray-800 rounded-lg overflow-hidden';
+    table.className = 'w-full bg-gray-800 rounded-lg overflow-hidden text-sm';
     
-    // Header con colonne visibili in base alla dimensione schermo
+    // Header con colonne ottimizzate per evitare scroll orizzontale
     table.innerHTML = `
         <thead>
-            <tr class="bg-gray-700 text-gray-400 text-sm">
-                <th class="px-3 py-2 text-center">#</th>
-                <th class="px-4 py-2 text-left cursor-pointer hover:bg-gray-600 transition-colors" colspan="2" onclick="renderStandings('team')">
+            <tr class="bg-gray-700 text-gray-400 text-xs">
+                <th class="px-2 py-2 text-center w-8">#</th>
+                <th class="px-2 py-2 text-left cursor-pointer hover:bg-gray-600 transition-colors" colspan="2" onclick="renderStandings('team')">
                     Squadra ${getSortIcon('team')}
                 </th>
-                <th class="px-3 py-2 text-center cursor-pointer hover:bg-gray-600 transition-colors" onclick="renderStandings('points')">
+                <th class="px-2 py-2 text-center cursor-pointer hover:bg-gray-600 transition-colors w-12" onclick="renderStandings('points')">
                     Pt ${getSortIcon('points')}
                 </th>
-                <th class="px-3 py-2 text-center cursor-pointer hover:bg-gray-600 transition-colors" onclick="renderStandings('fantasyPoints')">
+                <th class="px-2 py-2 text-center cursor-pointer hover:bg-gray-600 transition-colors w-12" onclick="renderStandings('fantasyPoints')">
                     Pti ${getSortIcon('fantasyPoints')}
                 </th>
-                <!-- Colonne nascoste su mobile (< 768px) -->
-                <th class="px-3 py-2 text-center cursor-pointer hover:bg-gray-600 transition-colors hidden md:table-cell" onclick="renderStandings('played')">
+                <!-- Colonne nascoste su mobile e tablet -->
+                <th class="px-2 py-2 text-center cursor-pointer hover:bg-gray-600 transition-colors hidden lg:table-cell w-10" onclick="renderStandings('played')">
                     G ${getSortIcon('played')}
                 </th>
-                <th class="px-3 py-2 text-center cursor-pointer hover:bg-gray-600 transition-colors hidden md:table-cell" onclick="renderStandings('wins')">
+                <th class="px-2 py-2 text-center cursor-pointer hover:bg-gray-600 transition-colors hidden lg:table-cell w-10" onclick="renderStandings('wins')">
                     V ${getSortIcon('wins')}
                 </th>
-                <th class="px-3 py-2 text-center cursor-pointer hover:bg-gray-600 transition-colors hidden md:table-cell" onclick="renderStandings('draws')">
+                <th class="px-2 py-2 text-center cursor-pointer hover:bg-gray-600 transition-colors hidden lg:table-cell w-10" onclick="renderStandings('draws')">
                     N ${getSortIcon('draws')}
                 </th>
-                <th class="px-3 py-2 text-center cursor-pointer hover:bg-gray-600 transition-colors hidden md:table-cell" onclick="renderStandings('losses')">
+                <th class="px-2 py-2 text-center cursor-pointer hover:bg-gray-600 transition-colors hidden lg:table-cell w-10" onclick="renderStandings('losses')">
                     P ${getSortIcon('losses')}
                 </th>
-                <th class="px-3 py-2 text-center cursor-pointer hover:bg-gray-600 transition-colors hidden md:table-cell" onclick="renderStandings('goalsFor')">
+                <th class="px-2 py-2 text-center cursor-pointer hover:bg-gray-600 transition-colors hidden xl:table-cell w-10" onclick="renderStandings('goalsFor')">
                     GF ${getSortIcon('goalsFor')}
                 </th>
-                <th class="px-3 py-2 text-center cursor-pointer hover:bg-gray-600 transition-colors hidden md:table-cell" onclick="renderStandings('goalsAgainst')">
+                <th class="px-2 py-2 text-center cursor-pointer hover:bg-gray-600 transition-colors hidden xl:table-cell w-10" onclick="renderStandings('goalsAgainst')">
                     GS ${getSortIcon('goalsAgainst')}
                 </th>
-                <th class="px-3 py-2 text-center cursor-pointer hover:bg-gray-600 transition-colors hidden md:table-cell" onclick="renderStandings('goalDifference')">
+                <th class="px-2 py-2 text-center cursor-pointer hover:bg-gray-600 transition-colors hidden xl:table-cell w-12" onclick="renderStandings('goalDifference')">
                     DR ${getSortIcon('goalDifference')}
                 </th>
             </tr>
@@ -6448,7 +7862,7 @@ window.renderStandings = (sortColumn = null) => {
                 
                 // Classe per la posizione
                 let positionClass = '';
-                if (position === 1) positionClass = 'text-yellow-300 font-bold text-lg';
+                if (position === 1) positionClass = 'text-yellow-300 font-bold';
                 else if (position === 2) positionClass = 'text-gray-200 font-bold';
                 else if (position === 3) positionClass = 'text-orange-300 font-bold';
                 else if (isLast) positionClass = 'text-red-300 font-bold';
@@ -6472,21 +7886,23 @@ window.renderStandings = (sortColumn = null) => {
                 
                 return `
                     <tr class="${rowClass}">
-                        <td class="px-3 py-3 text-center ${positionClass}">${position}</td>
-                        <td class="px-2 py-3 text-center">
+                        <td class="px-2 py-2 text-center ${positionClass}">${position}</td>
+                        <td class="px-1 py-2 text-center">
                             <img src="${getTeamLogo(team.team)}" alt="${team.team}" class="w-8 h-8 object-contain mx-auto" onerror="this.style.display='none'">
                         </td>
-                        <td class="px-2 py-3 text-left font-semibold">${team.team}</td>
-                        <td class="px-3 py-3 text-center font-bold text-green-400">${team.points}</td>
-                        <td class="px-3 py-3 text-center font-bold text-blue-400">${team.fantasyPoints ? team.fantasyPoints.toFixed(1) : '0.0'}</td>
+                        <td class="px-2 py-2 text-left font-semibold cursor-pointer hover:text-blue-400 transition-colors" onclick="showTeamStats('${team.team.replace(/'/g, "\\'")}')">
+                            ${team.team}
+                        </td>
+                        <td class="px-2 py-2 text-center font-bold text-green-400 w-10">${team.points}</td>
+                        <td class="px-2 py-2 text-center font-bold text-blue-400 w-10">${team.fantasyPoints ? team.fantasyPoints.toFixed(1) : '0.0'}</td>
                         <!-- Colonne nascoste su mobile -->
-                        <td class="px-3 py-3 text-center text-sm hidden md:table-cell">${team.played}</td>
-                        <td class="px-3 py-3 text-center text-sm text-green-300 hidden md:table-cell">${team.wins}</td>
-                        <td class="px-3 py-3 text-center text-sm text-yellow-300 hidden md:table-cell">${team.draws}</td>
-                        <td class="px-3 py-3 text-center text-sm text-red-300 hidden md:table-cell">${team.losses}</td>
-                        <td class="px-3 py-3 text-center text-sm hidden md:table-cell">${team.goalsFor}</td>
-                        <td class="px-3 py-3 text-center text-sm hidden md:table-cell">${team.goalsAgainst}</td>
-                        <td class="px-3 py-3 text-center text-sm font-semibold ${drClass} hidden md:table-cell">${team.goalDifference > 0 ? '+' : ''}${team.goalDifference}</td>
+                        <td class="px-2 py-2 text-center text-xs hidden lg:table-cell w-8">${team.played}</td>
+                        <td class="px-2 py-2 text-center text-xs text-green-300 hidden lg:table-cell w-8">${team.wins}</td>
+                        <td class="px-2 py-2 text-center text-xs text-yellow-300 hidden lg:table-cell w-8">${team.draws}</td>
+                        <td class="px-2 py-2 text-center text-xs text-red-300 hidden lg:table-cell w-8">${team.losses}</td>
+                        <td class="px-2 py-2 text-center text-xs hidden xl:table-cell w-10">${team.goalsFor}</td>
+                        <td class="px-2 py-2 text-center text-xs hidden xl:table-cell w-10">${team.goalsAgainst}</td>
+                        <td class="px-2 py-2 text-center text-xs font-semibold ${drClass} hidden xl:table-cell w-12">${team.goalDifference > 0 ? '+' : ''}${team.goalDifference}</td>
                     </tr>
                 `;
             }).join('')}
@@ -9191,174 +10607,9 @@ window.toggleAdditionalStats = () => {
             }
         };
 
-        // --- Effetto Halloween INTENSO (30 ottobre - 2 novembre 2025) ---
-        function initHalloweenEffect() {
-            const now = new Date();
-            const currentDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-            const startDate = new Date(2025, 9, 30); // 30 ottobre 2025 (mese 9 = ottobre)
-            const endDate = new Date(2025, 10, 2); // 2 novembre 2025 (mese 10 = novembre)
-            
-            // Verifica se siamo nel periodo Halloween
-            if (currentDate >= startDate && currentDate <= endDate) {
-                console.log('🎃👻💀 HALLOWEEN MODE ACTIVATED! 💀👻🎃');
-                const overlay = document.getElementById('halloween-overlay');
-                if (!overlay) return;
-                
-                // Array di emoji Halloween
-                const halloweenEmojis = ['🎃', '👻', '💀', '🕷️', '🕸️', '🦇', '🧛', '🧟', '☠️', '🪦', '🔮', '🧙'];
-                
-                // Crea ragnatele negli angoli (più grandi)
-                const webTopLeft = document.createElement('div');
-                webTopLeft.className = 'web-corner top-left';
-                webTopLeft.style.transform = 'scale(1.5)';
-                overlay.appendChild(webTopLeft);
-                
-                const webTopRight = document.createElement('div');
-                webTopRight.className = 'web-corner top-right';
-                webTopRight.style.transform = 'scale(1.5)';
-                overlay.appendChild(webTopRight);
-                
-                // RAGNI CHE SCENDONO - Molti di più!
-                for (let i = 0; i < 15; i++) {
-                    setTimeout(() => {
-                        const spider = document.createElement('div');
-                        spider.className = 'spider';
-                        spider.innerHTML = '🕷️';
-                        spider.style.left = `${Math.random() * 95}%`;
-                        spider.style.fontSize = `${Math.random() * 20 + 20}px`;
-                        spider.style.animationDelay = `${Math.random() * 3}s`;
-                        spider.style.animationDuration = `${Math.random() * 4 + 6}s`;
-                        overlay.appendChild(spider);
-                        setTimeout(() => spider.remove(), 10000);
-                    }, i * 400);
-                }
-                
-                // PIPISTRELLI CHE VOLANO - Un'invasione!
-                for (let i = 0; i < 20; i++) {
-                    setTimeout(() => {
-                        const bat = document.createElement('div');
-                        bat.className = 'bat';
-                        bat.innerHTML = '🦇';
-                        bat.style.top = `${Math.random() * 80}%`;
-                        bat.style.fontSize = `${Math.random() * 15 + 25}px`;
-                        bat.style.animationDelay = `${Math.random() * 2}s`;
-                        bat.style.animationDuration = `${Math.random() * 3 + 4}s`;
-                        overlay.appendChild(bat);
-                        setTimeout(() => bat.remove(), 8000);
-                    }, i * 300);
-                }
-                
-                // FANTASMI CHE FLUTTUANO
-                for (let i = 0; i < 12; i++) {
-                    setTimeout(() => {
-                        const ghost = document.createElement('div');
-                        ghost.className = 'bat';
-                        ghost.innerHTML = '👻';
-                        ghost.style.top = `${Math.random() * 70 + 10}%`;
-                        ghost.style.fontSize = `${Math.random() * 20 + 30}px`;
-                        ghost.style.animationDelay = `${Math.random() * 1.5}s`;
-                        ghost.style.animationDuration = `${Math.random() * 2 + 5}s`;
-                        ghost.style.opacity = '0.8';
-                        overlay.appendChild(ghost);
-                        setTimeout(() => ghost.remove(), 7000);
-                    }, i * 500);
-                }
-                
-                // ZUCCHE CHE CADONO
-                for (let i = 0; i < 10; i++) {
-                    setTimeout(() => {
-                        const pumpkin = document.createElement('div');
-                        pumpkin.className = 'spider';
-                        pumpkin.innerHTML = '🎃';
-                        pumpkin.style.left = `${Math.random() * 90}%`;
-                        pumpkin.style.fontSize = `${Math.random() * 25 + 30}px`;
-                        pumpkin.style.animationDelay = `${Math.random() * 2}s`;
-                        pumpkin.style.animationDuration = `${Math.random() * 3 + 5}s`;
-                        overlay.appendChild(pumpkin);
-                        setTimeout(() => pumpkin.remove(), 9000);
-                    }, i * 600);
-                }
-                
-                // TESCHI E SCHELETRI
-                for (let i = 0; i < 8; i++) {
-                    setTimeout(() => {
-                        const skull = document.createElement('div');
-                        skull.className = 'spider';
-                        skull.innerHTML = i % 2 === 0 ? '💀' : '☠️';
-                        skull.style.left = `${Math.random() * 90}%`;
-                        skull.style.fontSize = `${Math.random() * 20 + 25}px`;
-                        skull.style.animationDelay = `${Math.random() * 2.5}s`;
-                        skull.style.animationDuration = `${Math.random() * 4 + 6}s`;
-                        overlay.appendChild(skull);
-                        setTimeout(() => skull.remove(), 10000);
-                    }, i * 700);
-                }
-                
-                // RAGNATELE VOLANTI
-                for (let i = 0; i < 8; i++) {
-                    setTimeout(() => {
-                        const web = document.createElement('div');
-                        web.className = 'bat';
-                        web.innerHTML = '🕸️';
-                        web.style.top = `${Math.random() * 80}%`;
-                        web.style.fontSize = `${Math.random() * 25 + 35}px`;
-                        web.style.animationDelay = `${Math.random() * 1}s`;
-                        web.style.animationDuration = `${Math.random() * 4 + 5}s`;
-                        web.style.opacity = '0.7';
-                        overlay.appendChild(web);
-                        setTimeout(() => web.remove(), 9000);
-                    }, i * 800);
-                }
-                
-                // VAMPIRI E ZOMBIE
-                for (let i = 0; i < 6; i++) {
-                    setTimeout(() => {
-                        const monster = document.createElement('div');
-                        monster.className = 'bat';
-                        monster.innerHTML = i % 2 === 0 ? '�' : '🧟';
-                        monster.style.top = `${Math.random() * 70 + 15}%`;
-                        monster.style.fontSize = `${Math.random() * 15 + 35}px`;
-                        monster.style.animationDelay = `${Math.random() * 1.5}s`;
-                        monster.style.animationDuration = `${Math.random() * 3 + 5}s`;
-                        overlay.appendChild(monster);
-                        setTimeout(() => monster.remove(), 8000);
-                    }, i * 1000);
-                }
-                
-                // EXTRA RANDOM MIX
-                for (let i = 0; i < 15; i++) {
-                    setTimeout(() => {
-                        const randomElement = document.createElement('div');
-                        randomElement.className = Math.random() > 0.5 ? 'bat' : 'spider';
-                        randomElement.innerHTML = halloweenEmojis[Math.floor(Math.random() * halloweenEmojis.length)];
-                        randomElement.style.left = `${Math.random() * 95}%`;
-                        randomElement.style.top = `${Math.random() * 80}%`;
-                        randomElement.style.fontSize = `${Math.random() * 20 + 20}px`;
-                        randomElement.style.animationDelay = `${Math.random() * 2}s`;
-                        randomElement.style.animationDuration = `${Math.random() * 3 + 4}s`;
-                        overlay.appendChild(randomElement);
-                        setTimeout(() => randomElement.remove(), 8000);
-                    }, i * 350);
-                }
-                
-                // Attiva l'overlay
-                overlay.classList.add('active');
-                
-                // Rimuovi tutto dopo 12 secondi
-                setTimeout(() => {
-                    overlay.style.animation = 'fade-out 2s ease-out';
-                    setTimeout(() => {
-                        overlay.remove();
-                        console.log('🎃 Happy Halloween! Effetto completato 🎃');
-                    }, 2000);
-                }, 12000);
-            }
-        }
-
         // --- Inizializzazione ---
         window.onload = () => {
             setupFirebase();
-            initHalloweenEffect(); // Attiva effetto Halloween se nel periodo
         };
     </script>
     
@@ -9367,7 +10618,7 @@ window.toggleAdditionalStats = () => {
         <div class="container mx-auto px-4 text-center">
             <p class="text-xs text-gray-500">
                 <span class="font-semibold text-gray-400">FANTABet</span> • 
-                Versione 2.3 • 
+                Versione 2.4 • 
                 Ultimo aggiornamento: <span class="text-gray-400">24 Dicembre 2025</span>
             </p>
             <p class="text-xs text-gray-600 mt-1">
