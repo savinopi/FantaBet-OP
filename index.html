@@ -1744,71 +1744,6 @@
                         <div id="bonus-cards-container" class="space-y-3">
                             <!-- Cards renderizzate da JS -->
                         </div>
-                        
-                        <!-- Sezione EA FC POTM -->
-                        <div class="mt-8 border-t-2 border-purple-500 pt-6">
-                            <h3 class="text-xl font-bold mb-4 text-purple-400 flex items-center">
-                                <svg class="w-6 h-6 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
-                                </svg>
-                                Bonus EA FC POTM
-                            </h3>
-                            
-                            <div class="bg-purple-900/20 border border-purple-500/30 rounded-lg px-4 py-3 mb-4">
-                                <p class="text-sm text-purple-300">
-                                    <svg class="w-5 h-5 inline mr-2" fill="currentColor" viewBox="0 0 20 20">
-                                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
-                                    </svg>
-                                    <strong>Bonus Mensile Speciale:</strong> Assegna il bonus EA FC POTM a una squadra. La squadra potrà utilizzarlo una sola volta nel mese corrente.
-                                </p>
-                            </div>
-                            
-                            <div class="bg-gray-800 border border-gray-700 rounded-lg p-4">
-                                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                                    <div>
-                                        <label class="block text-sm font-semibold text-gray-400 mb-2">Squadra Assegnata</label>
-                                        <select id="potm-team-select" class="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white">
-                                            <option value="">-- Nessuna Squadra --</option>
-                                        </select>
-                                    </div>
-                                    <div>
-                                        <label class="block text-sm font-semibold text-gray-400 mb-2">Mese/Anno</label>
-                                        <input id="potm-month-input" type="month" class="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white">
-                                    </div>
-                                    <div>
-                                        <label class="block text-sm font-semibold text-gray-400 mb-2">Giornata Utilizzo (opzionale)</label>
-                                        <select id="potm-giornata-select" class="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white">
-                                            <option value="">-- Non ancora usato --</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                
-                                <div id="potm-status" class="mb-4 p-3 rounded-lg bg-gray-700/50">
-                                    <p class="text-sm text-gray-400">Carica i dati per vedere lo stato del POTM</p>
-                                </div>
-                                
-                                <div class="flex flex-col sm:flex-row gap-2">
-                                    <button onclick="loadPOTMData()" class="btn-primary flex-1">
-                                        <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
-                                        </svg>
-                                        Carica POTM
-                                    </button>
-                                    <button onclick="savePOTMData()" class="btn-success flex-1">
-                                        <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                                        </svg>
-                                        Assegna POTM
-                                    </button>
-                                    <button onclick="resetPOTMData()" class="btn-danger flex-1">
-                                        <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                                        </svg>
-                                        Reset POTM
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
                     </div>
 
                     <div id="admin-tab-danger" class="admin-tab-content card p-6 mt-4 hidden border-red-600">
@@ -2160,7 +2095,6 @@
         };
 
         window.setAppView = async (view) => {
-            console.log('setAppView chiamato con view:', view);
             
             // Ferma il timer del countdown se stiamo uscendo dalla sezione betting
             if (currentView === 'betting' && view !== 'betting' && countdownInterval) {
@@ -2200,12 +2134,9 @@
                 draw: 'draw-container'
             };
 
-            console.log('Container disponibili:', containers);
-
             // Nascondi tutte le sezioni principali
             Object.values(containers).forEach(id => {
                 const el = document.getElementById(id);
-                console.log(`Cercando elemento ${id}:`, el ? 'trovato' : 'non trovato');
                 if (el) el.classList.add('hidden');
             });
 
@@ -2213,7 +2144,6 @@
             const viewId = containers[view];
             if (viewId) {
                 const el = document.getElementById(viewId);
-                console.log(`Tentativo di mostrare ${viewId}:`, el ? 'elemento trovato' : 'elemento non trovato');
                 if (el) {
                     el.classList.remove('hidden');
                     // Se stiamo passando alla sezione scommesse, forziamo il refresh
@@ -2444,7 +2374,7 @@
                     const teamName = bonusData.teamName;
                     
                     // Controlla se c'è un bonus richiesto per questa giornata
-                    const bonusTypes = ['RG', 'twoG', 'SC'];
+                    const bonusTypes = ['RG', 'twoG', 'SC', 'POTM'];
                     let requestedBonus = null;
                     
                     bonusTypes.forEach(type => {
@@ -3364,7 +3294,6 @@
         const getPlayersCollectionRef = () => collection(db, 'fantabet_players'); // Collection per i calciatori
         const getPlayerStatsCollectionRef = () => collection(db, 'fantabet_player_stats'); // Collection per le statistiche calciatori
         const getBonusCollectionRef = () => collection(db, 'fantabet_bonus'); // Collection per i bonus squadre
-        const getPOTMCollectionRef = () => collection(db, 'fantabet_potm'); // Collection per il bonus EA FC POTM
         
         // --- Gestione Teams e UI ---
 
@@ -5235,7 +5164,6 @@
                 }, 0);
 
             const last = Math.max(fromMatches, fromResults);
-            console.log('determineLastCompletedGiornata ->', { fromMatches, fromResults, last });
             return last;
         };
 
@@ -6339,14 +6267,20 @@
                 // Inizializza i dati bonus per ogni squadra
                 currentBonusData = teams.map(teamName => {
                     if (existingBonus.has(teamName)) {
-                        return existingBonus.get(teamName);
+                        const teamData = existingBonus.get(teamName);
+                        // Assicura che POTM esista
+                        if (!teamData.POTM) {
+                            teamData.POTM = { total: 0, available: 0, usedInGiornata: [] };
+                        }
+                        return teamData;
                     } else {
                         // Inizializza con valori di default
                         return {
                             teamName: teamName,
-                            RG: { total: 1, available: 1, usedInGiornata: null },
-                            twoG: { total: 1, available: 1, usedInGiornata: null },
-                            SC: { total: 1, available: 1, usedInGiornata: null }
+                            RG: { total: 1, available: 1, usedInGiornata: [] },
+                            twoG: { total: 1, available: 1, usedInGiornata: [] },
+                            SC: { total: 1, available: 1, usedInGiornata: [] },
+                            POTM: { total: 0, available: 0, usedInGiornata: [] }
                         };
                     }
                 });
@@ -6371,10 +6305,12 @@
                 const rgUsedCount = team.RG.usedInGiornata ? team.RG.usedInGiornata.length : 0;
                 const twoGUsedCount = team.twoG.usedInGiornata ? team.twoG.usedInGiornata.length : 0;
                 const scUsedCount = team.SC.usedInGiornata ? team.SC.usedInGiornata.length : 0;
+                const potmUsedCount = team.POTM.usedInGiornata ? team.POTM.usedInGiornata.length : 0;
                 
                 const rgAvailable = (team.RG.total || 1) - rgUsedCount;
                 const twoGAvailable = (team.twoG.total || 1) - twoGUsedCount;
                 const scAvailable = (team.SC.total || 1) - scUsedCount;
+                const potmAvailable = (team.POTM.total || 0) - potmUsedCount;
                 
                 // Crea una card per ogni squadra
                 const card = document.createElement('div');
@@ -6386,8 +6322,8 @@
                         <h4 class="font-bold text-white text-base">${team.teamName}</h4>
                     </div>
                     
-                    <!-- Grid 3 colonne per i bonus -->
-                    <div class="grid grid-cols-3 gap-2">
+                    <!-- Grid 4 colonne per i bonus -->
+                    <div class="grid grid-cols-4 gap-2">
                         <!-- Colonna RG -->
                         <div class="bg-red-900/10 rounded-lg p-2">
                             <div class="flex items-center justify-center mb-2">
@@ -6483,6 +6419,38 @@
                                 ${renderCompactBonusSelects(team.teamName, 'SC', team.SC.usedInGiornata, team.SC.total || 1)}
                             </div>
                         </div>
+                        
+                        <!-- Colonna POTM -->
+                        <div class="bg-purple-900/10 rounded-lg p-2">
+                            <div class="flex items-center justify-center mb-2">
+                                <span class="w-8 h-8 bg-purple-900 text-purple-300 rounded font-bold flex items-center justify-center text-xs">PM</span>
+                            </div>
+                            
+                            <!-- Totali -->
+                            <div class="mb-2">
+                                <label class="text-xs text-gray-400 block text-center mb-1">Totali</label>
+                                <input 
+                                    type="number" 
+                                    min="0" 
+                                    max="10" 
+                                    value="${team.POTM.total || 0}"
+                                    data-team="${team.teamName}" 
+                                    data-bonus="POTM"
+                                    class="w-full bg-gray-700 border border-gray-600 rounded px-2 py-1 text-center text-white text-sm"
+                                    onchange="updateBonusTotal(this)">
+                            </div>
+                            
+                            <!-- Disponibili -->
+                            <div class="text-center mb-2">
+                                <span class="text-xs text-gray-400">Disp:</span>
+                                <span class="text-${potmAvailable > 0 ? 'green' : 'gray'}-400 font-bold ml-1">${potmAvailable}</span>
+                            </div>
+                            
+                            <!-- Select Giornate -->
+                            <div class="space-y-1">
+                                ${renderCompactBonusSelects(team.teamName, 'POTM', team.POTM.usedInGiornata, team.POTM.total || 0)}
+                            </div>
+                        </div>
                     </div>
                 `;
                 
@@ -6495,7 +6463,8 @@
             const used = usedInGiornata || [];
             const colorClass = bonusType === 'RG' ? 'text-red-400' : 
                               bonusType === 'twoG' ? 'text-green-400' : 
-                              'text-blue-400';
+                              bonusType === 'SC' ? 'text-blue-400' :
+                              'text-purple-400';
             
             let html = '';
             
@@ -6648,6 +6617,7 @@
                         RG: team.RG,
                         twoG: team.twoG,
                         SC: team.SC,
+                        POTM: team.POTM,
                         lastUpdate: new Date().toISOString()
                     };
                     
@@ -6673,187 +6643,6 @@
                 console.error('Errore salvataggio bonus:', error);
                 hideProgressBar();
                 messageBox('Errore nel salvataggio: ' + error.message);
-            }
-        };
-        
-        // === EA FC POTM MANAGEMENT ===
-        
-        let currentPOTMData = null;
-        
-        // Carica i dati del POTM corrente
-        window.loadPOTMData = async () => {
-            if (!isUserAdmin) {
-                messageBox('Solo gli admin possono gestire il POTM.');
-                return;
-            }
-            
-            try {
-                // Imposta il mese corrente come default
-                const now = new Date();
-                const currentMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
-                document.getElementById('potm-month-input').value = currentMonth;
-                
-                // Carica le squadre
-                const teamsSnapshot = await getDocs(getTeamCollectionRef());
-                const teams = teamsSnapshot.docs.map(doc => doc.data().name).sort();
-                
-                const teamSelect = document.getElementById('potm-team-select');
-                teamSelect.innerHTML = '<option value="">-- Nessuna Squadra --</option>';
-                teams.forEach(team => {
-                    const option = document.createElement('option');
-                    option.value = team;
-                    option.textContent = team;
-                    teamSelect.appendChild(option);
-                });
-                
-                // Popola select giornate
-                const giornataSelect = document.getElementById('potm-giornata-select');
-                giornataSelect.innerHTML = '<option value="">-- Non ancora usato --</option>';
-                for (let i = 1; i <= 36; i++) {
-                    const option = document.createElement('option');
-                    option.value = i;
-                    option.textContent = `Giornata ${i}`;
-                    giornataSelect.appendChild(option);
-                }
-                
-                // Carica il POTM esistente per il mese corrente
-                const potmSnapshot = await getDocs(getPOTMCollectionRef());
-                currentPOTMData = null;
-                
-                potmSnapshot.docs.forEach(doc => {
-                    const data = doc.data();
-                    if (data.month === currentMonth) {
-                        currentPOTMData = { id: doc.id, ...data };
-                    }
-                });
-                
-                // Aggiorna l'interfaccia
-                if (currentPOTMData) {
-                    teamSelect.value = currentPOTMData.assignedTeam || '';
-                    document.getElementById('potm-month-input').value = currentPOTMData.month || currentMonth;
-                    document.getElementById('potm-giornata-select').value = currentPOTMData.usedInGiornata || '';
-                    
-                    const statusDiv = document.getElementById('potm-status');
-                    const usedStatus = currentPOTMData.used && currentPOTMData.usedInGiornata ? 
-                        `<span class="text-yellow-400">✓ Utilizzato (Giornata ${currentPOTMData.usedInGiornata})</span>` :
-                        '<span class="text-green-400">✓ Assegnato ma non ancora usato</span>';
-                    
-                    statusDiv.innerHTML = `
-                        <p class="text-sm">
-                            <strong class="text-purple-400">Stato Corrente:</strong><br>
-                            <span class="text-white">Squadra: ${currentPOTMData.assignedTeam || 'Nessuna'}</span><br>
-                            <span class="text-white">Mese: ${currentPOTMData.month}</span><br>
-                            ${usedStatus}
-                        </p>
-                    `;
-                } else {
-                    document.getElementById('potm-status').innerHTML = `
-                        <p class="text-sm text-yellow-400">
-                            <svg class="w-4 h-4 inline mr-1" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
-                            </svg>
-                            Nessun POTM assegnato per questo mese
-                        </p>
-                    `;
-                }
-                
-                messageBox('Dati POTM caricati!');
-                
-            } catch (error) {
-                console.error('Errore caricamento POTM:', error);
-                messageBox('Errore nel caricamento del POTM: ' + error.message);
-            }
-        };
-        
-        // Salva/Assegna il POTM
-        window.savePOTMData = async () => {
-            if (!isUserAdmin) {
-                messageBox('Solo gli admin possono assegnare il POTM.');
-                return;
-            }
-            
-            const teamSelect = document.getElementById('potm-team-select');
-            const monthInput = document.getElementById('potm-month-input');
-            const giornataSelect = document.getElementById('potm-giornata-select');
-            
-            const assignedTeam = teamSelect.value;
-            const month = monthInput.value;
-            const usedInGiornata = giornataSelect.value ? parseInt(giornataSelect.value) : null;
-            
-            if (!assignedTeam) {
-                messageBox('Seleziona una squadra per assegnare il POTM.');
-                return;
-            }
-            
-            if (!month) {
-                messageBox('Seleziona il mese per il POTM.');
-                return;
-            }
-            
-            const confirmMsg = usedInGiornata 
-                ? `Assegnare il Bonus EA FC POTM a "${assignedTeam}" per il mese ${month} e segnarlo come usato nella Giornata ${usedInGiornata}?`
-                : `Assegnare il Bonus EA FC POTM a "${assignedTeam}" per il mese ${month} (non ancora usato)?`;
-            
-            if (!confirm(confirmMsg)) {
-                return;
-            }
-            
-            try {
-                const potmData = {
-                    assignedTeam: assignedTeam,
-                    month: month,
-                    used: usedInGiornata !== null,
-                    usedInGiornata: usedInGiornata,
-                    assignedDate: new Date().toISOString()
-                };
-                
-                const potmCollection = getPOTMCollectionRef();
-                
-                if (currentPOTMData && currentPOTMData.id) {
-                    // Aggiorna documento esistente
-                    await updateDoc(doc(potmCollection, currentPOTMData.id), potmData);
-                } else {
-                    // Crea nuovo documento
-                    const docRef = await addDoc(potmCollection, potmData);
-                    currentPOTMData = { id: docRef.id, ...potmData };
-                }
-                
-                messageBox(`Bonus EA FC POTM ${usedInGiornata ? 'assegnato e marcato come usato' : 'assegnato'} per ${assignedTeam}!`);
-                await loadPOTMData(); // Ricarica per aggiornare lo stato
-                
-            } catch (error) {
-                console.error('Errore salvataggio POTM:', error);
-                messageBox('Errore nel salvataggio del POTM: ' + error.message);
-            }
-        };
-        
-        // Reset del POTM
-        window.resetPOTMData = async () => {
-            if (!isUserAdmin) {
-                messageBox('Solo gli admin possono resettare il POTM.');
-                return;
-            }
-            
-            if (!currentPOTMData || !currentPOTMData.id) {
-                messageBox('Nessun POTM da resettare per questo mese.');
-                return;
-            }
-            
-            if (!confirm('Sei sicuro di voler eliminare il POTM corrente? Questa azione non può essere annullata.')) {
-                return;
-            }
-            
-            try {
-                const potmCollection = getPOTMCollectionRef();
-                await deleteDoc(doc(potmCollection, currentPOTMData.id));
-                
-                currentPOTMData = null;
-                messageBox('Bonus EA FC POTM resettato con successo!');
-                await loadPOTMData(); // Ricarica per aggiornare lo stato
-                
-            } catch (error) {
-                console.error('Errore reset POTM:', error);
-                messageBox('Errore nel reset del POTM: ' + error.message);
             }
         };
         
@@ -6902,32 +6691,19 @@
                 if (!userBonusDoc) {
                     userBonusDoc = {
                         teamName: userSquad,
-                        RG: { total: 1, available: 1, usedInGiornata: null },
-                        twoG: { total: 1, available: 1, usedInGiornata: null },
-                        SC: { total: 1, available: 1, usedInGiornata: null }
+                        RG: { total: 0, available: 0, usedInGiornata: [] },
+                        twoG: { total: 0, available: 0, usedInGiornata: [] },
+                        SC: { total: 0, available: 0, usedInGiornata: [] },
+                        POTM: { total: 0, available: 0, usedInGiornata: [] }
                     };
                 }
                 
-                currentUserBonusData = userBonusDoc;
-                
-                // Carica il POTM per il mese corrente
-                const now = new Date();
-                const currentMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
-                const potmSnapshot = await getDocs(getPOTMCollectionRef());
-                let userPOTM = null;
-                
-                potmSnapshot.docs.forEach(doc => {
-                    const data = doc.data();
-                    // Verifica se il POTM è assegnato alla squadra dell'utente e per il mese corrente
-                    if (data.assignedTeam === userSquad && data.month === currentMonth) {
-                        userPOTM = { id: doc.id, ...data };
-                    }
-                });
-                
-                // Aggiungi il POTM ai dati bonus se esiste
-                if (userPOTM) {
-                    currentUserBonusData.POTM = userPOTM;
+                // Assicurati che POTM esista nell'oggetto
+                if (!userBonusDoc.POTM) {
+                    userBonusDoc.POTM = { total: 0, available: 0, usedInGiornata: [] };
                 }
+                
+                currentUserBonusData = userBonusDoc;
                 
                 // Carica la giornata ATTIVA dal database
                 const activeGiornata = await loadActiveGiornata();
@@ -7247,15 +7023,19 @@
             const rgRequestedForNext = team.RG.usedInGiornata && team.RG.usedInGiornata.includes(nextGiornata);
             const twoGRequestedForNext = team.twoG.usedInGiornata && team.twoG.usedInGiornata.includes(nextGiornata);
             const scRequestedForNext = team.SC.usedInGiornata && team.SC.usedInGiornata.includes(nextGiornata);
+            const potmRequestedForNext = team.POTM.usedInGiornata && team.POTM.usedInGiornata.includes(nextGiornata);
             
             // Calcola quanti bonus sono disponibili in totale
             const rgUsedCount = team.RG.usedInGiornata ? team.RG.usedInGiornata.length : 0;
             const twoGUsedCount = team.twoG.usedInGiornata ? team.twoG.usedInGiornata.length : 0;
             const scUsedCount = team.SC.usedInGiornata ? team.SC.usedInGiornata.length : 0;
+            const potmUsedCount = team.POTM.usedInGiornata ? team.POTM.usedInGiornata.length : 0;
             
             const rgAvailable = (team.RG.total || 1) - rgUsedCount;
             const twoGAvailable = (team.twoG.total || 1) - twoGUsedCount;
             const scAvailable = (team.SC.total || 1) - scUsedCount;
+            const potmAvailable = (team.POTM.total || 0) - potmUsedCount;
+            const potmTotal = team.POTM.total || 0;
             
             container.innerHTML = `
                 ${opponentInfo}
@@ -7400,15 +7180,15 @@
                         </div>
                     </div>
                     
-                    <!-- Colonna POTM (EA FC Player of the Month) - Solo visualizzazione -->
-                    <div class="bg-gradient-to-br from-purple-900/20 to-purple-800/10 border-2 border-purple-700/50 rounded-xl p-3 sm:p-6 ${team.POTM ? 'border-purple-500 shadow-lg shadow-purple-500/20' : 'opacity-60'}">
+                    <!-- Colonna POTM (EA FC Player of the Month) -->
+                    <div class="bg-gradient-to-br from-purple-900/20 to-purple-800/10 border-2 ${potmRequestedForNext ? 'border-purple-500 shadow-lg shadow-purple-500/20' : 'border-purple-700/50'} rounded-xl p-3 sm:p-6 ${potmAvailable > 0 ? '' : 'opacity-60'}">
                         <div class="flex items-center justify-center mb-3 sm:mb-4">
                             <div class="relative">
-                                <div class="absolute inset-0 bg-purple-500 rounded-full blur-lg sm:blur-xl opacity-50 ${team.POTM && !team.POTM.used ? 'animate-pulse' : ''}"></div>
+                                <div class="absolute inset-0 bg-purple-500 rounded-full blur-lg sm:blur-xl opacity-50 ${potmAvailable > 0 ? 'animate-pulse' : ''}"></div>
                                 <div class="relative w-16 h-16 sm:w-24 sm:h-24 bg-gradient-to-br from-purple-600 to-purple-800 rounded-full flex items-center justify-center shadow-2xl border-2 sm:border-4 border-purple-400 p-2 sm:p-3">
                                     <img src="https://raw.githubusercontent.com/savinopi/FantaBet-OP/main/ea-sports_fc_logo-freelogovectors.net_.png" alt="EA Sports FC" class="w-full h-full object-contain" style="filter: brightness(0) invert(1);" onerror="this.style.display='none'">
                                     <span class="absolute -top-1 -right-1 flex h-5 w-5 sm:h-6 sm:w-6">
-                                        <span class="${team.POTM && !team.POTM.used ? 'animate-ping' : ''} absolute inline-flex h-full w-full rounded-full bg-purple-400 opacity-75"></span>
+                                        <span class="${potmAvailable > 0 ? 'animate-ping' : ''} absolute inline-flex h-full w-full rounded-full bg-purple-400 opacity-75"></span>
                                         <span class="relative inline-flex rounded-full h-5 w-5 sm:h-6 sm:w-6 bg-purple-500 items-center justify-center text-xs">⭐</span>
                                     </span>
                                 </div>
@@ -7416,29 +7196,28 @@
                         </div>
                         
                         <h3 class="text-center text-base sm:text-xl font-black text-purple-400 mb-1 sm:mb-2 tracking-wide leading-tight">EA FC POTM</h3>
-                        <p class="text-center text-xs sm:text-sm text-gray-400 mb-4 italic">Bonus speciale mensile - Assegnato dall'Admin</p>
+                        <p class="text-center text-xs sm:text-sm text-gray-400 mb-4 italic">Player of the Month</p>
                         
                         <div class="text-center mb-4 bg-gray-900/50 rounded-lg py-2 px-3">
-                            ${team.POTM ? `
-                                <span class="text-xs sm:text-sm text-gray-400">Stato: </span>
-                                <span class="text-lg sm:text-xl font-black ${!team.POTM.used ? 'text-green-400' : 'text-yellow-400'}">
-                                    ${!team.POTM.used ? '✓ Assegnato' : `Usato G.${team.POTM.usedInGiornata}`}
-                                </span>
-                            ` : `
-                                <span class="text-xs sm:text-sm text-gray-400">Stato: </span>
-                                <span class="text-lg sm:text-xl font-black text-gray-500">
-                                    ✗ Non Assegnato
-                                </span>
-                            `}
+                            <span class="text-xs sm:text-sm text-gray-400">Disponibili: </span>
+                            <span class="text-lg sm:text-xl font-black ${potmAvailable > 0 ? 'text-green-400' : 'text-red-400'}">
+                                ${potmAvailable}/${potmTotal}
+                            </span>
                         </div>
                         
                         <div class="flex items-center justify-center">
-                            <div class="flex items-center text-xs text-gray-500 italic">
-                                <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"></path>
-                                </svg>
-                                Gestito dall'Admin
-                            </div>
+                            <label class="flex items-center cursor-pointer group ${potmAvailable > 0 ? '' : 'cursor-not-allowed opacity-50'}">
+                                <input 
+                                    type="checkbox" 
+                                    ${potmRequestedForNext ? 'checked' : ''}
+                                    ${potmAvailable > 0 ? '' : 'disabled'}
+                                    data-bonus="POTM"
+                                    onchange="toggleBonusRequest(this, ${nextGiornata})"
+                                    class="w-5 h-5 sm:w-6 sm:h-6 text-purple-600 bg-gray-700 border-2 border-gray-600 rounded focus:ring-2 focus:ring-purple-500 cursor-pointer">
+                                <span class="ml-2 sm:ml-3 text-sm sm:text-base text-white font-bold group-hover:text-purple-400 transition-colors">
+                                    ${potmRequestedForNext ? '✓ Richiesto' : 'Richiedi'}
+                                </span>
+                            </label>
                         </div>
                     </div>
                 </div>
@@ -7457,9 +7236,16 @@
                 const { deadline } = await getGiornataDeadline(giornata);
                 const now = new Date();
                 
+                console.log('Controllo deadline:', {
+                    giornata: giornata,
+                    now: now.toLocaleString('it-IT'),
+                    deadline: deadline.toLocaleString('it-IT'),
+                    isScaduta: now >= deadline
+                });
+                
                 if (now >= deadline) {
                     checkbox.checked = !checkbox.checked; // Ripristina lo stato precedente
-                    messageBox('⏰ La deadline per richiedere i bonus è scaduta!');
+                    messageBox(`⏰ La deadline per richiedere i bonus è scaduta!\n\nOra: ${now.toLocaleString('it-IT')}\nDeadline: ${deadline.toLocaleString('it-IT')}`);
                     return;
                 }
             } catch (error) {
@@ -7481,7 +7267,7 @@
             // Se l'utente sta selezionando un bonus
             if (checkbox.checked) {
                 // Verifica se c'è già un altro bonus richiesto per questa giornata
-                const bonusTypes = ['RG', 'twoG', 'SC'];
+                const bonusTypes = ['RG', 'twoG', 'SC', 'POTM'];
                 let anotherBonusAlreadyRequested = false;
                 
                 bonusTypes.forEach(type => {
@@ -7544,34 +7330,29 @@
             
             // Verifica che la deadline non sia scaduta
             try {
-                const lastCompletedGiornata = determineLastCompletedGiornata();
-                const nextGiornata = lastCompletedGiornata + 1;
-                const { deadline } = await getGiornataDeadline(nextGiornata);
+                // Usa la giornata attiva configurata dall'admin invece di calcolarla
+                const activeGiornata = await loadActiveGiornata();
+                if (!activeGiornata) {
+                    messageBox('❌ Nessuna giornata attiva al momento.');
+                    return;
+                }
+                
+                const { deadline } = await getGiornataDeadline(activeGiornata);
                 const now = new Date();
                 
+                console.log('saveUserBonusData - Controllo deadline:', {
+                    activeGiornata: activeGiornata,
+                    now: now.toLocaleString('it-IT'),
+                    deadline: deadline.toLocaleString('it-IT'),
+                    isScaduta: now >= deadline
+                });
+                
                 if (now >= deadline) {
-                    messageBox('⏰ La deadline per richiedere i bonus è scaduta! Non è possibile salvare modifiche.');
+                    messageBox(`⏰ La deadline per richiedere i bonus è scaduta!\n\nOra: ${now.toLocaleString('it-IT')}\nDeadline: ${deadline.toLocaleString('it-IT')}`);
                     return;
                 }
             } catch (error) {
                 console.error('Errore controllo deadline:', error);
-            }
-            
-            // Verifica che nessun bonus sia richiesto per giornate sospese
-            try {
-                const bonusTypes = ['RG', 'twoG', 'SC'];
-                for (const bonusType of bonusTypes) {
-                    const usedArray = currentUserBonusData[bonusType].usedInGiornata || [];
-                    for (const giornata of usedArray) {
-                        const isSuspended = await isGiornataSuspended(giornata);
-                        if (isSuspended) {
-                            messageBox(`⏸️ Non puoi richiedere bonus per la Giornata ${giornata} perché è stata sospesa!`);
-                            return;
-                        }
-                    }
-                }
-            } catch (error) {
-                console.error('Errore controllo giornate sospese:', error);
             }
             
             if (!confirm('Salvare le modifiche ai tuoi bonus?')) {
@@ -7588,6 +7369,7 @@
                     RG: currentUserBonusData.RG,
                     twoG: currentUserBonusData.twoG,
                     SC: currentUserBonusData.SC,
+                    POTM: currentUserBonusData.POTM,
                     lastUpdate: new Date().toISOString()
                 };
                 
@@ -10305,11 +10087,6 @@ window.toggleAdditionalStats = () => {
         };
         
         const renderAdminBetsList = (bets, users, filter = 'pending') => {
-            console.log('renderAdminBetsList chiamato:', {
-                totaleBets: bets?.length,
-                filtro: filter,
-                users: users?.length
-            });
             
             const listContainer = document.getElementById('admin-bets-list');
             if (!listContainer) {
@@ -10330,19 +10107,6 @@ window.toggleAdditionalStats = () => {
             } else if (filter === 'settled') {
                 filteredBets = bets.filter(b => b.settled);
             }
-
-            console.log('Scommesse dopo filtro:', {
-                filtro: filter,
-                totale: bets.length,
-                filtrate: filteredBets.length,
-                dettaglio: filteredBets.map(b => ({
-                    giornata: b.giornata,
-                    userId: b.userId,
-                    stake: b.stake,
-                    settled: b.settled,
-                    predictions: b.predictions?.length
-                }))
-            });
 
             if (filteredBets.length === 0) {
                 listContainer.innerHTML = `<p class="text-gray-500">Nessuna scommessa ${filter === 'pending' ? 'da liquidare' : filter === 'settled' ? 'liquidata' : ''} trovata.</p>`;
@@ -10623,88 +10387,27 @@ window.toggleAdditionalStats = () => {
             addUnsubscribe(
                 onSnapshot(getMatchesCollectionRef(), async (snapshot) => {
                     try {
-                        console.log('Snapshot delle partite ricevuto:', {
-                            numeroDoc: snapshot.docs.length,
-                            docs: snapshot.docs.map(doc => ({
-                                id: doc.id,
-                                ...doc.data()
-                            }))
-                        });
-
                         allMatches = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                        console.log('Partite caricate in allMatches:', allMatches.length);
                         
                         // 1. Aggiorna la tendina di chiusura Admin
                         updateMatchToCloseSelect(allMatches);
                 
 
                 // Determina l'ultima giornata con risultati
-                console.log('Analisi giornate dalle partite:', {
-                    totalePartite: allMatches.length,
-                    statoPartite: allMatches.map(m => ({
-                        partita: `${m.homeTeam} vs ${m.awayTeam}`,
-                        giornata: m.giornata,
-                        status: m.status,
-                        result: m.result
-                    }))
-                });
-                
                 const partiteChiuse = allMatches.filter(m => m.status === 'closed' && m.result);
-                console.log('Partite chiuse trovate:', {
-                    numero: partiteChiuse.length,
-                    dettaglio: partiteChiuse.map(m => ({
-                        partita: `${m.homeTeam} vs ${m.awayTeam}`,
-                        giornata: m.giornata,
-                        status: m.status,
-                        result: m.result
-                    }))
-                });
-                
                 let giornatePresenti = new Set(allMatches.map(m => parseInt(m.giornata || '0', 10)));
-                console.log('Giornate presenti nel sistema:', Array.from(giornatePresenti).sort());
 
                 // Usa anche i risultati storici per determinare l'ultima giornata completata
                 const lastCompletedGiornata = determineLastCompletedGiornata();
-                console.log('Ultima giornata completata (combinata):', lastCompletedGiornata);
 
                 // La prossima giornata è quella successiva all'ultima completata
                 let newNextGiornata = lastCompletedGiornata + 1;
-                console.log('Prossima giornata disponibile:', newNextGiornata);
                 
                 // Filtra le partite aperte solo della prossima giornata
-                console.log('Inizio filtro partite aperte. Stato attuale:', {
-                    totalePartite: allMatches.length,
-                    prossimaGiornata: newNextGiornata,
-                    partitePerStato: allMatches.reduce((acc, m) => {
-                        acc[m.status || 'undefined'] = (acc[m.status || 'undefined'] || 0) + 1;
-                        return acc;
-                    }, {})
-                });
-                
                 let openMatchesData = allMatches.filter(m => {
                     const isOpen = m.status === 'open' || !m.status;
                     const giornataNum = parseInt(m.giornata || '0', 10);
                     const isNextGiornata = giornataNum === newNextGiornata;
-                    
-                    console.log('Valutazione partita:', {
-                        partita: `${m.homeTeam} vs ${m.awayTeam}`,
-                        giornata: giornataNum,
-                        status: m.status,
-                        isOpen,
-                        isNextGiornata,
-                        prossimaGiornata: newNextGiornata,
-                        risultatoFiltro: isOpen && isNextGiornata
-                    });
-                    
-                    console.log('Analisi partita:', {
-                        partita: `${m.homeTeam} vs ${m.awayTeam}`,
-                        giornata: giornataNum,
-                        status: m.status,
-                        isOpen: isOpen,
-                        isNextGiornata: isNextGiornata,
-                        odds: m.odds
-                    });
-                    
                     return isOpen && isNextGiornata;
                 });
                 
@@ -10712,25 +10415,16 @@ window.toggleAdditionalStats = () => {
                 if (newNextGiornata !== nextGiornataNumber) {
                     nextGiornataNumber = newNextGiornata;
                     if (isUserAdmin) {
-                        setupAdminBetsListener(nextGiornataNumber, allUsersForAdmin); // Passa la lista utenti
+                        setupAdminBetsListener(nextGiornataNumber, allUsersForAdmin);
                     }
                 }
                 
-                if (nextGiornataNumber === 0) { // Nessuna giornata aperta valida
-                    openMatchesData = []; // Nessuna partita da mostrare
+                if (nextGiornataNumber === 0) {
+                    openMatchesData = [];
                 }
 
                 // 3. FILTRA le partite per includere solo la PROSSIMA GIORNATA
                 openMatchesData = openMatchesData.filter(m => parseInt(m.giornata) === newNextGiornata);
-                console.log('Partite filtrate per la prossima giornata:', {
-                    giornata: newNextGiornata,
-                    partiteTrovate: openMatchesData.length,
-                    dettaglio: openMatchesData.map(m => ({
-                        partita: `${m.homeTeam} vs ${m.awayTeam}`,
-                        giornata: m.giornata,
-                        status: m.status
-                    }))
-                });
 
                 // 4. Recupera la scommessa dell'utente per questa giornata (formato nuovo: una scommessa per giornata)
                 let userGiornataBet = null;
