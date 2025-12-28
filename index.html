@@ -995,7 +995,7 @@
                     </div>
 
                     <!-- Modal Statistiche Squadra -->
-                    <div id="team-stats-modal" class="hidden fixed inset-0 bg-black/95 z-[60] overflow-auto" style="padding-top: var(--safe-area-inset-top);">
+                    <div id="team-stats-modal" class="hidden fixed inset-0 bg-black/95 z-[9999] overflow-auto" style="padding-top: var(--safe-area-inset-top);">
                         <div class="min-h-screen p-4">
                             <!-- Header -->
                             <div class="flex items-center justify-between mb-6 sticky bg-black/90 backdrop-blur-sm py-3 px-2 rounded-lg" style="top: var(--safe-area-inset-top);">
@@ -1726,11 +1726,11 @@
                         <div class="bg-gray-800/50 border border-gray-600/30 rounded-lg px-3 py-2 mb-4">
                             <div class="flex flex-wrap justify-around gap-2 text-xs">
                                 <div class="flex items-center">
-                                    <span class="w-6 h-6 bg-red-900 text-red-300 rounded font-bold flex items-center justify-center mr-1 text-xs">RG</span>
+                                    <span class="w-6 h-6 bg-red-900 text-red-300 rounded font-bold flex items-center justify-center mr-1 text-sm">×2</span>
                                     <span class="text-gray-400">Raddoppio</span>
                                 </div>
                                 <div class="flex items-center">
-                                    <span class="w-6 h-6 bg-green-900 text-green-300 rounded font-bold flex items-center justify-center mr-1 text-xs">2G</span>
+                                    <span class="w-6 h-6 bg-green-900 text-green-300 rounded font-bold flex items-center justify-center mr-1 text-sm">+2</span>
                                     <span class="text-gray-400">2 Goal</span>
                                 </div>
                                 <div class="flex items-center">
@@ -2597,6 +2597,7 @@
             // Mostra loading
             content.innerHTML = '<div class="text-center py-8"><div class="animate-spin inline-block w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full"></div><p class="text-gray-400 mt-4">Caricamento statistiche...</p></div>';
             modal.classList.remove('hidden');
+            modal.style.display = 'block';
             document.body.style.overflow = 'hidden';
             
             try {
@@ -2653,6 +2654,7 @@
                     return {
                         Name: player.playerName,
                         R: ruolo,
+                        Id: stats ? (stats.playerId || stats.Id) : null,
                         Fm: stats ? (parseFloat(stats.fm) || 0) : 0,
                         Pv: stats ? (parseInt(stats.pv) || 0) : 0,
                         Gf: stats ? (parseInt(stats.gf) || 0) : 0,
@@ -2762,11 +2764,14 @@
                                     <div class="absolute inset-0 bg-gradient-to-br from-${ruoloInfo.color}-500/20 to-${ruoloInfo.color}-700/20 rounded-2xl blur group-hover:blur-md transition-all"></div>
                                     <div class="relative bg-gradient-to-br from-slate-800 to-slate-900 border-2 border-${ruoloInfo.color}-500 rounded-2xl p-5 transform group-hover:scale-105 transition-all duration-300">
                                         <div class="flex items-start justify-between mb-3">
-                                            <div>
-                                                <span class="inline-block px-3 py-1 bg-${ruoloInfo.color}-500/20 border border-${ruoloInfo.color}-500 rounded-full text-${ruoloInfo.color}-400 text-xs font-bold mb-2">
-                                                    ${ruoloInfo.emoji} ${ruoloInfo.nome.toUpperCase()}
-                                                </span>
-                                                <h4 class="text-2xl font-bold text-white">${player.Name}</h4>
+                                            <div class="flex items-start gap-3">
+                                                ${player.Id ? `<img src="https://content.fantacalcio.it/web/campioncini/20/card/${player.Id}.png?v=466" alt="${player.Name}" class="w-16 h-20 object-cover rounded-lg shadow-lg border-2 border-${ruoloInfo.color}-500" onerror="this.style.display='none'">` : ''}
+                                                <div>
+                                                    <span class="inline-block px-3 py-1 bg-${ruoloInfo.color}-500/20 border border-${ruoloInfo.color}-500 rounded-full text-${ruoloInfo.color}-400 text-xs font-bold mb-2">
+                                                        ${ruoloInfo.emoji} ${ruoloInfo.nome.toUpperCase()}
+                                                    </span>
+                                                    <h4 class="text-2xl font-bold text-white">${player.Name}</h4>
+                                                </div>
                                             </div>
                                             <div class="text-right">
                                                 <div class="text-3xl font-black text-${ruoloInfo.color}-400">${player.Fm?.toFixed(1) || '0.0'}</div>
@@ -2804,11 +2809,14 @@
                                     <div class="absolute inset-0 bg-gradient-to-br from-${ruoloInfo.color}-500/20 to-${ruoloInfo.color}-700/20 rounded-2xl blur group-hover:blur-md transition-all"></div>
                                     <div class="relative bg-gradient-to-br from-slate-800 to-slate-900 border-2 border-${ruoloInfo.color}-500 rounded-2xl p-5 transform group-hover:scale-105 transition-all duration-300">
                                         <div class="flex items-start justify-between mb-3">
-                                            <div>
-                                                <span class="inline-block px-3 py-1 bg-${ruoloInfo.color}-500/20 border border-${ruoloInfo.color}-500 rounded-full text-${ruoloInfo.color}-400 text-xs font-bold mb-2">
-                                                    ${ruoloInfo.emoji} ${ruoloInfo.nome.toUpperCase()}
-                                                </span>
-                                                <h4 class="text-2xl font-bold text-white">${player.Name}</h4>
+                                            <div class="flex items-start gap-3">
+                                                ${player.Id ? `<img src="https://content.fantacalcio.it/web/campioncini/20/card/${player.Id}.png?v=466" alt="${player.Name}" class="w-16 h-20 object-cover rounded-lg shadow-lg border-2 border-${ruoloInfo.color}-500" onerror="this.style.display='none'">` : ''}
+                                                <div>
+                                                    <span class="inline-block px-3 py-1 bg-${ruoloInfo.color}-500/20 border border-${ruoloInfo.color}-500 rounded-full text-${ruoloInfo.color}-400 text-xs font-bold mb-2">
+                                                        ${ruoloInfo.emoji} ${ruoloInfo.nome.toUpperCase()}
+                                                    </span>
+                                                    <h4 class="text-2xl font-bold text-white">${player.Name}</h4>
+                                                </div>
                                             </div>
                                             <div class="text-right">
                                                 <div class="text-3xl font-black text-${ruoloInfo.color}-400">${player.Fm?.toFixed(1) || '0.0'}</div>
@@ -2836,16 +2844,16 @@
                                             <div class="flex items-center gap-2">
                                                 <span class="text-xs text-gray-400 w-12">Gol</span>
                                                 <div class="flex-1 bg-slate-950 rounded-full h-2 overflow-hidden">
-                                                    <div class="bg-gradient-to-r from-green-500 to-green-600 h-full transition-all duration-1000" style="width: ${Math.min(gfPercent * 10, 100)}%"></div>
+                                                    <div class="bg-gradient-to-r from-green-500 to-green-600 h-full transition-all duration-1000" style="width: ${Math.min(gfPercent, 100)}%"></div>
                                                 </div>
-                                                <span class="text-xs text-gray-400 w-12 text-right">${player.Gf || 0}</span>
+                                                <span class="text-xs text-gray-400 w-16 text-right">${player.Gf || 0}/${player.Pv || 0}</span>
                                             </div>
                                             <div class="flex items-center gap-2">
                                                 <span class="text-xs text-gray-400 w-12">Assist</span>
                                                 <div class="flex-1 bg-slate-950 rounded-full h-2 overflow-hidden">
-                                                    <div class="bg-gradient-to-r from-purple-500 to-purple-600 h-full transition-all duration-1000" style="width: ${Math.min(assPercent * 10, 100)}%"></div>
+                                                    <div class="bg-gradient-to-r from-purple-500 to-purple-600 h-full transition-all duration-1000" style="width: ${Math.min(assPercent, 100)}%"></div>
                                                 </div>
-                                                <span class="text-xs text-gray-400 w-12 text-right">${player.Ass || 0}</span>
+                                                <span class="text-xs text-gray-400 w-16 text-right">${player.Ass || 0}/${player.Pv || 0}</span>
                                             </div>
                                         </div>
                                     </div>
@@ -2890,12 +2898,19 @@
                     const assPerMatch = bestPlayer.Pv > 0 ? (bestPlayer.Ass / bestPlayer.Pv).toFixed(2) : 0;
                     
                     html += `
-                        <div class="text-center mb-6">
-                            <div class="inline-block relative">
-                                <div class="absolute inset-0 bg-purple-500 blur-2xl opacity-50 animate-pulse"></div>
-                                <h4 class="relative text-5xl font-black text-white mb-2 drop-shadow-2xl">${bestPlayer.Name}</h4>
+                        <div class="flex flex-col items-center mb-6">
+                            ${bestPlayer.Id ? `
+                            <div class="mb-4">
+                                <img src="https://content.fantacalcio.it/web/campioncini/20/card/${bestPlayer.Id}.png?v=466" alt="${bestPlayer.Name}" class="w-32 h-40 object-cover rounded-xl shadow-2xl border-4 border-purple-500" onerror="this.style.display='none'">
                             </div>
-                            <p class="text-xl text-purple-300 font-semibold">${ruoloNome}</p>
+                            ` : ''}
+                            <div class="text-center">
+                                <div class="inline-block relative">
+                                    <div class="absolute inset-0 bg-purple-500 blur-2xl opacity-50 animate-pulse"></div>
+                                    <h4 class="relative text-5xl font-black text-white mb-2 drop-shadow-2xl">${bestPlayer.Name}</h4>
+                                </div>
+                                <p class="text-xl text-purple-300 font-semibold">${ruoloNome}</p>
+                            </div>
                         </div>
                         
                         <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
@@ -2918,6 +2933,18 @@
                                 <div class="text-xs text-gray-400 mt-1">${assPerMatch}/partita</div>
                             </div>
                         </div>
+                        
+                        ${(bestPlayer.Gf || 0) > 0 || (bestPlayer.Ass || 0) > 0 ? `
+                        <div class="mt-4">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-xs text-gray-400">Goal Contribution</span>
+                                <span class="text-xs font-bold text-purple-400">${(bestPlayer.Gf || 0) + (bestPlayer.Ass || 0)} (${bestPlayer.Gf || 0}G + ${bestPlayer.Ass || 0}A) - ${(bestPlayer.Gf || 0) + (bestPlayer.Ass || 0)}/${bestPlayer.Pv || 0}</span>
+                            </div>
+                            <div class="h-3 bg-slate-950 rounded-full overflow-hidden">
+                                <div class="h-full bg-gradient-to-r from-purple-500 to-pink-500" style="width: ${Math.min((((bestPlayer.Gf || 0) + (bestPlayer.Ass || 0)) / Math.max(bestPlayer.Pv, 1)) * 100, 100)}%"></div>
+                            </div>
+                        </div>
+                        ` : ''}
                     `;
                 } else {
                     html += `<p class="text-gray-400 text-center italic">Nessun giocatore con almeno 5 presenze</p>`;
@@ -2941,12 +2968,19 @@
                                     </h3>
                                 </div>
                                 <div class="p-6">
-                                    <div class="text-center mb-4">
-                                        <div class="inline-block relative">
-                                            <div class="absolute inset-0 bg-green-500 blur-xl opacity-50"></div>
-                                            <h4 class="relative text-4xl font-black text-white mb-1">${topScorer.Name}</h4>
+                                    <div class="flex flex-col items-center mb-4">
+                                        ${topScorer.Id ? `
+                                        <div class="mb-3">
+                                            <img src="https://content.fantacalcio.it/web/campioncini/20/card/${topScorer.Id}.png?v=466" alt="${topScorer.Name}" class="w-24 h-32 object-cover rounded-lg shadow-2xl border-3 border-green-500" onerror="this.style.display='none'">
                                         </div>
-                                        <p class="text-lg text-green-300">${topScorer.R && ruoli[topScorer.R] ? ruoli[topScorer.R].nome : 'N/A'}</p>
+                                        ` : ''}
+                                        <div class="text-center">
+                                            <div class="inline-block relative">
+                                                <div class="absolute inset-0 bg-green-500 blur-xl opacity-50"></div>
+                                                <h4 class="relative text-4xl font-black text-white mb-1">${topScorer.Name}</h4>
+                                            </div>
+                                            <p class="text-lg text-green-300">${topScorer.R && ruoli[topScorer.R] ? ruoli[topScorer.R].nome : 'N/A'}</p>
+                                        </div>
                                     </div>
                                     
                                     <div class="bg-slate-950/50 rounded-2xl p-6 mb-4">
@@ -2973,10 +3007,10 @@
                                     <div class="mt-4">
                                         <div class="flex items-center justify-between mb-2">
                                             <span class="text-xs text-gray-400">Goal Contribution</span>
-                                            <span class="text-xs font-bold text-green-400">${topScorer.Gf + topScorer.Ass} (${topScorer.Gf}G + ${topScorer.Ass}A)</span>
+                                            <span class="text-xs font-bold text-green-400">${topScorer.Gf + topScorer.Ass} (${topScorer.Gf}G + ${topScorer.Ass}A) - ${topScorer.Gf + topScorer.Ass}/${topScorer.Pv || 0}</span>
                                         </div>
                                         <div class="h-3 bg-slate-950 rounded-full overflow-hidden">
-                                            <div class="h-full bg-gradient-to-r from-green-500 to-emerald-500" style="width: ${Math.min((topScorer.Gf / Math.max(topScorer.Pv, 1)) * 100, 100)}%"></div>
+                                            <div class="h-full bg-gradient-to-r from-green-500 to-emerald-500" style="width: ${Math.min(((topScorer.Gf + topScorer.Ass) / Math.max(topScorer.Pv, 1)) * 100, 100)}%"></div>
                                         </div>
                                     </div>
                                     ` : ''}
@@ -2995,12 +3029,19 @@
                                     </h3>
                                 </div>
                                 <div class="p-6">
-                                    <div class="text-center mb-4">
-                                        <div class="inline-block relative">
-                                            <div class="absolute inset-0 bg-cyan-500 blur-xl opacity-50"></div>
-                                            <h4 class="relative text-4xl font-black text-white mb-1">${topAssistman.Name}</h4>
+                                    <div class="flex flex-col items-center mb-4">
+                                        ${topAssistman.Id ? `
+                                        <div class="mb-3">
+                                            <img src="https://content.fantacalcio.it/web/campioncini/20/card/${topAssistman.Id}.png?v=466" alt="${topAssistman.Name}" class="w-24 h-32 object-cover rounded-lg shadow-2xl border-3 border-cyan-500" onerror="this.style.display='none'">
                                         </div>
-                                        <p class="text-lg text-cyan-300">${topAssistman.R && ruoli[topAssistman.R] ? ruoli[topAssistman.R].nome : 'N/A'}</p>
+                                        ` : ''}
+                                        <div class="text-center">
+                                            <div class="inline-block relative">
+                                                <div class="absolute inset-0 bg-cyan-500 blur-xl opacity-50"></div>
+                                                <h4 class="relative text-4xl font-black text-white mb-1">${topAssistman.Name}</h4>
+                                            </div>
+                                            <p class="text-lg text-cyan-300">${topAssistman.R && ruoli[topAssistman.R] ? ruoli[topAssistman.R].nome : 'N/A'}</p>
+                                        </div>
                                     </div>
                                     
                                     <div class="bg-slate-950/50 rounded-2xl p-6 mb-4">
@@ -3027,7 +3068,7 @@
                                     <div class="mt-4">
                                         <div class="flex items-center justify-between mb-2">
                                             <span class="text-xs text-gray-400">Assist Contribution</span>
-                                            <span class="text-xs font-bold text-cyan-400">${topAssistman.Gf + topAssistman.Ass} (${topAssistman.Gf}G + ${topAssistman.Ass}A)</span>
+                                            <span class="text-xs font-bold text-cyan-400">${topAssistman.Ass}A - ${topAssistman.Ass}/${topAssistman.Pv || 0}</span>
                                         </div>
                                         <div class="h-3 bg-slate-950 rounded-full overflow-hidden">
                                             <div class="h-full bg-gradient-to-r from-cyan-500 to-blue-500" style="width: ${Math.min((topAssistman.Ass / Math.max(topAssistman.Pv, 1)) * 100, 100)}%"></div>
@@ -3049,8 +3090,17 @@
         };
         
         window.closeTeamStatsModal = () => {
-            document.getElementById('team-stats-modal').classList.add('hidden');
+            const modal = document.getElementById('team-stats-modal');
+            modal.classList.add('hidden');
+            modal.style.display = '';
             document.body.style.overflow = '';
+        };
+        
+        // Mostra statistiche del match tra due squadre (da bonus)
+        window.showMatchStatsModal = async (homeTeam, awayTeam) => {
+            // Semplicemente apri le stats della squadra casa
+            // L'utente può poi chiudere e aprire l'altra se vuole
+            await showTeamStats(homeTeam);
         };
 
         // --- Gestione Autenticazione ---
@@ -6327,7 +6377,7 @@
                         <!-- Colonna RG -->
                         <div class="bg-red-900/10 rounded-lg p-2">
                             <div class="flex items-center justify-center mb-2">
-                                <span class="w-8 h-8 bg-red-900 text-red-300 rounded font-bold flex items-center justify-center text-sm">RG</span>
+                                <span class="w-8 h-8 bg-red-900 text-red-300 rounded font-bold flex items-center justify-center text-lg">×2</span>
                             </div>
                             
                             <!-- Totali -->
@@ -6359,7 +6409,7 @@
                         <!-- Colonna 2G -->
                         <div class="bg-green-900/10 rounded-lg p-2">
                             <div class="flex items-center justify-center mb-2">
-                                <span class="w-8 h-8 bg-green-900 text-green-300 rounded font-bold flex items-center justify-center text-sm">2G</span>
+                                <span class="w-8 h-8 bg-green-900 text-green-300 rounded font-bold flex items-center justify-center text-lg">+2</span>
                             </div>
                             
                             <!-- Totali -->
@@ -6864,7 +6914,7 @@
                         
                         <!-- Mobile layout - Orizzontale compatto con VS centrato -->
                         <div class="md:hidden flex items-stretch gap-2">
-                            <!-- Prima squadra (quella dell'utente) -->
+                            <!-- Squadra Casa (sinistra) -->
                             <div class="flex-1 flex flex-col items-center justify-center bg-gradient-to-br from-gray-800/40 to-gray-700/20 border border-gray-600/50 rounded-lg p-2">
                                 <div class="relative mb-2">
                                     ${isUserHome ? (userLogo ? `
@@ -6874,22 +6924,22 @@
                                             <span class="text-lg">🏠</span>
                                         </div>
                                     `) : (opponentLogo ? `
-                                        <img src="${opponentLogo}" alt="${awayTeam}" class="w-12 h-12 object-contain" onerror="this.style.display='none'">
+                                        <img src="${opponentLogo}" alt="${homeTeam}" class="w-12 h-12 object-contain" onerror="this.style.display='none'">
                                     ` : `
                                         <div class="w-12 h-12 bg-gray-700 rounded-full flex items-center justify-center">
-                                            <span class="text-lg">✈️</span>
+                                            <span class="text-lg">🏠</span>
                                         </div>
                                     `)}
                                 </div>
                                 <p class="font-bold text-gray-200 text-xs text-center mb-1.5 leading-tight line-clamp-2 px-1">
-                                    ${isUserHome ? homeTeam : awayTeam}
+                                    ${homeTeam}
                                 </p>
                                 <div class="flex flex-col gap-1 w-full items-center">
-                                    <span class="inline-flex items-center justify-center px-2 py-0.5 rounded-full text-xs font-semibold ${isUserHome ? 'bg-blue-600/70 text-white' : 'bg-orange-600/70 text-white'} w-full max-w-[90%]">
-                                        ${isUserHome ? '🏠' : '✈️'}
+                                    <span class="inline-flex items-center justify-center px-2 py-0.5 rounded-full text-xs font-semibold bg-blue-600/70 text-white w-full max-w-[90%]">
+                                        🏠
                                     </span>
                                     <span class="inline-flex items-center justify-center px-2 py-0.5 rounded-full text-xs font-bold bg-gray-600 text-yellow-400">
-                                        #${userPosition}
+                                        #${isUserHome ? userPosition : opponentPosition}
                                     </span>
                                 </div>
                             </div>
@@ -6901,14 +6951,14 @@
                                 </div>
                             </div>
                             
-                            <!-- Seconda squadra (avversario) -->
+                            <!-- Squadra Trasferta (destra) -->
                             <div class="flex-1 flex flex-col items-center justify-center bg-gradient-to-br from-gray-800/40 to-gray-700/20 border border-gray-600/50 rounded-lg p-2">
                                 <div class="relative mb-2">
                                     ${!isUserHome ? (userLogo ? `
-                                        <img src="${userLogo}" alt="${homeTeam}" class="w-12 h-12 object-contain" onerror="this.style.display='none'">
+                                        <img src="${userLogo}" alt="${awayTeam}" class="w-12 h-12 object-contain" onerror="this.style.display='none'">
                                     ` : `
                                         <div class="w-12 h-12 bg-gray-700 rounded-full flex items-center justify-center">
-                                            <span class="text-lg">🏠</span>
+                                            <span class="text-lg">✈️</span>
                                         </div>
                                     `) : (opponentLogo ? `
                                         <img src="${opponentLogo}" alt="${awayTeam}" class="w-12 h-12 object-contain" onerror="this.style.display='none'">
@@ -6919,14 +6969,14 @@
                                     `)}
                                 </div>
                                 <p class="font-bold text-gray-200 text-xs text-center mb-1.5 leading-tight line-clamp-2 px-1">
-                                    ${!isUserHome ? homeTeam : awayTeam}
+                                    ${awayTeam}
                                 </p>
                                 <div class="flex flex-col gap-1 w-full items-center">
-                                    <span class="inline-flex items-center justify-center px-2 py-0.5 rounded-full text-xs font-semibold ${!isUserHome ? 'bg-blue-600/70 text-white' : 'bg-orange-600/70 text-white'} w-full max-w-[90%]">
-                                        ${!isUserHome ? '🏠' : '✈️'}
+                                    <span class="inline-flex items-center justify-center px-2 py-0.5 rounded-full text-xs font-semibold bg-orange-600/70 text-white w-full max-w-[90%]">
+                                        ✈️
                                     </span>
                                     <span class="inline-flex items-center justify-center px-2 py-0.5 rounded-full text-xs font-bold bg-gray-600 text-yellow-400">
-                                        #${opponentPosition}
+                                        #${!isUserHome ? userPosition : opponentPosition}
                                     </span>
                                 </div>
                             </div>
@@ -6963,6 +7013,10 @@
                 ].sort((a, b) => a.position - b.position);
                 
                 if (homeStats && awayStats) {
+                    // Escape i nomi delle squadre per usarli in modo sicuro nell'onclick
+                    const homeTeamEscaped = homeTeam.replace(/'/g, "\\'");
+                    const awayTeamEscaped = awayTeam.replace(/'/g, "\\'");
+                    
                     miniStandings = `
                         <div class="bg-gray-900/50 border border-gray-700 rounded-lg p-3 sm:p-4 mb-4 sm:mb-6">
                             <h4 class="text-center text-sm sm:text-lg font-bold text-yellow-500 mb-2 sm:mb-3 flex items-center justify-center">
@@ -6989,7 +7043,9 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        ${teams.map((team, idx) => `
+                                        ${teams.map((team, idx) => {
+                                            const teamNameEscaped = team.name.replace(/'/g, "\\'");
+                                            return `
                                             <tr class="${idx === 0 ? 'border-b border-gray-800' : ''} ${team.name === userSquad ? 'bg-blue-900/30' : ''}">
                                                 <td class="py-2 px-1 font-bold text-yellow-500">${team.position}</td>
                                                 <td class="py-2 px-1">
@@ -7007,7 +7063,7 @@
                                                 <td class="text-center py-2 px-1 text-gray-300">${team.stats.goalsAgainst}</td>
                                                 <td class="text-center py-2 px-1 font-semibold ${team.stats.goalDifference > 0 ? 'text-green-400' : team.stats.goalDifference < 0 ? 'text-red-400' : 'text-gray-400'}">${team.stats.goalDifference > 0 ? '+' : ''}${team.stats.goalDifference}</td>
                                             </tr>
-                                        `).join('')}
+                                        `;}).join('')}
                                     </tbody>
                                 </table>
                             </div>
@@ -7060,9 +7116,8 @@
                             <div class="relative">
                                 <div class="absolute inset-0 bg-red-500 rounded-full blur-lg sm:blur-xl opacity-50 animate-pulse"></div>
                                 <div class="relative w-16 h-16 sm:w-24 sm:h-24 bg-gradient-to-br from-red-600 to-red-800 rounded-full flex items-center justify-center shadow-2xl border-2 sm:border-4 border-red-400">
-                                    <svg class="w-9 h-9 sm:w-14 sm:h-14 text-red-100" fill="currentColor" viewBox="0 0 20 20">
-                                        <path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z"></path>
-                                    </svg>
+                                    <!-- Icona pallone -->
+                                    <img src="https://raw.githubusercontent.com/savinopi/FantaBet-OP/main/football-in-midair.png" alt="Football" class="relative w-12 h-12 sm:w-16 sm:h-16 object-contain" style="filter: brightness(0) invert(1) drop-shadow(2px 2px 4px rgba(0,0,0,0.5));">
                                     <span class="absolute -top-1 -right-1 flex h-5 w-5 sm:h-6 sm:w-6">
                                         <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
                                         <span class="relative inline-flex rounded-full h-5 w-5 sm:h-6 sm:w-6 bg-red-500 items-center justify-center text-white text-xs font-bold">×2</span>
@@ -7102,9 +7157,11 @@
                             <div class="relative">
                                 <div class="absolute inset-0 bg-green-500 rounded-full blur-lg sm:blur-xl opacity-50 animate-pulse"></div>
                                 <div class="relative w-16 h-16 sm:w-24 sm:h-24 bg-gradient-to-br from-green-600 to-green-800 rounded-full flex items-center justify-center shadow-2xl border-2 sm:border-4 border-green-400">
-                                    <svg class="w-9 h-9 sm:w-14 sm:h-14 text-green-100" fill="currentColor" viewBox="0 0 512 512">
-                                        <path d="M177.1 228.6L207.9 320h96.5l29.62-91.38L256 172.1L177.1 228.6zM255.1 0C114.6 0 .0001 114.6 .0001 256S114.6 512 256 512s255.1-114.6 255.1-255.1S397.4 0 255.1 0zM416.6 246.8L381.9 214l-22.44 62.32l-22.62 7.816l22.38-61.97l-34.71-32.81l34.71-32.81l-22.38-61.97l22.62 7.816L381.9 166.7l34.71-32.81c-34.46-37.46-81.03-63.03-134.5-69.58l-8.066 75.92l-22.44 7.891L260.1 90.16L273.7 13.36C268.5 13.12 263.3 12.1 258.1 12.1c-6.047 0-11.1 .4766-17.83 .8906l12.36 76.83l8.531 58.02L238.7 139.8l-7.844-75.15C176.4 71.23 129.8 96.8 95.35 134.2l34.71 32.81l-22.38 61.97l22.62-7.816L152.7 166.7l34.71 32.81l-34.71 32.81l22.38 61.97l-22.62-7.816L130.1 214L95.35 246.8C108.7 283.9 134.2 314.3 168.8 334.7l7.775-75.43l22.38-7.922l-8.119 58.18l-12.49 76.62c5.453 .2969 10.86 .875 16.51 .875c6.203 0 12.31-.5781 18.43-1.016l-12.76-77.83l-8.205-58.29l22.46 8.012l7.559 75.75c54.25-6.549 101.6-32.45 136.1-69.91L324.2 231.8l22.38-61.97L323.9 177.7L301.5 214L266.8 246.8l34.71 32.81l22.38 61.97l-22.62-7.816l-7.504-75.11l-22.5-8.066l8.131 58.44l12.69 77.74c54.84-6.699 102.4-32.87 137.1-70.55L416.6 246.8z"/>
-                                    </svg>
+                                    <!-- 2 Palloni sovrapposti -->
+                                    <div class="relative w-full h-full flex items-center justify-center">
+                                        <img src="https://raw.githubusercontent.com/savinopi/FantaBet-OP/main/football-ball.png" alt="Football" class="absolute w-9 h-9 sm:w-12 sm:h-12 object-contain -translate-x-2 sm:-translate-x-3" style="filter: brightness(0) invert(1) drop-shadow(2px 2px 4px rgba(0,0,0,0.5));">
+                                        <img src="https://raw.githubusercontent.com/savinopi/FantaBet-OP/main/football-ball.png" alt="Football" class="absolute w-9 h-9 sm:w-12 sm:h-12 object-contain translate-x-2 sm:translate-x-3" style="filter: brightness(0) invert(1) drop-shadow(2px 2px 4px rgba(0,0,0,0.5));">
+                                    </div>
                                     <span class="absolute -top-1 -right-1 flex h-5 w-5 sm:h-6 sm:w-6">
                                         <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
                                         <span class="relative inline-flex rounded-full h-5 w-5 sm:h-6 sm:w-6 bg-green-500 items-center justify-center text-white text-xs font-bold">+2</span>
@@ -7144,9 +7201,7 @@
                             <div class="relative">
                                 <div class="absolute inset-0 bg-blue-500 rounded-full blur-lg sm:blur-xl opacity-50 animate-pulse"></div>
                                 <div class="relative w-16 h-16 sm:w-24 sm:h-24 bg-gradient-to-br from-blue-600 to-blue-800 rounded-full flex items-center justify-center shadow-2xl border-2 sm:border-4 border-blue-400">
-                                    <svg class="w-9 h-9 sm:w-14 sm:h-14 text-blue-100" fill="currentColor" viewBox="0 0 20 20">
-                                        <path fill-rule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
-                                    </svg>
+                                    <img src="https://raw.githubusercontent.com/savinopi/FantaBet-OP/main/football-sports-gloves.png" alt="Gloves" class="w-9 h-9 sm:w-14 sm:h-14 object-contain" style="filter: brightness(0) invert(1) drop-shadow(2px 2px 4px rgba(0,0,0,0.5));">
                                     <span class="absolute -top-1 -right-1 flex h-5 w-5 sm:h-6 sm:w-6">
                                         <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
                                         <span class="relative inline-flex rounded-full h-5 w-5 sm:h-6 sm:w-6 bg-blue-500 items-center justify-center text-xs">🛡️</span>
@@ -10495,8 +10550,8 @@ window.toggleAdditionalStats = () => {
         <div class="container mx-auto px-4 text-center">
             <p class="text-xs text-gray-500">
                 <span class="font-semibold text-gray-400">FANTABet</span> • 
-                Versione 2.5 • 
-                Ultimo aggiornamento: <span class="text-gray-400">25 Dicembre 2025</span>
+                Versione 2.6 • 
+                Ultimo aggiornamento: <span class="text-gray-400">28 Dicembre 2025</span>
             </p>
             <p class="text-xs text-gray-600 mt-1">
                 © 2025 - Gestionale Fantacalcio con Sistema Scommesse
